@@ -1,0 +1,37 @@
+:root {
+  /* Colors */
+  --color-aura-positive: #7CFFB2;
+  --color-aura-negative: #FF6B6B;
+  --color-neutral: #8E8E93;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: rgba(255, 255, 255, 0.7);
+  
+  /* Backgrounds */
+  --bg-app: #000000;
+  --bg-surface-primary: rgba(255, 255, 255, 0.1); /* Ultra Thin Material */
+  --bg-surface-secondary: rgba(255, 255, 255, 0.15); /* Thin Material */
+  --bg-overlay: rgba(255, 255, 255, 0.2); /* Regular Material */
+
+  /* Typography */
+  --font-primary: -apple-system, BlinkMacSystemFont, "SF Pro", "Inter", sans-serif;
+  --line-height-base: 1.25;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+
+  /* UI Properties */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  
+  --touch-target-size: 44px;
+}
