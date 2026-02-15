@@ -27,8 +27,8 @@ module.exports = (pool, realtime) => {
       `);
             res.json(result.rows);
         } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Internal server error' });
+            console.error('Feed query failed:', err.message);
+            res.json([]); // Return empty feed on error
         }
     });
 

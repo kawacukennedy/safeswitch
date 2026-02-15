@@ -88,6 +88,10 @@ const startServer = async () => {
         console.log('Database connected successfully');
         client.release();
 
+        // Auto-create tables if they don't exist
+        const initDb = require('./utils/initDb');
+        await initDb(pool);
+
         // Register Routes
         app.use('/api/auth', rateLimit.auth, authRoutes(pool));
 
