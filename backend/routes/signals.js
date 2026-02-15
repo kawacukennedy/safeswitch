@@ -58,12 +58,19 @@ module.exports = (pool, realtime) => {
                 [user_id, reward, result.rows[0].id]
             );
 
+            // Fetch profile data for broadcast
+            const profile = await pool.query('SELECT handle, aura_score FROM profiles WHERE id = $1', [user_id]);
+            const { handle, aura_score } = profile.rows[0];
+
             // Broadcast to Feed
             if (realtime) {
                 realtime.broadcast('new_signal', {
                     id: result.rows[0].id,
                     video_url,
-                    quest_id
+                    quest_id,
+                    user_id,
+                    handle,
+                    aura_score
                 });
             }
 

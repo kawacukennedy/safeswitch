@@ -59,14 +59,22 @@ const Feed = () => {
     const handleVote = async (type) => { // 'human' or 'slop'
         const currentSignal = signals[activeIndex];
 
-        try {
-            if (currentSignal) {
-                await api.submitAudit(currentSignal.id, type);
-                showToast({
-                    message: type === 'human' ? 'Verified Human' : 'Flagged as Slop',
-                    type: type === 'human' ? 'success' : 'error'
-                });
+        if (!currentSignal?.id) {
+            console.error("Attempted to vote on signal without ID:", currentSignal);
+            showToast({ message: "Invalid signal data. Skipping.", type: "error" });
+            // Advance to next even if invalid
+            if (activeIndex < signals.length - 1) {
+                setActiveIndex(prev => prev + 1);
             }
+            return;
+        }
+
+        try {
+            await api.submitAudit(currentSignal.id, type);
+            showToast({
+                message: type === 'human' ? 'Verified Human' : 'Flagged as Slop',
+                type: type === 'human' ? 'success' : 'error'
+            });
 
             // Advance to next
             if (activeIndex < signals.length - 1) {
@@ -75,6 +83,7 @@ const Feed = () => {
                 showToast({ message: 'All caught up!', type: 'info' });
             }
         } catch (err) {
+            console.error(err);
             showToast({ message: err.message, type: 'error' });
         }
     };
