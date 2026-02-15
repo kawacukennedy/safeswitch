@@ -23,7 +23,10 @@ app.use(express.json());
 // Database Pool
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    // socket options
+    keepAlive: true,
+    family: 4 // Force IPv4
 });
 
 // Mock Auth Middleware (for dev environment without Supabase)
