@@ -110,7 +110,7 @@ module.exports = (pool, realtime) => {
 
             res.status(201).json({ signal_id: result.rows[0].id, video_url, status: 'processing' });
         } catch (err) {
-            console.error('Signal upload error:', err);
+            console.error('❌ Signal upload error (Full Stack):', err);
             res.status(500).json({ error: 'Upload failed: ' + err.message });
         }
     });
