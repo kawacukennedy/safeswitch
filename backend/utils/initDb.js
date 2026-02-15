@@ -194,4 +194,40 @@ module.exports = async (pool) => {
     } catch (migrationErr) {
         console.warn('Migration note:', migrationErr.message);
     }
+
+    // Create materialized views if they don't exist
+    try {
+        await pool.query(`
+            CREATE MATERIALIZED VIEW IF NOT EXISTS leaderboard_global AS
+            SELECT
+                handle,
+                aura_score AS aura,
+                city,
+                RANK() OVER (ORDER BY aura_score DESC) AS rank
+            FROM profiles
+            WHERE is_suspended = false
+            ORDER BY aura_score DESC
+            LIMIT 100;
+        `);
+
+        await pool.query(`
+            CREATE MATERIALIZED VIEW IF NOT EXISTS leaderboard_city AS
+            SELECT
+                handle,
+                aura_score AS aura,
+                city,
+                RANK() OVER (PARTITION BY city ORDER BY aura_score DESC) AS rank
+            FROM profiles
+            WHERE is_suspended = false AND city IS NOT NULL
+            ORDER BY city, aura_score DESC;
+        `);
+
+        // Create indexes on the materialized views for fast lookups
+        await pool.query('CREATE INDEX IF NOT EXISTS idx_lb_global_rank ON leaderboard_global(rank);').catch(() => { });
+        await pool.query('CREATE INDEX IF NOT EXISTS idx_lb_city_city ON leaderboard_city(city);').catch(() => { });
+
+        console.log('Materialized views ready.');
+    } catch (mvErr) {
+        console.warn('Materialized views note:', mvErr.message);
+    }
 };

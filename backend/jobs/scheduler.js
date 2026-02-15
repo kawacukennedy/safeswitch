@@ -43,11 +43,10 @@ module.exports = (pool) => {
     // 3. Update Leaderboard Cache (Every 5 mins)
     cron.schedule('*/5 * * * *', async () => {
         try {
-            console.log('Refreshing leaderboards...');
             await pool.query('REFRESH MATERIALIZED VIEW leaderboard_global');
             await pool.query('REFRESH MATERIALIZED VIEW leaderboard_city');
         } catch (err) {
-            console.error('Job Error (leaderboards):', err);
+            // Silently skip — views may not exist yet, leaderboard route has its own fallback
         }
     });
 
