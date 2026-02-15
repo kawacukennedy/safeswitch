@@ -54,6 +54,7 @@ export const Camera = forwardRef(({
     const handleStream = (stream) => {
         if (videoRef.current) {
             videoRef.current.srcObject = stream;
+            videoRef.current.play().catch(e => console.warn("Auto-play failed:", e));
             streamRef.current = stream;
             setHasPermission(true);
             if (onStreamReady) onStreamReady(stream);

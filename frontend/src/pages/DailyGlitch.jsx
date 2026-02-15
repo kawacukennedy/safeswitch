@@ -155,174 +155,176 @@ const DailyGlitch = () => {
 
             {/* Main Content Area */}
             <div style={{ flex: 1, background: 'black', position: 'relative', overflow: 'hidden' }}>
-                <AnimatePresence mode="wait">
+                <div style={{ maxWidth: '480px', margin: '0 auto', height: '100%', position: 'relative' }}>
+                    <AnimatePresence mode="wait">
 
-                    {/* Active State: Ready to Record */}
-                    {status === 'active' && (
-                        <motion.div
-                            key="active"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '120px 32px 32px 32px', textAlign: 'center' }}
-                        >
-                            <div
-                                onClick={handleStartRecording}
+                        {/* Active State: Ready to Record */}
+                        {status === 'active' && (
+                            <motion.div
+                                key="active"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '120px 32px 32px 32px', textAlign: 'center' }}
+                            >
+                                <div
+                                    onClick={handleStartRecording}
+                                    style={{
+                                        width: '96px', height: '96px', borderRadius: '50%',
+                                        background: 'rgba(124, 255, 178, 0.05)',
+                                        border: '2px solid var(--color-aura-positive)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        marginBottom: '32px', cursor: 'pointer', position: 'relative'
+                                    }}
+                                >
+                                    <div style={{
+                                        position: 'absolute', inset: 0, borderRadius: '50%',
+                                        background: 'rgba(124, 255, 178, 0.2)',
+                                        animation: 'pulse 2s infinite ease-in-out'
+                                    }} />
+                                    <CameraIcon size={40} style={{ color: 'var(--color-aura-positive)', position: 'relative', zIndex: 1 }} />
+                                </div>
+                                <p style={{ color: 'rgba(255,255,255,0.6)', maxWidth: '280px' }}>
+                                    Tap to initiate capture sequence. Verification required.
+                                </p>
+                            </motion.div>
+                        )}
+
+                        {/* Recording State */}
+                        {status === 'recording' && (
+                            <motion.div
+                                key="recording"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                style={{ height: '100%', position: 'relative' }}
+                            >
+                                <Camera
+                                    ref={cameraRef}
+                                    autoStart={true}
+                                    onStreamReady={() => {
+                                        setTimeout(() => {
+                                            if (cameraRef.current) cameraRef.current.startRecording();
+                                        }, 500);
+                                    }}
+                                    onCapture={handleRecordingComplete}
+                                    maxDuration={7}
+                                />
+                                <button
+                                    onClick={() => {
+                                        if (cameraRef.current) cameraRef.current.stop();
+                                        setStatus('active');
+                                    }}
+                                    style={{
+                                        position: 'absolute', top: '80px', right: '16px', zIndex: 20,
+                                        padding: '8px', borderRadius: '50%',
+                                        background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)'
+                                    }}
+                                >
+                                    <X size={24} />
+                                </button>
+                            </motion.div>
+                        )}
+
+                        {/* Reviewing State */}
+                        {status === 'reviewing' && recordedVideo && (
+                            <motion.div
+                                key="reviewing"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                style={{ height: '100%', position: 'relative', background: '#111' }}
+                            >
+                                {/* Video Preview */}
+                                <video
+                                    src={URL.createObjectURL(recordedVideo)}
+                                    autoPlay
+                                    loop
+                                    playsInline
+                                    muted
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+
+                                <div style={{
+                                    position: 'absolute', bottom: 0, left: 0, right: 0,
+                                    padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                    background: 'linear-gradient(to top, black, transparent)'
+                                }}>
+                                    <button
+                                        onClick={() => setStatus('recording')}
+                                        style={{
+                                            padding: '16px', borderRadius: '50%',
+                                            background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(12px)'
+                                        }}
+                                    >
+                                        <RefreshCw size={24} />
+                                    </button>
+
+                                    <button
+                                        onClick={submitGlitch}
+                                        style={{
+                                            flex: 1, marginLeft: '16px', padding: '16px',
+                                            background: 'var(--color-aura-positive)', color: 'black',
+                                            fontWeight: '700', borderRadius: '12px',
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+                                        }}
+                                    >
+                                        <Upload size={20} />
+                                        TRANSMIT SIGNAL
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {/* Submitting State */}
+                        {status === 'submitting' && (
+                            <motion.div
+                                key="submitting"
                                 style={{
-                                    width: '96px', height: '96px', borderRadius: '50%',
-                                    background: 'rgba(124, 255, 178, 0.05)',
-                                    border: '2px solid var(--color-aura-positive)',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    marginBottom: '32px', cursor: 'pointer', position: 'relative'
+                                    height: '100%', display: 'flex', flexDirection: 'column',
+                                    alignItems: 'center', justifyContent: 'center',
+                                    background: 'rgba(0,0,0,0.9)', position: 'absolute', inset: 0, zIndex: 50
                                 }}
+                            >
+                                <div style={{ width: '256px', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '99px', overflow: 'hidden', marginBottom: '16px' }}>
+                                    <motion.div
+                                        style={{ height: '100%', background: 'var(--color-aura-positive)', width: `${uploadProgress}%` }}
+                                    />
+                                </div>
+                                <p style={{ fontFamily: 'monospace', color: 'var(--color-aura-positive)', animation: 'pulse 2s infinite' }}>
+                                    ENCRYPTING & UPLOADING... {Math.round(uploadProgress)}%
+                                </p>
+                            </motion.div>
+                        )}
+
+                        {/* Complete State */}
+                        {status === 'complete' && (
+                            <motion.div
+                                key="complete"
+                                style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '32px' }}
                             >
                                 <div style={{
-                                    position: 'absolute', inset: 0, borderRadius: '50%',
-                                    background: 'rgba(124, 255, 178, 0.2)',
-                                    animation: 'pulse 2s infinite ease-in-out'
-                                }} />
-                                <CameraIcon size={40} style={{ color: 'var(--color-aura-positive)', position: 'relative', zIndex: 1 }} />
-                            </div>
-                            <p style={{ color: 'rgba(255,255,255,0.6)', maxWidth: '280px' }}>
-                                Tap to initiate capture sequence. Verification required.
-                            </p>
-                        </motion.div>
-                    )}
-
-                    {/* Recording State */}
-                    {status === 'recording' && (
-                        <motion.div
-                            key="recording"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            style={{ height: '100%', position: 'relative' }}
-                        >
-                            <Camera
-                                ref={cameraRef}
-                                autoStart={true}
-                                onStreamReady={() => {
-                                    setTimeout(() => {
-                                        if (cameraRef.current) cameraRef.current.startRecording();
-                                    }, 500);
-                                }}
-                                onCapture={handleRecordingComplete}
-                                maxDuration={7}
-                            />
-                            <button
-                                onClick={() => {
-                                    if (cameraRef.current) cameraRef.current.stop();
-                                    setStatus('active');
-                                }}
-                                style={{
-                                    position: 'absolute', top: '80px', right: '16px', zIndex: 20,
-                                    padding: '8px', borderRadius: '50%',
-                                    background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)'
-                                }}
-                            >
-                                <X size={24} />
-                            </button>
-                        </motion.div>
-                    )}
-
-                    {/* Reviewing State */}
-                    {status === 'reviewing' && recordedVideo && (
-                        <motion.div
-                            key="reviewing"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            style={{ height: '100%', position: 'relative', background: '#111' }}
-                        >
-                            {/* Video Preview */}
-                            <video
-                                src={URL.createObjectURL(recordedVideo)}
-                                autoPlay
-                                loop
-                                playsInline
-                                muted
-                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
-
-                            <div style={{
-                                position: 'absolute', bottom: 0, left: 0, right: 0,
-                                padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                                background: 'linear-gradient(to top, black, transparent)'
-                            }}>
+                                    width: '80px', height: '80px',
+                                    background: 'var(--color-aura-positive)', borderRadius: '50%',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    marginBottom: '24px', color: 'black'
+                                }}>
+                                    <Check size={40} strokeWidth={4} />
+                                </div>
+                                <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '8px' }}>Wait for Audit</h2>
+                                <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '32px' }}>
+                                    Your signal is being verified by the network. Check back later for results.
+                                </p>
                                 <button
-                                    onClick={() => setStatus('recording')}
-                                    style={{
-                                        padding: '16px', borderRadius: '50%',
-                                        background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(12px)'
-                                    }}
+                                    onClick={() => setStatus('active')}
+                                    style={{ color: 'var(--color-aura-positive)' }}
                                 >
-                                    <RefreshCw size={24} />
+                                    Return to Feed
                                 </button>
+                            </motion.div>
+                        )}
 
-                                <button
-                                    onClick={submitGlitch}
-                                    style={{
-                                        flex: 1, marginLeft: '16px', padding: '16px',
-                                        background: 'var(--color-aura-positive)', color: 'black',
-                                        fontWeight: '700', borderRadius: '12px',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
-                                    }}
-                                >
-                                    <Upload size={20} />
-                                    TRANSMIT SIGNAL
-                                </button>
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {/* Submitting State */}
-                    {status === 'submitting' && (
-                        <motion.div
-                            key="submitting"
-                            style={{
-                                height: '100%', display: 'flex', flexDirection: 'column',
-                                alignItems: 'center', justifyContent: 'center',
-                                background: 'rgba(0,0,0,0.9)', position: 'absolute', inset: 0, zIndex: 50
-                            }}
-                        >
-                            <div style={{ width: '256px', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '99px', overflow: 'hidden', marginBottom: '16px' }}>
-                                <motion.div
-                                    style={{ height: '100%', background: 'var(--color-aura-positive)', width: `${uploadProgress}%` }}
-                                />
-                            </div>
-                            <p style={{ fontFamily: 'monospace', color: 'var(--color-aura-positive)', animation: 'pulse 2s infinite' }}>
-                                ENCRYPTING & UPLOADING... {Math.round(uploadProgress)}%
-                            </p>
-                        </motion.div>
-                    )}
-
-                    {/* Complete State */}
-                    {status === 'complete' && (
-                        <motion.div
-                            key="complete"
-                            style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '32px' }}
-                        >
-                            <div style={{
-                                width: '80px', height: '80px',
-                                background: 'var(--color-aura-positive)', borderRadius: '50%',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                marginBottom: '24px', color: 'black'
-                            }}>
-                                <Check size={40} strokeWidth={4} />
-                            </div>
-                            <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '8px' }}>Wait for Audit</h2>
-                            <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '32px' }}>
-                                Your signal is being verified by the network. Check back later for results.
-                            </p>
-                            <button
-                                onClick={() => setStatus('active')}
-                                style={{ color: 'var(--color-aura-positive)' }}
-                            >
-                                Return to Feed
-                            </button>
-                        </motion.div>
-                    )}
-
-                </AnimatePresence>
+                    </AnimatePresence>
+                </div>
             </div>
         </div>
     );

@@ -38,7 +38,7 @@ const Profile = () => {
     if (!profile) return null;
 
     return (
-        <div className="p-6 relative isolate">
+        <div className="p-6 relative isolate max-w-md mx-auto">
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-2xl font-bold text-white">PROFILE</h1>
                 <button onClick={() => navigate('/settings')} className="p-2 bg-white/5 rounded-full hover:bg-white/10">
