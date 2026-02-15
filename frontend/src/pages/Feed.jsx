@@ -114,59 +114,61 @@ const Feed = () => {
             </div>
 
             {/* Video Card Stack */}
-            <div className="h-full w-full relative">
-                <AnimatePresence>
-                    <motion.div
-                        key={currentSignal.id || 'empty'}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, y: -100 }}
-                        className="h-full w-full relative"
-                    >
-                        {/* Placeholder for Video */}
-                        <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center">
-                            <span className="font-mono text-white/20 text-center">
-                                SIGNAL_{currentSignal.id}
-                                <br />
-                                {currentSignal.video_url}
-                            </span>
-                        </div>
-
-                        {/* Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/80" />
-
-                        {/* Controls & Info */}
-                        <div className="absolute bottom-0 left-0 right-0 p-6 pb-24">
-                            <div className="mb-4">
-                                <h3 className="text-white font-bold text-lg drop-shadow-md">
-                                    @{currentSignal.handle || 'unknown'}
-                                </h3>
-                                <p className="text-white/80 text-sm drop-shadow-md">
-                                    Aura: {currentSignal.aura_score || '?'}
-                                </p>
+            <div className="h-full w-full relative flex justify-center bg-black">
+                <div className="h-full w-full max-w-md relative bg-neutral-900">
+                    <AnimatePresence>
+                        <motion.div
+                            key={currentSignal.id || 'empty'}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, y: -100 }}
+                            className="h-full w-full relative"
+                        >
+                            {/* Placeholder for Video */}
+                            <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center">
+                                <span className="font-mono text-white/20 text-center">
+                                    SIGNAL_{currentSignal.id}
+                                    <br />
+                                    {currentSignal.video_url}
+                                </span>
                             </div>
 
-                            {/* Audit Actions */}
-                            <div className="flex gap-4">
-                                <button
-                                    onClick={() => handleVote('slop')}
-                                    className="flex-1 py-4 rounded-xl bg-red-500/20 hover:bg-red-500/40 border border-red-500/50 backdrop-blur-md flex flex-col items-center gap-1 transition-colors"
-                                >
-                                    <ThumbsDown className="text-red-500" size={24} />
-                                    <span className="text-xs font-bold text-red-400">SLOP</span>
-                                </button>
+                            {/* Gradient Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/80" />
 
-                                <button
-                                    onClick={() => handleVote('human')}
-                                    className="flex-1 py-4 rounded-xl bg-neon-green/20 hover:bg-neon-green/40 border border-neon-green/50 backdrop-blur-md flex flex-col items-center gap-1 transition-colors"
-                                >
-                                    <ThumbsUp className="text-neon-green" size={24} />
-                                    <span className="text-xs font-bold text-neon-green">HUMAN</span>
-                                </button>
+                            {/* Controls & Info */}
+                            <div className="absolute bottom-0 left-0 right-0 p-6 pb-24">
+                                <div className="mb-4">
+                                    <h3 className="text-white font-bold text-lg drop-shadow-md">
+                                        @{currentSignal.handle || 'unknown'}
+                                    </h3>
+                                    <p className="text-white/80 text-sm drop-shadow-md">
+                                        Aura: {currentSignal.aura_score || '?'}
+                                    </p>
+                                </div>
+
+                                {/* Audit Actions */}
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={() => handleVote('slop')}
+                                        className="flex-1 py-4 rounded-xl bg-red-500/20 hover:bg-red-500/40 border border-red-500/50 backdrop-blur-md flex flex-col items-center gap-1 transition-colors"
+                                    >
+                                        <ThumbsDown className="text-red-500" size={24} />
+                                        <span className="text-xs font-bold text-red-400">SLOP</span>
+                                    </button>
+
+                                    <button
+                                        onClick={() => handleVote('human')}
+                                        className="flex-1 py-4 rounded-xl bg-neon-green/20 hover:bg-neon-green/40 border border-neon-green/50 backdrop-blur-md flex flex-col items-center gap-1 transition-colors"
+                                    >
+                                        <ThumbsUp className="text-neon-green" size={24} />
+                                        <span className="text-xs font-bold text-neon-green">HUMAN</span>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    </motion.div>
-                </AnimatePresence>
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
             </div>
 
             {/* Report Modal */}
