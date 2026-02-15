@@ -53,25 +53,31 @@ const auraRoutes = require('./routes/aura');
 const realtimeRoutes = require('./routes/realtime')();
 app.use('/api/realtime', realtimeRoutes);
 
+const authenticateToken = require('./middleware/auth');
+
+// ... (keep routes)
+
+// Use real auth middleware for protected routes
+// app.use('/api/auth', rateLimit.auth, authRoutes(pool)); // Auth routes are public
 app.use('/api/auth', rateLimit.auth, authRoutes(pool));
-app.use('/api/quests', mockAuth, questRoutes(pool));
-// Pass realtime broadcaster to signals route for notifications
-app.use('/api/signals', rateLimit.submission, mockAuth, signalRoutes(pool, realtimeRoutes));
-app.use('/api/audits', rateLimit.audit, mockAuth, auditRoutes(pool));
-app.use('/api/users', mockAuth, userRoutes(pool));
 
-// Profile routes
-app.use('/api/profiles', mockAuth, profileRoutes(pool));
-app.use('/api/profile', mockAuth, profileRoutes(pool));
+// Protected Routes
+app.use('/api/quests', authenticateToken, questRoutes(pool));
+app.use('/api/signals', rateLimit.submission, authenticateToken, signalRoutes(pool, realtimeRoutes));
+app.use('/api/audits', rateLimit.audit, authenticateToken, auditRoutes(pool));
+app.use('/api/users', authenticateToken, userRoutes(pool));
+app.use('/api/profiles', authenticateToken, profileRoutes(pool));
+app.use('/api/profile', authenticateToken, profileRoutes(pool));
+app.use('/api/settings', authenticateToken, settingsRoutes(pool));
+app.use('/api/vouches', authenticateToken, vouchesRoutes(pool));
+app.use('/api/reports', authenticateToken, reportsRoutes(pool));
+app.use('/api/blocks', authenticateToken, blocksRoutes(pool));
+app.use('/api/appeals', authenticateToken, appealsRoutes(pool));
+app.use('/api/recaps', authenticateToken, recapRoutes(pool));
+app.use('/api/leaderboard', authenticateToken, leaderboardRoutes(pool)); // Maybe public? But spec says auth.
+app.use('/api/aura', authenticateToken, auraRoutes(pool));
 
-app.use('/api/settings', mockAuth, settingsRoutes(pool));
-app.use('/api/vouches', mockAuth, vouchesRoutes(pool));
-app.use('/api/reports', mockAuth, reportsRoutes(pool));
-app.use('/api/blocks', mockAuth, blocksRoutes(pool));
-app.use('/api/appeals', mockAuth, appealsRoutes(pool));
-app.use('/api/recaps', mockAuth, recapRoutes(pool));
-app.use('/api/leaderboard', mockAuth, leaderboardRoutes(pool));
-app.use('/api/aura', mockAuth, auraRoutes(pool));
+
 
 // Health Check
 app.get('/api/health', (req, res) => {

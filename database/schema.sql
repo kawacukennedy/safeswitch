@@ -24,6 +24,7 @@ CREATE TYPE appeal_status AS ENUM ('pending', 'reviewed', 'rejected', 'accepted'
 CREATE TABLE profiles (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), -- In real Supabase, this references auth.users
     handle TEXT NOT NULL UNIQUE CHECK (handle ~ '^[a-z0-9_]{3,16}$'),
+    email TEXT UNIQUE, -- Added for custom auth
     aura_score INTEGER NOT NULL DEFAULT 0,
     city TEXT,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),

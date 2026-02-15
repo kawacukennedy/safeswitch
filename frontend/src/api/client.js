@@ -7,6 +7,7 @@ async function request(endpoint, options = {}) {
     const defaults = {
         headers: {
             'Content-Type': 'application/json',
+            ...(localStorage.getItem('token') ? { 'Authorization': `Bearer ${localStorage.getItem('token')}` } : {})
         },
     };
 

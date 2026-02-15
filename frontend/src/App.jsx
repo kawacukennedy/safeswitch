@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Onboarding from './pages/Onboarding';
+import Login from './pages/Login';
+import VerifyAuth from './pages/VerifyAuth';
 import DailyGlitch from './pages/DailyGlitch';
 import Feed from './pages/Feed';
 import Leaderboard from './pages/Leaderboard';
@@ -19,6 +21,14 @@ import Maintenance from './pages/static/Maintenance';
 import Suspension from './pages/static/Suspension';
 import Offline from './pages/static/Offline';
 import { AppLayout } from './components/layout/AppLayout';
+
+const RequireAuth = ({ children }) => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+};
 
 function App() {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
@@ -46,32 +56,35 @@ function App() {
         {/* Public Routes */}
         <Route path="/" element={<Landing />} />
         <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/verify" element={<VerifyAuth />} />
 
-        {/* App Routes (with Navigation) */}
-        <Route element={<AppLayout />}>
+        {/* App Routes (Protected) */}
+        <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
           <Route path="/daily-glitch" element={<DailyGlitch />} />
           <Route path="/feed" element={<Feed />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/profile" element={<Profile />} />
+
+          {/* Settings Module */}
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/settings/account" element={<AccountManagement />} />
+          <Route path="/settings/blocked" element={<BlockedUsers />} />
+          <Route path="/settings/notifications" element={<Notifications />} />
+          <Route path="/settings/privacy" element={<Legal type="privacy" />} />
+          <Route path="/settings/terms" element={<Legal type="terms" />} />
+
+          {/* History Module */}
+          <Route path="/history/audit" element={<AuditHistory />} />
+          <Route path="/history/aura" element={<AuraHistory />} />
+          <Route path="/history/reports" element={<ReportStatus />} />
+
+          {/* Standalone Pages */}
+          <Route path="/recap" element={<WeeklyRecap />} />
+          <Route path="/suspended" element={<Suspension />} />
         </Route>
 
-        {/* Settings Module */}
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/settings/account" element={<AccountManagement />} />
-        <Route path="/settings/blocked" element={<BlockedUsers />} />
-        <Route path="/settings/notifications" element={<Notifications />} />
-        <Route path="/settings/privacy" element={<Legal type="privacy" />} />
-        <Route path="/settings/terms" element={<Legal type="terms" />} />
-
-        {/* History Module */}
-        <Route path="/history/audit" element={<AuditHistory />} />
-        <Route path="/history/aura" element={<AuraHistory />} />
-        <Route path="/history/reports" element={<ReportStatus />} />
-
-        {/* Standalone Pages */}
-        <Route path="/recap" element={<WeeklyRecap />} />
         <Route path="/maintenance" element={<Maintenance />} />
-        <Route path="/suspended" element={<Suspension />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
