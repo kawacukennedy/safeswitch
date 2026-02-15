@@ -37,10 +37,21 @@ export const api = {
 
     // Signals
     getFeed: () => request('/signals'),
-    uploadSignal: (questId, videoUrl) => request('/signals', {
-        method: 'POST',
-        body: JSON.stringify({ quest_id: questId, video_url: videoUrl })
-    }),
+    uploadSignal: (questId, videoFile) => {
+        const formData = new FormData();
+        formData.append('quest_id', questId);
+        formData.append('video', videoFile);
+
+        return request('/signals', {
+            method: 'POST',
+            body: formData,
+            // Header hack: fetch automatically sets Content-Type to multipart/form-data with boundary
+            // when body is FormData, so we need to EXCLUDE Content-Type: application/json
+            headers: {
+                'Content-Type': undefined
+            }
+        });
+    },
 
     // Audits
     submitAudit: (signalId, vote) => request('/audits', {
