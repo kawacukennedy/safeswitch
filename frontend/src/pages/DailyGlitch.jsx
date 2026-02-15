@@ -79,16 +79,7 @@ const DailyGlitch = () => {
         setStatus('recording');
     };
 
-    // Auto-start camera when entering recording state
-    useEffect(() => {
-        if (status === 'recording' && cameraRef.current) {
-            cameraRef.current.start().then(() => {
-                setTimeout(() => {
-                    if (cameraRef.current) cameraRef.current.startRecording();
-                }, 500);
-            });
-        }
-    }, [status]);
+
 
     const submitGlitch = async () => {
         setStatus('submitting');
@@ -209,6 +200,12 @@ const DailyGlitch = () => {
                         >
                             <Camera
                                 ref={cameraRef}
+                                autoStart={true}
+                                onStreamReady={() => {
+                                    setTimeout(() => {
+                                        if (cameraRef.current) cameraRef.current.startRecording();
+                                    }, 500);
+                                }}
                                 onCapture={handleRecordingComplete}
                                 maxDuration={7}
                             />

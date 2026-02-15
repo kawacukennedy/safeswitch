@@ -6,6 +6,7 @@ export const Camera = forwardRef(({
     onError,
     onCapture,
     maxDuration = 7, // seconds
+    autoStart = false,
     className
 }, ref) => {
     const videoRef = useRef(null);
