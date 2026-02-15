@@ -52,6 +52,7 @@ module.exports = (pool) => {
             let userResult = await pool.query('SELECT * FROM profiles WHERE email = $1', [email]);
             let user = userResult.rows[0];
             let isNewUser = false;
+            let isFirstUser = false;
 
             if (!user) {
                 // Create a minimal profile — the user will complete onboarding next
@@ -65,6 +66,12 @@ module.exports = (pool) => {
                 );
                 user = userResult.rows[0];
                 isNewUser = true;
+
+                // Check if this is the very first user (founder)
+                const countResult = await pool.query('SELECT COUNT(*) FROM profiles');
+                if (parseInt(countResult.rows[0].count) === 1) {
+                    isFirstUser = true;
+                }
             }
 
             // Issue Session Token (long-lived)
@@ -78,7 +85,7 @@ module.exports = (pool) => {
                 { expiresIn: '7d' }
             );
 
-            res.json({ user, token: sessionToken, isNewUser });
+            res.json({ user, token: sessionToken, isNewUser, isFirstUser });
 
         } catch (err) {
             console.error('Verify error:', err);

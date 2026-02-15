@@ -32,6 +32,9 @@ const VerifyAuth = () => {
                 setStatus('success');
 
                 if (data.isNewUser) {
+                    if (data.isFirstUser) {
+                        localStorage.setItem('isFirstUser', 'true');
+                    }
                     showToast('Welcome! Let\'s set up your identity.', 'success');
                     setTimeout(() => navigate('/onboarding'), 1000);
                 } else {
