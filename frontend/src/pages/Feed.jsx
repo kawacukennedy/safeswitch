@@ -84,7 +84,17 @@ const Feed = () => {
             }
         } catch (err) {
             console.error(err);
-            showToast({ message: err.message, type: 'error' });
+            if (err.message && err.message.toLowerCase().includes('already voted')) {
+                showToast({ message: 'You already voted on this. Skipping...', type: 'info' });
+                // Advance to next
+                if (activeIndex < signals.length - 1) {
+                    setActiveIndex(prev => prev + 1);
+                } else {
+                    showToast({ message: 'All caught up!', type: 'info' });
+                }
+            } else {
+                showToast({ message: err.message, type: 'error' });
+            }
         }
     };
 
