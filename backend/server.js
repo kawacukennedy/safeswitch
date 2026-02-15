@@ -54,6 +54,7 @@ const realtimeRoutes = require('./routes/realtime')();
 app.use('/api/realtime', realtimeRoutes);
 
 app.use('/api/auth', rateLimit.auth, authRoutes(pool));
+app.use('/api/quests', mockAuth, questRoutes(pool));
 // Pass realtime broadcaster to signals route for notifications
 app.use('/api/signals', rateLimit.submission, mockAuth, signalRoutes(pool, realtimeRoutes));
 app.use('/api/audits', rateLimit.audit, mockAuth, auditRoutes(pool));
