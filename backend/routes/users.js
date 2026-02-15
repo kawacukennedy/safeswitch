@@ -12,7 +12,9 @@ module.exports = (pool) => {
 
             const result = await pool.query('SELECT * FROM profiles WHERE id = $1', [req.user.id]);
             if (result.rows.length === 0) {
-                return res.status(404).json({ error: 'Profile not found' });
+                // JWT valid but profile gone → stale session (DB was likely reset)
+                // Return 401 so client clears token and redirects to login
+                return res.status(401).json({ error: 'Session expired — please log in again' });
             }
             res.json(result.rows[0]);
         } catch (err) {
