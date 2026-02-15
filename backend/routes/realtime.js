@@ -12,6 +12,9 @@ module.exports = () => {
         res.setHeader('Content-Type', 'text/event-stream');
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');
+        // Explicit CORS for SSE
+        res.setHeader('Access-Control-Allow-Origin', 'https://glitchgen.vercel.app');
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
 
         // Add client
         const clientId = Date.now();
