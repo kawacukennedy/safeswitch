@@ -47,7 +47,7 @@ const Profile = () => {
             </div>
 
             {/* Profile Card */}
-            <div className="glass-panel p-6 mb-6 flex flex-col items-center">
+            <div className="glass-card p-6 mb-6 flex flex-col items-center">
                 <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-neon-green to-blue-500 mb-4 p-1">
                     <div className="w-full h-full rounded-full bg-black flex items-center justify-center">
                         <span className="text-2xl font-mono text-white">

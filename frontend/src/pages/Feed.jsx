@@ -134,14 +134,26 @@ const Feed = () => {
                             exit={{ opacity: 0, y: -100 }}
                             className="h-full w-full relative"
                         >
-                            {/* Placeholder for Video */}
-                            <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center">
-                                <span className="font-mono text-white/20 text-center">
-                                    SIGNAL_{currentSignal.id}
-                                    <br />
-                                    {currentSignal.video_url}
-                                </span>
-                            </div>
+                            {/* Video Player */}
+                            {currentSignal.video_url ? (
+                                <video
+                                    src={currentSignal.video_url}
+                                    className="absolute inset-0 w-full h-full object-cover"
+                                    autoPlay
+                                    loop
+                                    playsInline
+                                    muted={true}
+                                    controls={false}
+                                />
+                            ) : (
+                                <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center">
+                                    <span className="font-mono text-white/20 text-center">
+                                        SIGNAL_{currentSignal.id}
+                                        <br />
+                                        (No Video URL)
+                                    </span>
+                                </div>
+                            )}
 
                             {/* Gradient Overlay */}
                             <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/80" />
