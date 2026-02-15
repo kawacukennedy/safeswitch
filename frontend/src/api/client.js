@@ -17,6 +17,12 @@ async function request(endpoint, options = {}) {
     const response = await fetch(`${API_BASE}${endpoint}`, options);
 
     if (!response.ok) {
+        if (response.status === 401) {
+            localStorage.removeItem('token');
+            if (window.location.pathname !== '/login' && window.location.pathname !== '/') {
+                window.location.href = '/login';
+            }
+        }
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `API Error: ${response.status}`);
     }
