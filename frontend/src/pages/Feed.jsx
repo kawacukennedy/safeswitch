@@ -144,16 +144,24 @@ const Feed = () => {
                                     playsInline
                                     muted={true}
                                     controls={false}
+                                    onError={(e) => {
+                                        console.error("Video load error:", currentSignal.video_url);
+                                        e.target.style.display = 'none';
+                                        e.target.nextSibling.style.display = 'flex'; // Show fallback
+                                    }}
                                 />
-                            ) : (
-                                <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center">
-                                    <span className="font-mono text-white/20 text-center">
-                                        SIGNAL_{currentSignal.id}
-                                        <br />
-                                        (No Video URL)
-                                    </span>
+                            ) : null}
+
+                            {/* Fallback for missing/broken video */}
+                            <div className="absolute inset-0 bg-neutral-800 flex flex-col items-center justify-center hidden" style={{ display: !currentSignal.video_url ? 'flex' : 'none' }}>
+                                <div className="p-4 rounded-full bg-white/5 mb-4 animate-pulse">
+                                    <Activity className="text-white/20" size={48} />
                                 </div>
-                            )}
+                                <span className="font-mono text-white/40 text-center text-xs tracking-widest uppercase">
+                                    SIGNAL LOST<br />
+                                    {currentSignal.id}
+                                </span>
+                            </div>
 
                             {/* Gradient Overlay */}
                             <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/80" />

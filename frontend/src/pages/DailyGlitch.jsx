@@ -92,7 +92,9 @@ const DailyGlitch = () => {
         }, 200);
 
         try {
-            const fakeVideoUrl = `https://cdn.glitch.app/signals/${Date.now()}.webm`;
+            // DEMO: Since we don't have a real video upload, we use a sample video URL.
+            // In a real app, we would upload `recordedVideo` to S3/Cloudinary here.
+            const fakeVideoUrl = "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
 
             if (activeQuest) {
                 await api.uploadSignal(activeQuest.id, fakeVideoUrl);
