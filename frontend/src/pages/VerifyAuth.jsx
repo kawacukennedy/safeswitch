@@ -30,10 +30,14 @@ const VerifyAuth = () => {
                 localStorage.setItem('user', JSON.stringify(data.user));
 
                 setStatus('success');
-                showToast('Welcome back!', 'success');
 
-                // Redirect to feed
-                setTimeout(() => navigate('/feed'), 1000);
+                if (data.isNewUser) {
+                    showToast('Welcome! Let\'s set up your identity.', 'success');
+                    setTimeout(() => navigate('/onboarding'), 1000);
+                } else {
+                    showToast('Welcome back!', 'success');
+                    setTimeout(() => navigate('/feed'), 1000);
+                }
             } catch (err) {
                 console.error(err);
                 setStatus('error');

@@ -51,13 +51,10 @@ module.exports = (pool) => {
             // Find or Create User
             let userResult = await pool.query('SELECT * FROM profiles WHERE email = $1', [email]);
             let user = userResult.rows[0];
+            let isNewUser = false;
 
             if (!user) {
-                // Create new user with generated handle
-                // Handle format: user_xxxx (last 4 chars of uuid)
-                // We'll update uuid first
-                // Actually let's just generate a random handle for now and let them change it?
-                // Or use email prefix?
+                // Create a minimal profile — the user will complete onboarding next
                 const emailPrefix = email.split('@')[0].substring(0, 10).replace(/[^a-zA-Z0-9_]/g, '');
                 const randomSuffix = Math.floor(Math.random() * 10000);
                 const handle = `${emailPrefix}_${randomSuffix}`.toLowerCase();
@@ -67,6 +64,7 @@ module.exports = (pool) => {
                     [email, handle]
                 );
                 user = userResult.rows[0];
+                isNewUser = true;
             }
 
             // Issue Session Token (long-lived)
@@ -80,7 +78,7 @@ module.exports = (pool) => {
                 { expiresIn: '7d' }
             );
 
-            res.json({ user, token: sessionToken });
+            res.json({ user, token: sessionToken, isNewUser });
 
         } catch (err) {
             console.error('Verify error:', err);

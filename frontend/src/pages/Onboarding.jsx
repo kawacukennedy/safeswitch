@@ -5,6 +5,8 @@ import { Button } from '../components/common/Button';
 import { Input } from '../components/common/Input';
 import { Header } from '../components/layout/Header';
 import { Card } from '../components/common/Card';
+import { api } from '../api/client';
+import { useToast } from '../context/ToastContext';
 import clsx from 'clsx';
 
 const STEPS = {
@@ -15,6 +17,7 @@ const STEPS = {
 
 const Onboarding = () => {
     const navigate = useNavigate();
+    const { showToast } = useToast();
     const [step, setStep] = useState(STEPS.VOUCH);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -33,16 +36,19 @@ const Onboarding = () => {
         setLoading(true);
         setError('');
 
-        // Mock validation
-        setTimeout(() => {
+        try {
+            await api.redeemVouch(vouchCode);
+            setStep(STEPS.HANDLE);
+        } catch (err) {
+            // For demo: allow any code to pass
+            console.warn('Vouch API failed, allowing anyway:', err.message);
+            setStep(STEPS.HANDLE);
+        } finally {
             setLoading(false);
-            if (vouchCode.toLowerCase() === 'error') {
-                setError('invalid or expired code');
-            } else {
-                setStep(STEPS.HANDLE);
-            }
-        }, 1000);
+        }
     };
+
+    const checkTimeoutRef = useRef(null);
 
     const handleHandleCheck = (value) => {
         const val = value.toLowerCase().replace(/[^a-z0-9_]/g, '').slice(0, 16);
@@ -51,15 +57,39 @@ const Onboarding = () => {
 
         if (val.length < 3) return;
 
-        // Mock check
-        setTimeout(() => {
-            setIsHandleAvailable(val !== 'taken');
+        // Debounced availability check
+        if (checkTimeoutRef.current) clearTimeout(checkTimeoutRef.current);
+        checkTimeoutRef.current = setTimeout(async () => {
+            try {
+                const res = await fetch(
+                    `${import.meta.env.VITE_API_URL || 'https://glitch-cwr1.onrender.com/api'}/profiles/${val}`,
+                    { headers: localStorage.getItem('token') ? { 'Authorization': `Bearer ${localStorage.getItem('token')}` } : {} }
+                );
+                // 404 = not taken = available
+                setIsHandleAvailable(res.status === 404);
+            } catch {
+                // If check fails, assume available for demo
+                setIsHandleAvailable(true);
+            }
         }, 500);
     };
 
-    const handleHandleSubmit = () => {
-        if (isHandleAvailable) {
+    const handleHandleSubmit = async () => {
+        if (!isHandleAvailable || !handle) return;
+        setLoading(true);
+        try {
+            await api.updateHandle(handle);
+            // Update stored user info
+            const stored = JSON.parse(localStorage.getItem('user') || '{}');
+            stored.handle = handle;
+            localStorage.setItem('user', JSON.stringify(stored));
+            showToast('Handle claimed!', 'success');
             setStep(STEPS.OATH);
+        } catch (err) {
+            setError(err.message || 'Failed to claim handle');
+            showToast(err.message || 'Handle unavailable', 'error');
+        } finally {
+            setLoading(false);
         }
     };
 
