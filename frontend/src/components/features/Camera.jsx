@@ -46,6 +46,7 @@ export const Camera = forwardRef(({
             } catch (fallbackErr) {
                 console.error("Camera error:", fallbackErr);
                 setHasPermission(false);
+                setErrorMsg(fallbackErr.message || "Camera access failed");
                 if (onError) onError(fallbackErr);
             }
         }
@@ -132,8 +133,26 @@ export const Camera = forwardRef(({
         if (timerRef.current) clearInterval(timerRef.current);
     };
 
+    const [errorMsg, setErrorMsg] = useState(null);
+
     useEffect(() => {
-        return () => stopCamera();
+        let timeout;
+        if (autoStart) {
+            startCamera();
+            timeout = setTimeout(() => {
+                setHasPermission(prev => {
+                    if (prev === null) {
+                        setErrorMsg("Camera initialization timed out");
+                        return false;
+                    }
+                    return prev;
+                });
+            }, 10000);
+        }
+        return () => {
+            stopCamera();
+            if (timeout) clearTimeout(timeout);
+        };
     }, []);
 
     return (
@@ -195,9 +214,16 @@ export const Camera = forwardRef(({
             )}
 
             {hasPermission === false && (
-                <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.9)' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.9)', padding: '20px', textAlign: 'center' }}>
                     <VideoOff size={48} style={{ marginBottom: '8px', color: 'rgba(255,255,255,0.5)' }} />
-                    <span style={{ color: 'rgba(255,255,255,0.5)' }}>Camera permission denied</span>
+                    <span style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '8px' }}>Camera unavailable</span>
+                    {errorMsg && <span style={{ color: 'var(--color-aura-negative)', fontSize: '12px', marginBottom: '16px', display: 'block' }}>{errorMsg}</span>}
+                    <button
+                        onClick={() => { setHasPermission(null); setErrorMsg(null); startCamera(); }}
+                        style={{ padding: '8px 16px', background: 'rgba(255,255,255,0.1)', borderRadius: '8px', color: 'white', border: 'none', cursor: 'pointer' }}
+                    >
+                        Retry
+                    </button>
                 </div>
             )}
 
