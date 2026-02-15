@@ -4,8 +4,13 @@
     align-items: center;
     position: fixed;
     bottom: 0;
-    left: 0;
+    left: 50%;
+    /* Center horizontally */
+    transform: translateX(-50%);
+    /* Adjust for explicit width */
     width: 100%;
+    max-width: 28rem;
+    /* max-w-md match */
     height: 60px;
     /* Reduced specific height */
     padding-bottom: env(safe-area-inset-bottom);
