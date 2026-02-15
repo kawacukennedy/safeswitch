@@ -27,8 +27,17 @@ module.exports = (pool) => {
 
             if (!result || result.rows.length === 0) {
                 // Fallback raw query
-                const rawQuery = 'SELECT handle, aura_score as aura, RANK() OVER (ORDER BY aura_score DESC) as rank FROM profiles LIMIT 10';
-                const rawResult = await pool.query(rawQuery);
+                let rawQuery = 'SELECT handle, aura_score as aura, RANK() OVER (ORDER BY aura_score DESC) as rank, city FROM profiles';
+                let rawParams = [];
+
+                if (scope === 'city' && city) {
+                    rawQuery += ' WHERE city = $1';
+                    rawParams.push(city);
+                }
+
+                rawQuery += ' LIMIT 100';
+
+                const rawResult = await pool.query(rawQuery, rawParams);
                 return res.json(rawResult.rows);
             }
 

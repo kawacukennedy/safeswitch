@@ -166,8 +166,8 @@ const Profile = () => {
                         </div>
                     ) : (
                         <div className="text-center p-8 rounded-2xl border border-dashed border-white/10 text-white/30 text-xs font-mono">
-                            > NO_TRANSMISSIONS_DETECTED<br />
-                            > INITIATE_PROTOCOL_TO_BEGIN
+                            &gt; NO_TRANSMISSIONS_DETECTED<br />
+                            &gt; INITIATE_PROTOCOL_TO_BEGIN
                         </div>
                     )}
                 </div>
