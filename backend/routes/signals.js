@@ -43,13 +43,21 @@ module.exports = (pool, realtime) => {
         }
 
         try {
-            // If no quest_id, use the most recent quest
-            if (!quest_id) {
-                const latestQuest = await pool.query('SELECT id FROM quests ORDER BY created_at DESC LIMIT 1');
-                if (latestQuest.rows.length > 0) {
-                    quest_id = latestQuest.rows[0].id;
+            // Validate quest_id exists in DB; if not, use latest quest or null
+            let validQuestId = null;
+            if (quest_id) {
+                const questCheck = await pool.query('SELECT id FROM quests WHERE id = $1', [quest_id]);
+                if (questCheck.rows.length > 0) {
+                    validQuestId = questCheck.rows[0].id;
                 }
             }
+            if (!validQuestId) {
+                const latestQuest = await pool.query('SELECT id FROM quests ORDER BY active_at DESC LIMIT 1');
+                if (latestQuest.rows.length > 0) {
+                    validQuestId = latestQuest.rows[0].id;
+                }
+            }
+            quest_id = validQuestId; // may be null if no quests exist at all
 
             // Upload video (Supabase or local fallback)
             const video_url = await StorageService.uploadFile(file.buffer, file.mimetype);
