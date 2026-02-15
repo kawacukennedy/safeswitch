@@ -5,9 +5,10 @@ import Onboarding from './pages/Onboarding';
 import Login from './pages/Login';
 import VerifyAuth from './pages/VerifyAuth';
 import DailyGlitch from './pages/DailyGlitch';
-import Feed from './pages/Feed';
 import Leaderboard from './pages/Leaderboard';
 import Profile from './pages/Profile';
+import WeeklyRecap from './pages/WeeklyRecap';
+import { ToastProvider } from './context/ToastContext';
 import Settings from './pages/settings/Settings';
 import AccountManagement from './pages/settings/AccountManagement';
 import BlockedUsers from './pages/settings/BlockedUsers';
@@ -65,6 +66,7 @@ function App() {
           <Route path="/feed" element={<Feed />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/recap" element={<WeeklyRecap />} />
 
           {/* Settings Module */}
           <Route path="/settings" element={<Settings />} />
