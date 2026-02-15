@@ -7,7 +7,7 @@ module.exports = (pool) => {
         const { user_id } = req.params;
         try {
             const result = await pool.query(
-                'SELECT * FROM recap_data WHERE user_id = $1 ORDER BY week_start DESC LIMIT 1',
+                'SELECT * FROM recap_data WHERE user_id = $1 ORDER BY week_start_date DESC LIMIT 1',
                 [user_id]
             );
 

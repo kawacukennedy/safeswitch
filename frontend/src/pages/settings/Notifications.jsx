@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Header } from '../../components/layout/Header';
 import { Card } from '../../components/common/Card';
 import { useToast } from '../../context/ToastContext';
+import { api } from '../../api/client';
 
 const Toggle = ({ label, checked, onChange }) => (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>

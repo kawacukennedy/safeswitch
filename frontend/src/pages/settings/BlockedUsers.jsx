@@ -1,11 +1,25 @@
+import React, { useState, useEffect } from 'react';
+import { Header } from '../../components/layout/Header';
+import { Card } from '../../components/common/Card';
+import { Button } from '../../components/common/Button';
+import { useToast } from '../../context/ToastContext';
 import { api } from '../../api/client';
 
 const BlockedUsers = () => {
     const { showToast } = useToast();
     const [blockedUsers, setBlockedUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    React.useEffect(() => {
-        api.getBlockedUsers().then(setBlockedUsers).catch(console.error);
+    useEffect(() => {
+        api.getBlockedUsers()
+            .then(data => {
+                setBlockedUsers(Array.isArray(data) ? data : []);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error(err);
+                setLoading(false);
+            });
     }, []);
 
     const unblock = async (id) => {
@@ -19,10 +33,14 @@ const BlockedUsers = () => {
     };
 
     return (
-        <div className="blocked-page min-h-screen">
+        <div className="blocked-page" style={{ minHeight: '100vh' }}>
             <Header title="blocked users" showBack />
             <main className="container" style={{ marginTop: '20px' }}>
-                {blockedUsers.length === 0 ? (
+                {loading ? (
+                    <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-secondary)' }}>
+                        <p>loading...</p>
+                    </div>
+                ) : blockedUsers.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-secondary)' }}>
                         <p>you haven't blocked anyone.</p>
                     </div>

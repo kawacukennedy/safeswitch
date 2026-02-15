@@ -1,3 +1,9 @@
+import React, { useState, useEffect } from 'react';
+import { Header } from '../../components/layout/Header';
+import { Card } from '../../components/common/Card';
+import { Button } from '../../components/common/Button';
+import { Input } from '../../components/common/Input';
+import { useToast } from '../../context/ToastContext';
 import { api } from '../../api/client';
 
 const AccountManagement = () => {
@@ -5,9 +11,10 @@ const AccountManagement = () => {
     const [handle, setHandle] = useState('');
     const [city, setCity] = useState('');
     const [editing, setEditing] = useState(null); // 'handle' | 'city' | null
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
     // Load initial data
-    React.useEffect(() => {
+    useEffect(() => {
         api.getMe().then(user => {
             setHandle(user.handle || '');
             setCity(user.city || '');
@@ -32,8 +39,19 @@ const AccountManagement = () => {
         }
     };
 
+    const handleDelete = async () => {
+        showToast({ message: 'deleting account...', type: 'loading' });
+        try {
+            await api.deleteAccount();
+            showToast({ message: 'account deleted', type: 'success' });
+            window.location.href = '/';
+        } catch (err) {
+            showToast({ message: err.message, type: 'error' });
+        }
+    };
+
     return (
-        <div className="account-page min-h-screen">
+        <div className="account-page min-h-screen" style={{ minHeight: '100vh' }}>
             <Header title="account" showBack />
 
             <main className="container" style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -50,7 +68,7 @@ const AccountManagement = () => {
                                         variant="secondary"
                                         onClick={() => setEditing(null)}
                                         style={{ flex: 1 }}
-                                    >cancle</Button>
+                                    >cancel</Button>
                                     <Button
                                         onClick={() => handleSave('handle', document.getElementById('edit-handle').value)}
                                         style={{ flex: 1 }}
@@ -78,7 +96,7 @@ const AccountManagement = () => {
                                         variant="secondary"
                                         onClick={() => setEditing(null)}
                                         style={{ flex: 1 }}
-                                    >cancle</Button>
+                                    >cancel</Button>
                                     <Button
                                         onClick={() => handleSave('city', document.getElementById('edit-city').value)}
                                         style={{ flex: 1 }}
@@ -87,7 +105,7 @@ const AccountManagement = () => {
                             </div>
                         ) : (
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span style={{ fontSize: '18px', fontWeight: '500' }}>{city}</span>
+                                <span style={{ fontSize: '18px', fontWeight: '500' }}>{city || 'not set'}</span>
                                 <Button variant="ghost" onClick={() => setEditing('city')} style={{ width: 'auto', padding: '0 12px' }}>change</Button>
                             </div>
                         )}
@@ -99,7 +117,7 @@ const AccountManagement = () => {
                     <Button
                         variant="secondary"
                         style={{ width: '100%', borderColor: 'var(--color-aura-negative)', color: 'var(--color-aura-negative)' }}
-                        onClick={() => showToast({ message: 'function disabled for safety', type: 'error' })}
+                        onClick={() => setShowDeleteConfirm(true)}
                     >
                         delete account
                     </Button>
@@ -109,6 +127,30 @@ const AccountManagement = () => {
                 </div>
 
             </main>
+
+            {/* Delete Confirmation Modal */}
+            {showDeleteConfirm && (
+                <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+                    <div
+                        style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+                        onClick={() => setShowDeleteConfirm(false)}
+                    />
+                    <Card style={{ position: 'relative', width: '100%', maxWidth: '320px', textAlign: 'center', padding: '24px' }}>
+                        <h3 style={{ marginBottom: '12px', fontSize: '18px', color: 'var(--color-aura-negative)' }}>delete account?</h3>
+                        <p style={{ color: 'var(--color-text-secondary)', marginBottom: '24px' }}>this cannot be undone. all data will be permanently lost.</p>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                            <Button variant="secondary" onClick={() => setShowDeleteConfirm(false)} style={{ flex: 1 }}>cancel</Button>
+                            <Button
+                                variant="primary"
+                                onClick={handleDelete}
+                                style={{ flex: 1, background: 'var(--color-aura-negative)', color: 'white', border: 'none' }}
+                            >
+                                delete
+                            </Button>
+                        </div>
+                    </Card>
+                </div>
+            )}
         </div>
     );
 };

@@ -7,8 +7,6 @@ async function request(endpoint, options = {}) {
     const defaults = {
         headers: {
             'Content-Type': 'application/json',
-            // In a real app, we'd add Authorization header here
-            // 'Authorization': `Bearer ${token}`
         },
     };
 
@@ -30,8 +28,8 @@ async function request(endpoint, options = {}) {
 
 export const api = {
     // Auth
+    requestMagicLink: (email) => request('/auth/magic-link', { method: 'POST', body: JSON.stringify({ email }) }),
     verifyMagicLink: (token) => request('/auth/verify', { method: 'POST', body: JSON.stringify({ token }) }),
-    submitAppeal: (reason) => request('/appeals', { method: 'POST', body: JSON.stringify({ reason }) }),
 
     // Quests
     getCurrentQuest: () => request('/quests/current'),
@@ -66,14 +64,16 @@ export const api = {
     blockUser: (blockedId) => request('/blocks', { method: 'POST', body: JSON.stringify({ blocked_id: blockedId }) }),
     unblockUser: (blockedId) => request(`/blocks/${blockedId}`, { method: 'DELETE' }),
 
-    reportSignal: (signalId, reason, description) => request('/reports', { method: 'POST', body: JSON.stringify({ signal_id: signalId, reason, description }) }),
-    getReportStatus: () => request('/reports'), // assuming user can see their own reports status, though backend route was mod only? Let's check. 
-    // Actually backend route `GET /api/reports` was mod only. 
-    // We might need a user-facing route for their own reports if the UI demands it. 
-    // For now, let's omit unless we change backend. `ReportStatus.jsx` implies user wants to see THEIR reports.
-    // The spec says `get_reports` is mod only. We'll skip for now or rely on a new endpoint if needed.
-    // Wait, the UI `ReportStatus.jsx` exists. I should probably fallback to mock or add a route if I can.
-    // I'll add `getMyReports` method and maybe quick-fix backend if I can, or just left as TODO.
+    // Reports
+    submitReport: ({ signal_id, reason, description }) => request('/reports', {
+        method: 'POST',
+        body: JSON.stringify({ signal_id, reason, description })
+    }),
+    getMyReports: () => request('/reports/mine'),
+
+    // Appeals
+    submitAppeal: (reason) => request('/appeals', { method: 'POST', body: JSON.stringify({ reason }) }),
+    getAppeals: () => request('/appeals'),
 
     // Engagement
     getRecap: (userId) => request(`/recaps/${userId}/latest`),

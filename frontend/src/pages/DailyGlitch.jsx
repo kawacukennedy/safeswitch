@@ -1,9 +1,42 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Camera as CameraIcon, Upload, X, Check, Loader2, RefreshCw } from 'lucide-react';
-import Camera from '../../components/features/Camera';
-import { useToast } from '../../context/ToastContext';
-import { api } from '../../api/client';
+import { Camera } from '../components/features/Camera';
+import { useToast } from '../context/ToastContext';
+import { api } from '../api/client';
+
+const useCountdown = (targetDate) => {
+    const [timeLeft, setTimeLeft] = useState('');
+
+    useEffect(() => {
+        if (!targetDate) return;
+
+        const tick = () => {
+            const now = Date.now();
+            const end = new Date(targetDate).getTime();
+            const diff = end - now;
+
+            if (diff <= 0) {
+                setTimeLeft('EXPIRED');
+                return;
+            }
+
+            const hours = Math.floor(diff / 3600000);
+            const minutes = Math.floor((diff % 3600000) / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+
+            setTimeLeft(
+                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+            );
+        };
+
+        tick();
+        const interval = setInterval(tick, 1000);
+        return () => clearInterval(interval);
+    }, [targetDate]);
+
+    return timeLeft;
+};
 
 const DailyGlitch = () => {
     const { showToast } = useToast();
@@ -11,6 +44,9 @@ const DailyGlitch = () => {
     const [status, setStatus] = useState('loading'); // loading, active, recording, reviewing, submitting, complete
     const [recordedVideo, setRecordedVideo] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
+    const cameraRef = useRef(null);
+
+    const countdown = useCountdown(activeQuest?.expires_at);
 
     // Fetch Quest
     useEffect(() => {
@@ -39,10 +75,24 @@ const DailyGlitch = () => {
         setStatus('reviewing');
     };
 
+    const handleStartRecording = () => {
+        setStatus('recording');
+    };
+
+    // Auto-start camera when entering recording state
+    useEffect(() => {
+        if (status === 'recording' && cameraRef.current) {
+            cameraRef.current.start().then(() => {
+                setTimeout(() => {
+                    if (cameraRef.current) cameraRef.current.startRecording();
+                }, 500);
+            });
+        }
+    }, [status]);
+
     const submitGlitch = async () => {
         setStatus('submitting');
 
-        // Simulate Upload Progress
         let progress = 0;
         const interval = setInterval(() => {
             progress += 10;
@@ -51,8 +101,6 @@ const DailyGlitch = () => {
         }, 200);
 
         try {
-            // In a real app, we would upload the Blob to a bucket (S3) and get a URL.
-            // For this mock environment, we'll create a fake URL or base64 string.
             const fakeVideoUrl = `https://cdn.glitch.app/signals/${Date.now()}.webm`;
 
             if (activeQuest) {
@@ -73,28 +121,41 @@ const DailyGlitch = () => {
 
     if (status === 'loading') {
         return (
-            <div className="h-full flex items-center justify-center">
-                <Loader2 className="animate-spin text-neon-green" size={48} />
+            <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Loader2 size={48} style={{ animation: 'spin 1s linear infinite', color: 'var(--color-aura-positive)' }} />
             </div>
         );
     }
 
     return (
-        <div className="h-full flex flex-col relative">
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
             {/* Quest Header */}
-            <div className="absolute top-0 left-0 right-0 z-10 p-4 bg-gradient-to-b from-black/80 to-transparent">
-                <div className="glass-panel p-4 border-neon-green/30">
-                    <h2 className="text-sm font-mono text-neon-green mb-1">
+            <div style={{
+                position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10,
+                padding: '16px',
+                background: 'linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)'
+            }}>
+                <div className="glass-panel" style={{ padding: '16px', borderColor: 'rgba(124, 255, 178, 0.3)' }}>
+                    <h2 style={{ fontSize: '12px', fontFamily: 'monospace', color: 'var(--color-aura-positive)', marginBottom: '4px' }}>
                         // DAILY PROTOCOL
                     </h2>
-                    <p className="text-xl font-bold text-white leading-tight">
+                    <p style={{ fontSize: '18px', fontWeight: '700', lineHeight: 1.3 }}>
                         {activeQuest?.quest_text}
                     </p>
-                    <div className="flex justify-between items-end mt-2">
-                        <span className="text-xs text-white/50 font-mono">
-                            EXPIRES IN: 12:43:02
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '8px' }}>
+                        <span style={{
+                            fontSize: '12px',
+                            color: countdown === 'EXPIRED' ? 'var(--color-aura-negative)' : 'rgba(255,255,255,0.5)',
+                            fontFamily: 'monospace'
+                        }}>
+                            EXPIRES IN: {countdown || '...'}
                         </span>
-                        <div className="text-xs px-2 py-1 rounded bg-neon-green/10 text-neon-green border border-neon-green/30">
+                        <div style={{
+                            fontSize: '12px', padding: '4px 8px', borderRadius: '4px',
+                            background: 'rgba(124, 255, 178, 0.1)',
+                            color: 'var(--color-aura-positive)',
+                            border: '1px solid rgba(124, 255, 178, 0.3)'
+                        }}>
                             REWARD: 10 AURA
                         </div>
                     </div>
@@ -102,7 +163,7 @@ const DailyGlitch = () => {
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 bg-black relative overflow-hidden">
+            <div style={{ flex: 1, background: 'black', position: 'relative', overflow: 'hidden' }}>
                 <AnimatePresence mode="wait">
 
                     {/* Active State: Ready to Record */}
@@ -112,14 +173,26 @@ const DailyGlitch = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="h-full flex flex-col items-center justify-center p-8 text-center"
+                            style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px', textAlign: 'center' }}
                         >
-                            <div className="w-24 h-24 rounded-full bg-neon-green/5 border-2 border-neon-green flex items-center justify-center mb-8 relative group cursor-pointer"
-                                onClick={() => setStatus('recording')}>
-                                <div className="absolute inset-0 rounded-full bg-neon-green/20 animate-ping" />
-                                <CameraIcon size={40} className="text-neon-green relative z-10" />
+                            <div
+                                onClick={handleStartRecording}
+                                style={{
+                                    width: '96px', height: '96px', borderRadius: '50%',
+                                    background: 'rgba(124, 255, 178, 0.05)',
+                                    border: '2px solid var(--color-aura-positive)',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    marginBottom: '32px', cursor: 'pointer', position: 'relative'
+                                }}
+                            >
+                                <div style={{
+                                    position: 'absolute', inset: 0, borderRadius: '50%',
+                                    background: 'rgba(124, 255, 178, 0.2)',
+                                    animation: 'pulse 2s infinite ease-in-out'
+                                }} />
+                                <CameraIcon size={40} style={{ color: 'var(--color-aura-positive)', position: 'relative', zIndex: 1 }} />
                             </div>
-                            <p className="text-white/60 max-w-xs">
+                            <p style={{ color: 'rgba(255,255,255,0.6)', maxWidth: '280px' }}>
                                 Tap to initiate capture sequence. Verification required.
                             </p>
                         </motion.div>
@@ -127,36 +200,75 @@ const DailyGlitch = () => {
 
                     {/* Recording State */}
                     {status === 'recording' && (
-                        <Camera
-                            onCapture={handleRecordingComplete}
-                            onCancel={() => setStatus('active')}
-                        />
+                        <motion.div
+                            key="recording"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            style={{ height: '100%', position: 'relative' }}
+                        >
+                            <Camera
+                                ref={cameraRef}
+                                onCapture={handleRecordingComplete}
+                                maxDuration={7}
+                            />
+                            <button
+                                onClick={() => {
+                                    if (cameraRef.current) cameraRef.current.stop();
+                                    setStatus('active');
+                                }}
+                                style={{
+                                    position: 'absolute', top: '80px', right: '16px', zIndex: 20,
+                                    padding: '8px', borderRadius: '50%',
+                                    background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)'
+                                }}
+                            >
+                                <X size={24} />
+                            </button>
+                        </motion.div>
                     )}
 
                     {/* Reviewing State */}
                     {status === 'reviewing' && recordedVideo && (
                         <motion.div
                             key="reviewing"
-                            className="h-full relative bg-neutral-900"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
+                            style={{ height: '100%', position: 'relative', background: '#111' }}
                         >
-                            {/* Video Preview Placeholder */}
-                            <div className="absolute inset-0 flex items-center justify-center text-white/20">
-                                [VIDEO_PREVIEW_LOOP]
-                            </div>
+                            {/* Video Preview */}
+                            <video
+                                src={URL.createObjectURL(recordedVideo)}
+                                autoPlay
+                                loop
+                                playsInline
+                                muted
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
 
-                            <div className="absolute bottom-0 left-0 right-0 p-6 flex justify-between items-center bg-gradient-to-t from-black to-transparent">
+                            <div style={{
+                                position: 'absolute', bottom: 0, left: 0, right: 0,
+                                padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                background: 'linear-gradient(to top, black, transparent)'
+                            }}>
                                 <button
                                     onClick={() => setStatus('recording')}
-                                    className="p-4 rounded-full bg-white/10 text-white backdrop-blur-md"
+                                    style={{
+                                        padding: '16px', borderRadius: '50%',
+                                        background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(12px)'
+                                    }}
                                 >
                                     <RefreshCw size={24} />
                                 </button>
 
                                 <button
                                     onClick={submitGlitch}
-                                    className="flex-1 ml-4 py-4 bg-neon-green text-black font-bold rounded-xl flex items-center justify-center gap-2"
+                                    style={{
+                                        flex: 1, marginLeft: '16px', padding: '16px',
+                                        background: 'var(--color-aura-positive)', color: 'black',
+                                        fontWeight: '700', borderRadius: '12px',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+                                    }}
                                 >
                                     <Upload size={20} />
                                     TRANSMIT SIGNAL
@@ -169,15 +281,18 @@ const DailyGlitch = () => {
                     {status === 'submitting' && (
                         <motion.div
                             key="submitting"
-                            className="h-full flex flex-col items-center justify-center bg-black/90 z-50 absolute inset-0"
+                            style={{
+                                height: '100%', display: 'flex', flexDirection: 'column',
+                                alignItems: 'center', justifyContent: 'center',
+                                background: 'rgba(0,0,0,0.9)', position: 'absolute', inset: 0, zIndex: 50
+                            }}
                         >
-                            <div className="w-64 h-2 bg-white/10 rounded-full overflow-hidden mb-4">
+                            <div style={{ width: '256px', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '99px', overflow: 'hidden', marginBottom: '16px' }}>
                                 <motion.div
-                                    className="h-full bg-neon-green"
-                                    style={{ width: `${uploadProgress}%` }}
+                                    style={{ height: '100%', background: 'var(--color-aura-positive)', width: `${uploadProgress}%` }}
                                 />
                             </div>
-                            <p className="font-mono text-neon-green animate-pulse">
+                            <p style={{ fontFamily: 'monospace', color: 'var(--color-aura-positive)', animation: 'pulse 2s infinite' }}>
                                 ENCRYPTING & UPLOADING... {Math.round(uploadProgress)}%
                             </p>
                         </motion.div>
@@ -187,18 +302,23 @@ const DailyGlitch = () => {
                     {status === 'complete' && (
                         <motion.div
                             key="complete"
-                            className="h-full flex flex-col items-center justify-center text-center p-8"
+                            style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '32px' }}
                         >
-                            <div className="w-20 h-20 bg-neon-green rounded-full flex items-center justify-center mb-6 text-black">
+                            <div style={{
+                                width: '80px', height: '80px',
+                                background: 'var(--color-aura-positive)', borderRadius: '50%',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                marginBottom: '24px', color: 'black'
+                            }}>
                                 <Check size={40} strokeWidth={4} />
                             </div>
-                            <h2 className="text-2xl font-bold text-white mb-2">Wait for Audit</h2>
-                            <p className="text-white/60 mb-8">
+                            <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '8px' }}>Wait for Audit</h2>
+                            <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '32px' }}>
                                 Your signal is being verified by the network. Check back later for results.
                             </p>
                             <button
-                                onClick={() => setStatus('active')} // Reset or go to feed
-                                className="text-neon-green hover:underline"
+                                onClick={() => setStatus('active')}
+                                style={{ color: 'var(--color-aura-positive)' }}
                             >
                                 Return to Feed
                             </button>

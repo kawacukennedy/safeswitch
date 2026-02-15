@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Header } from '../components/layout/Header';
-import { Card } from '../components/common/Card';
-import { Button } from '../components/common/Button';
+import { Header } from '../../components/layout/Header';
+import { Card } from '../../components/common/Card';
+import { Button } from '../../components/common/Button';
 import { ChevronRight, User, Bell, Shield, FileText, Lock, LogOut } from 'lucide-react';
-import { useToast } from '../context/ToastContext';
+import { useToast } from '../../context/ToastContext';
 import clsx from 'clsx';
 
 const SettingsItem = ({ icon: Icon, label, onClick, destructive }) => (

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, AlertTriangle } from 'lucide-react';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../common/Button';
 import { api } from '../../api/client';
 import { useToast } from '../../context/ToastContext';
 
@@ -63,8 +63,8 @@ const ReportSignalModal = ({ signalId, onClose }) => {
                                     key={r}
                                     onClick={() => setReason(r)}
                                     className={`p-2 rounded-lg text-sm border transition-all ${reason === r
-                                            ? 'bg-white text-black border-white'
-                                            : 'bg-transparent text-white/70 border-white/20 hover:border-white/50'
+                                        ? 'bg-white text-black border-white'
+                                        : 'bg-transparent text-white/70 border-white/20 hover:border-white/50'
                                         }`}
                                 >
                                     {r}

@@ -163,3 +163,34 @@ CREATE TABLE appeals (
 
 CREATE INDEX idx_appeals_user_id ON appeals(user_id);
 CREATE INDEX idx_appeals_status ON appeals(status);
+
+-- Add consensus column to signals (nullable until determined)
+ALTER TABLE signals ADD COLUMN IF NOT EXISTS consensus VARCHAR(5) DEFAULT NULL;
+
+-- Materialized Views for Leaderboard (refreshed periodically by scheduler)
+CREATE MATERIALIZED VIEW IF NOT EXISTS leaderboard_global AS
+SELECT
+    p.id,
+    p.handle,
+    p.aura_score,
+    ROW_NUMBER() OVER (ORDER BY p.aura_score DESC) AS rank
+FROM profiles p
+WHERE p.is_suspended = false
+ORDER BY p.aura_score DESC
+LIMIT 100;
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS leaderboard_city AS
+SELECT
+    p.id,
+    p.handle,
+    p.city,
+    p.aura_score,
+    ROW_NUMBER() OVER (PARTITION BY p.city ORDER BY p.aura_score DESC) AS rank
+FROM profiles p
+WHERE p.is_suspended = false AND p.city IS NOT NULL
+ORDER BY p.city, p.aura_score DESC;
+
+-- Indexes on materialized views
+CREATE UNIQUE INDEX IF NOT EXISTS idx_lb_global_id ON leaderboard_global(id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_lb_city_id ON leaderboard_city(id);
+CREATE INDEX IF NOT EXISTS idx_lb_city_city ON leaderboard_city(city);

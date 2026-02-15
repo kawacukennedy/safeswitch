@@ -1,3 +1,8 @@
+import React, { useState } from 'react';
+import { AlertOctagon } from 'lucide-react';
+import { Button } from '../../components/common/Button';
+import { Input } from '../../components/common/Input';
+import { useToast } from '../../context/ToastContext';
 import { api } from '../../api/client';
 
 const Suspension = () => {
@@ -12,7 +17,7 @@ const Suspension = () => {
             setSubmitted(true);
             showToast({ message: 'appeal submitted', type: 'success' });
         } catch (err) {
-            showToast({ message: 'Failed to submit appeal', type: 'error' });
+            showToast({ message: err.message || 'Failed to submit appeal', type: 'error' });
         }
     };
 

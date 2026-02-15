@@ -1,6 +1,6 @@
 import React from 'react';
 import { WifiOff } from 'lucide-react';
-import { Button } from '../../components/ui/Button';
+import { Button } from '../../components/common/Button';
 
 const Offline = () => {
     const handleRetry = () => {

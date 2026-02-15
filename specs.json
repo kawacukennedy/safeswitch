@@ -1,0 +1,3156 @@
+{
+    "design_system": {
+        "platform": "iOS",
+        "version": "iOS 26",
+        "design_philosophy": [
+            "glassmorphism",
+            "spatial depth",
+            "soft translucency",
+            "subtle motion",
+            "human-first tactility",
+            "lowercase typography bias"
+        ],
+        "ui_principles": {
+            "touch_targets": "minimum_44pt",
+            "motion": "physics_based_spring",
+            "haptics": "contextual_light",
+            "contrast": "adaptive_dynamic",
+            "accessibility": {
+                "voiceover": true,
+                "dynamic_type": true,
+                "reduced_motion_support": true
+            }
+        },
+        "typography": {
+            "primary_font": "SF Pro",
+            "text_case": "lowercase_preferred",
+            "weights": [
+                "regular",
+                "medium",
+                "semibold"
+            ],
+            "line_height_ratio": 1.25
+        },
+        "color_system": {
+            "base_mode": "dark_first",
+            "materials": {
+                "primary_surface": "ultra_thin_material",
+                "secondary_surface": "thin_material",
+                "overlay": "regular_material"
+            },
+            "accent_colors": {
+                "aura_positive": "#7CFFB2",
+                "aura_negative": "#FF6B6B",
+                "neutral": "#8E8E93"
+            }
+        }
+    },
+    "app_blueprint": {
+        "app_name": "GLITCH",
+        "tagline": "prove you're real",
+        "core_principle": "human_only_liveness_verification",
+        "supported_platforms": [
+            "iOS_PWA"
+        ],
+        "authentication": {
+            "methods": [
+                "magic_link_email"
+            ],
+            "requirements": {
+                "vouch_required": true,
+                "minimum_referrer_aura": 100
+            }
+        },
+        "quest_generation": {
+            "rules": {
+                "randomized_release_time": true,
+                "minimum_interval_hours": 20,
+                "maximum_interval_hours": 28,
+                "quest_types": [
+                    "public_interaction",
+                    "absurd_action",
+                    "synchronized_moment"
+                ],
+                "safety_constraints": {
+                    "prohibited_actions": [
+                        "illegal_activity",
+                        "harassment",
+                        "property_damage",
+                        "dangerous_stunts"
+                    ],
+                    "human_only_requirements": [
+                        "unpredictable_human_response",
+                        "physical_presence",
+                        "social_interaction"
+                    ],
+                    "review_process": "community_reports_and_moderator_escalation"
+                },
+                "rotation_policy": "new_quest_every_day_no_repeats_within_30_days"
+            }
+        },
+        "audit_rules": {
+            "audit_weighting": {
+                "consensus_majority": 0.7,
+                "auditor_aura_multiplier": true,
+                "max_weight_per_auditor": 1.5
+            },
+            "confidence_scoring": {
+                "threshold_for_verification": 0.66,
+                "threshold_for_rejection": 0.33,
+                "undecided_range": "0.34_to_0.65"
+            },
+            "penalties_for_bad_audits": {
+                "incorrect_vote_detected_by_consensus": -5,
+                "serial_bad_audit_threshold": 10,
+                "temporary_audit_ban_after_threshold": "24_hours"
+            },
+            "audit_distribution": "random_sampling_of_recent_signals_with_bias_towards_lower_aura_users"
+        },
+        "navigation_structure": {
+            "type": "tab_based",
+            "tabs": [
+                "daily_glitch",
+                "global_feed",
+                "leaderboard",
+                "profile"
+            ]
+        },
+        "pages": {
+            "landing_page": {
+                "purpose": "conversion_and_context",
+                "copy": {
+                    "headline": "the internet is full of ghosts",
+                    "subheadline": "glitch is how you prove you're real"
+                },
+                "sections": [
+                    {
+                        "id": "hero",
+                        "content": {
+                            "headline": "the internet is full of ghosts",
+                            "subheadline": "glitch is how you prove you're real"
+                        }
+                    },
+                    {
+                        "id": "how_it_works",
+                        "steps": [
+                            "get vouched by a human",
+                            "complete daily glitch",
+                            "earn aura",
+                            "audit others"
+                        ]
+                    },
+                    {
+                        "id": "social_proof",
+                        "elements": [
+                            "live_aura_counter",
+                            "recent_verified_signals"
+                        ]
+                    }
+                ],
+                "ui": {
+                    "components": [
+                        {
+                            "id": "cta_primary",
+                            "type": "button",
+                            "label": "request vouch",
+                            "action": "navigate_to_onboarding"
+                        },
+                        {
+                            "id": "cta_secondary",
+                            "type": "button",
+                            "label": "watch today's glitch",
+                            "action": "preview_quest"
+                        },
+                        {
+                            "id": "aura_counter",
+                            "type": "live_counter",
+                            "data_source": "total_aura_live"
+                        },
+                        {
+                            "id": "recent_signals",
+                            "type": "horizontal_scroll",
+                            "item_component": "video_thumbnail"
+                        }
+                    ],
+                    "states": {
+                        "loading": {
+                            "components_enabled": [],
+                            "show_loader": true
+                        },
+                        "loaded": {
+                            "components_enabled": [
+                                "cta_primary",
+                                "cta_secondary",
+                                "aura_counter",
+                                "recent_signals"
+                            ]
+                        },
+                        "error": {
+                            "toast": "failed to load. pull to refresh.",
+                            "components_enabled": []
+                        }
+                    },
+                    "transitions": {
+                        "from": [
+                            "direct_link",
+                            "social_share"
+                        ],
+                        "to": [
+                            "onboarding",
+                            "daily_glitch"
+                        ]
+                    },
+                    "interactions": {
+                        "on_cta_click": {
+                            "haptic": "light"
+                        },
+                        "on_preview_click": {
+                            "haptic": "light"
+                        }
+                    }
+                }
+            },
+            "onboarding": {
+                "purpose": "new_user_setup",
+                "steps": [
+                    {
+                        "step": 1,
+                        "screen": "enter_vouch_code",
+                        "validation": "server_side",
+                        "ui": {
+                            "components": [
+                                {
+                                    "id": "code_field",
+                                    "type": "text_input",
+                                    "placeholder": "enter vouch code",
+                                    "keyboard": "default"
+                                },
+                                {
+                                    "id": "submit_button",
+                                    "type": "button",
+                                    "label": "verify",
+                                    "action": "validate_code"
+                                },
+                                {
+                                    "id": "error_label",
+                                    "type": "text",
+                                    "content": ""
+                                }
+                            ],
+                            "states": {
+                                "idle": {
+                                    "components_enabled": [
+                                        "code_field",
+                                        "submit_button"
+                                    ],
+                                    "error_label_hidden": true
+                                },
+                                "validating": {
+                                    "submit_button_loading": true,
+                                    "code_field_disabled": true,
+                                    "error_label_hidden": true
+                                },
+                                "success": {
+                                    "auto_advance": true
+                                },
+                                "error": {
+                                    "error_label_content": "invalid or expired code",
+                                    "submit_button_enabled": true,
+                                    "code_field_enabled": true
+                                }
+                            },
+                            "interactions": {
+                                "on_submit": {
+                                    "haptic": "light"
+                                },
+                                "on_error": {
+                                    "haptic": "error"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "step": 2,
+                        "screen": "create_handle",
+                        "rules": {
+                            "lowercase_only": true,
+                            "max_length": 16
+                        },
+                        "ui": {
+                            "components": [
+                                {
+                                    "id": "handle_field",
+                                    "type": "text_input",
+                                    "placeholder": "choose handle",
+                                    "keyboard": "default",
+                                    "autocapitalize": "none"
+                                },
+                                {
+                                    "id": "availability_indicator",
+                                    "type": "text",
+                                    "content": ""
+                                },
+                                {
+                                    "id": "submit_button",
+                                    "type": "button",
+                                    "label": "continue",
+                                    "action": "check_and_submit"
+                                }
+                            ],
+                            "states": {
+                                "idle": {
+                                    "components_enabled": [
+                                        "handle_field",
+                                        "submit_button"
+                                    ],
+                                    "availability_indicator_hidden": true
+                                },
+                                "checking": {
+                                    "submit_button_loading": true,
+                                    "handle_field_disabled": true,
+                                    "availability_indicator_content": "checking..."
+                                },
+                                "available": {
+                                    "availability_indicator_content": "✓ available",
+                                    "availability_indicator_color": "aura_positive",
+                                    "submit_button_enabled": true,
+                                    "handle_field_enabled": true
+                                },
+                                "unavailable": {
+                                    "availability_indicator_content": "✗ taken",
+                                    "availability_indicator_color": "aura_negative",
+                                    "submit_button_enabled": false,
+                                    "handle_field_enabled": true
+                                },
+                                "success": {
+                                    "auto_advance": true
+                                }
+                            },
+                            "interactions": {
+                                "on_text_change": {
+                                    "debounce": 300,
+                                    "action": "check_availability"
+                                },
+                                "on_submit": {
+                                    "haptic": "light"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "step": 3,
+                        "screen": "human_protocol_oath",
+                        "action_required": "tap_and_hold_3_seconds",
+                        "ui": {
+                            "components": [
+                                {
+                                    "id": "oath_text",
+                                    "type": "text",
+                                    "content": "i am human. i will not use ai. i will glitch with chaos."
+                                },
+                                {
+                                    "id": "tap_hold_button",
+                                    "type": "button",
+                                    "label": "tap and hold to swear",
+                                    "action": "hold_to_confirm",
+                                    "hold_duration": 3
+                                }
+                            ],
+                            "states": {
+                                "idle": {
+                                    "tap_hold_button_idle": true
+                                },
+                                "holding": {
+                                    "tap_hold_button_progress": true,
+                                    "haptic_feedback": "incremental"
+                                },
+                                "success": {
+                                    "auto_advance_to_main_app": true,
+                                    "toast": "welcome, human."
+                                }
+                            },
+                            "interactions": {
+                                "on_hold_complete": {
+                                    "haptic": "success"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "transitions": {
+                    "from": [
+                        "landing_page"
+                    ],
+                    "to": [
+                        "daily_glitch"
+                    ]
+                }
+            },
+            "daily_glitch": {
+                "purpose": "complete_todays_quest",
+                "copy": {
+                    "quest_text": "{{current_quest.text}}"
+                },
+                "ui": {
+                    "components": [
+                        {
+                            "id": "quest_card",
+                            "type": "card",
+                            "content": "{{current_quest.text}}"
+                        },
+                        {
+                            "id": "timer",
+                            "type": "countdown",
+                            "format": "mm:ss",
+                            "source": "quest_expires_at"
+                        },
+                        {
+                            "id": "record_button",
+                            "type": "button",
+                            "label": "record glitch",
+                            "action": "start_recording"
+                        },
+                        {
+                            "id": "camera_preview",
+                            "type": "camera",
+                            "visible": false
+                        },
+                        {
+                            "id": "stop_button",
+                            "type": "button",
+                            "label": "stop",
+                            "action": "stop_recording",
+                            "visible": false
+                        },
+                        {
+                            "id": "submit_button",
+                            "type": "button",
+                            "label": "submit",
+                            "action": "submit_video",
+                            "enabled": "video_recorded",
+                            "visible": false
+                        }
+                    ],
+                    "states": {
+                        "active": {
+                            "components_enabled": [
+                                "quest_card",
+                                "timer",
+                                "record_button"
+                            ],
+                            "camera_preview_visible": false,
+                            "stop_button_visible": false,
+                            "submit_button_visible": false
+                        },
+                        "recording": {
+                            "components_enabled": [
+                                "camera_preview",
+                                "stop_button"
+                            ],
+                            "record_button_visible": false,
+                            "timer_paused": true,
+                            "camera_preview_visible": true,
+                            "stop_button_visible": true
+                        },
+                        "preview": {
+                            "components_enabled": [
+                                "submit_button"
+                            ],
+                            "video_preview_visible": true,
+                            "submit_button_visible": true,
+                            "submit_button_label": "submit glitch"
+                        },
+                        "submitting": {
+                            "show_loader": true,
+                            "disable_all": true
+                        },
+                        "success": {
+                            "toast": "glitch submitted! awaiting audit.",
+                            "auto_clear": true,
+                            "return_to_active": true
+                        },
+                        "expired": {
+                            "toast": "quest window closed. try tomorrow.",
+                            "disable_all": true,
+                            "components_enabled": []
+                        },
+                        "upload_failed": {
+                            "toast": "upload failed. retry?",
+                            "submit_button_enabled": true,
+                            "submit_button_label": "retry"
+                        }
+                    },
+                    "transitions": {
+                        "from": [
+                            "global_feed",
+                            "notification",
+                            "onboarding"
+                        ],
+                        "to": [
+                            "submission_flow"
+                        ]
+                    },
+                    "interactions": {
+                        "on_quest_start": {
+                            "haptic": "light"
+                        },
+                        "on_record_start": {
+                            "haptic": "light"
+                        },
+                        "on_record_stop": {
+                            "haptic": "light"
+                        },
+                        "on_submit": {
+                            "haptic": "success"
+                        },
+                        "on_expire": {
+                            "haptic": "error"
+                        }
+                    }
+                }
+            },
+            "global_feed": {
+                "purpose": "audit_signals",
+                "access_rule": "audit_required",
+                "audit_requirement": 5,
+                "content_ordering": "most_recent_verified",
+                "interaction": {
+                    "vote_options": [
+                        "human",
+                        "slop"
+                    ],
+                    "commenting": false,
+                    "likes": false
+                },
+                "ui": {
+                    "components": [
+                        {
+                            "id": "audit_prompt",
+                            "type": "text",
+                            "content": "audit these signals: is this human or slop?"
+                        },
+                        {
+                            "id": "signal_feed",
+                            "type": "vertical_list",
+                            "item_component": "audit_card"
+                        },
+                        {
+                            "id": "audit_card",
+                            "type": "card",
+                            "children": [
+                                {
+                                    "id": "video_player",
+                                    "type": "video",
+                                    "source": "{{signal.video_url}}",
+                                    "autoplay": false,
+                                    "loop": true
+                                },
+                                {
+                                    "id": "vote_buttons",
+                                    "type": "button_group",
+                                    "buttons": [
+                                        {
+                                            "label": "human",
+                                            "action": "vote_human",
+                                            "color": "aura_positive"
+                                        },
+                                        {
+                                            "label": "slop",
+                                            "action": "vote_slop",
+                                            "color": "aura_negative"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": "progress_indicator",
+                            "type": "text",
+                            "content": "{{audits_remaining}} of 5 completed"
+                        }
+                    ],
+                    "states": {
+                        "loading": {
+                            "show_loader": true
+                        },
+                        "loaded": {
+                            "components_enabled": [
+                                "audit_prompt",
+                                "signal_feed",
+                                "progress_indicator"
+                            ]
+                        },
+                        "no_signals": {
+                            "toast": "no signals to audit right now. check back soon."
+                        },
+                        "audit_completed": {
+                            "toast": "audit complete! +10 aura.",
+                            "auto_refresh": true
+                        },
+                        "error": {
+                            "toast": "failed to load feed."
+                        }
+                    },
+                    "transitions": {
+                        "from": [
+                            "daily_glitch",
+                            "leaderboard"
+                        ],
+                        "to": [
+                            "profile"
+                        ]
+                    },
+                    "interactions": {
+                        "on_vote": {
+                            "haptic": "light",
+                            "optimistic_update": true
+                        }
+                    }
+                }
+            },
+            "leaderboard": {
+                "purpose": "view_top_users",
+                "views": [
+                    "global",
+                    "city"
+                ],
+                "sorting": "aura_descending",
+                "visuals": {
+                    "aura_glow": true,
+                    "rank_animation": "spring"
+                },
+                "ui": {
+                    "components": [
+                        {
+                            "id": "view_selector",
+                            "type": "segmented_control",
+                            "options": [
+                                "global",
+                                "city"
+                            ],
+                            "action": "switch_view"
+                        },
+                        {
+                            "id": "leaderboard_list",
+                            "type": "vertical_list",
+                            "item_component": "rank_row"
+                        },
+                        {
+                            "id": "rank_row",
+                            "type": "row",
+                            "children": [
+                                {
+                                    "id": "rank",
+                                    "type": "text",
+                                    "content": "{{rank}}"
+                                },
+                                {
+                                    "id": "handle",
+                                    "type": "text",
+                                    "content": "{{handle}}"
+                                },
+                                {
+                                    "id": "aura_score",
+                                    "type": "text",
+                                    "content": "{{aura}}",
+                                    "style": "aura_glow"
+                                }
+                            ]
+                        }
+                    ],
+                    "states": {
+                        "loading": {
+                            "show_loader": true
+                        },
+                        "loaded": {
+                            "components_enabled": [
+                                "view_selector",
+                                "leaderboard_list"
+                            ]
+                        },
+                        "error": {
+                            "toast": "failed to load leaderboard."
+                        }
+                    },
+                    "transitions": {
+                        "from": [
+                            "global_feed",
+                            "profile"
+                        ],
+                        "to": [
+                            "profile"
+                        ]
+                    },
+                    "interactions": {
+                        "on_view_change": {
+                            "haptic": "light"
+                        },
+                        "on_row_tap": {
+                            "action": "navigate_to_profile",
+                            "haptic": "light"
+                        }
+                    }
+                }
+            },
+            "profile": {
+                "purpose": "view_own_profile",
+                "sections": [
+                    "aura_score",
+                    "verification_badge",
+                    "glitch_history",
+                    "recaps"
+                ],
+                "exportables": [
+                    "shareable_aura_card",
+                    "bio_link_badge"
+                ],
+                "ui": {
+                    "components": [
+                        {
+                            "id": "handle",
+                            "type": "text",
+                            "content": "@{{handle}}"
+                        },
+                        {
+                            "id": "aura_score",
+                            "type": "text",
+                            "content": "{{aura}} aura"
+                        },
+                        {
+                            "id": "verification_badge",
+                            "type": "badge",
+                            "label": "human verified",
+                            "visible": "{{aura >= 100}}"
+                        },
+                        {
+                            "id": "glitch_history",
+                            "type": "horizontal_scroll",
+                            "item_component": "glitch_thumbnail"
+                        },
+                        {
+                            "id": "recaps",
+                            "type": "button",
+                            "label": "view weekly recap",
+                            "action": "open_recap"
+                        },
+                        {
+                            "id": "share_aura",
+                            "type": "button",
+                            "label": "share aura card",
+                            "action": "share"
+                        },
+                        {
+                            "id": "copy_badge",
+                            "type": "button",
+                            "label": "copy bio badge",
+                            "action": "copy_to_clipboard"
+                        },
+                        {
+                            "id": "settings_button",
+                            "type": "icon_button",
+                            "icon": "gear",
+                            "action": "navigate_to_settings_page"
+                        }
+                    ],
+                    "states": {
+                        "loading": {
+                            "show_loader": true
+                        },
+                        "loaded": {
+                            "components_enabled": [
+                                "handle",
+                                "aura_score",
+                                "verification_badge",
+                                "glitch_history",
+                                "recaps",
+                                "share_aura",
+                                "copy_badge",
+                                "settings_button"
+                            ]
+                        },
+                        "error": {
+                            "toast": "failed to load profile."
+                        }
+                    },
+                    "transitions": {
+                        "from": [
+                            "leaderboard",
+                            "global_feed"
+                        ],
+                        "to": [
+                            "weekly_recap",
+                            "settings_page"
+                        ]
+                    },
+                    "interactions": {
+                        "on_share": {
+                            "haptic": "light"
+                        },
+                        "on_copy": {
+                            "haptic": "light",
+                            "toast": "badge copied"
+                        },
+                        "on_settings": {
+                            "haptic": "light"
+                        }
+                    }
+                }
+            },
+            "weekly_recap": {
+                "purpose": "view_weekly_summary",
+                "format": "vertical_story",
+                "elements": [
+                    "total_glitches_completed",
+                    "most_chaotic_day",
+                    "aura_change",
+                    "audit_accuracy"
+                ],
+                "ui": {
+                    "components": [
+                        {
+                            "id": "recap_story",
+                            "type": "story_view",
+                            "pages": [
+                                {
+                                    "type": "page",
+                                    "content": "you completed {{total_glitches}} glitches this week."
+                                },
+                                {
+                                    "type": "page",
+                                    "content": "your most chaotic day was {{day}}."
+                                },
+                                {
+                                    "type": "page",
+                                    "content": "aura change: +{{aura_gain}}"
+                                },
+                                {
+                                    "type": "page",
+                                    "content": "audit accuracy: {{accuracy}}%"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "share_recap",
+                            "type": "button",
+                            "label": "share recap",
+                            "action": "share"
+                        }
+                    ],
+                    "states": {
+                        "loading": {
+                            "show_loader": true
+                        },
+                        "loaded": {
+                            "components_enabled": [
+                                "recap_story",
+                                "share_recap"
+                            ]
+                        },
+                        "error": {
+                            "toast": "failed to load recap."
+                        }
+                    },
+                    "transitions": {
+                        "from": [
+                            "profile"
+                        ],
+                        "to": [
+                            "profile"
+                        ]
+                    },
+                    "interactions": {
+                        "on_share": {
+                            "haptic": "light"
+                        }
+                    }
+                }
+            },
+            "settings_page": {
+                "purpose": "manage_app_settings",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "account_section",
+                            "type": "section",
+                            "label": "account",
+                            "children": [
+                                {
+                                    "id": "account_management",
+                                    "type": "navigation_link",
+                                    "label": "account management",
+                                    "action": "navigate_to_account_management_page"
+                                },
+                                {
+                                    "id": "blocked_users",
+                                    "type": "navigation_link",
+                                    "label": "blocked users",
+                                    "action": "navigate_to_blocked_users_page"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "preferences_section",
+                            "type": "section",
+                            "label": "preferences",
+                            "children": [
+                                {
+                                    "id": "notifications",
+                                    "type": "navigation_link",
+                                    "label": "notifications",
+                                    "action": "navigate_to_notifications_settings_page"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "about_section",
+                            "type": "section",
+                            "label": "about",
+                            "children": [
+                                {
+                                    "id": "privacy",
+                                    "type": "navigation_link",
+                                    "label": "privacy",
+                                    "action": "navigate_to_privacy_page"
+                                },
+                                {
+                                    "id": "terms",
+                                    "type": "navigation_link",
+                                    "label": "terms",
+                                    "action": "navigate_to_terms_page"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "logout_button",
+                            "type": "button",
+                            "label": "log out",
+                            "action": "show_logout_confirmation"
+                        }
+                    ],
+                    "states": {
+                        "loading": {
+                            "show_loader": true
+                        },
+                        "loaded": {
+                            "components_enabled": true
+                        }
+                    },
+                    "transitions": {
+                        "from": [
+                            "profile"
+                        ],
+                        "to": [
+                            "account_management_page",
+                            "blocked_users_page",
+                            "notifications_settings_page",
+                            "privacy_page",
+                            "terms_page"
+                        ]
+                    },
+                    "interactions": {
+                        "on_logout": {
+                            "haptic": "light"
+                        }
+                    }
+                }
+            },
+            "account_management_page": {
+                "purpose": "manage_account_settings",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "handle_display",
+                            "type": "text",
+                            "content": "handle: @{{handle}}"
+                        },
+                        {
+                            "id": "change_handle_button",
+                            "type": "button",
+                            "label": "change handle",
+                            "action": "show_change_handle_modal"
+                        },
+                        {
+                            "id": "city_display",
+                            "type": "text",
+                            "content": "city: {{city}}"
+                        },
+                        {
+                            "id": "change_city_button",
+                            "type": "button",
+                            "label": "change city",
+                            "action": "show_change_city_modal"
+                        },
+                        {
+                            "id": "delete_account_button",
+                            "type": "button",
+                            "label": "delete account",
+                            "action": "show_delete_account_confirmation",
+                            "style": "destructive"
+                        }
+                    ],
+                    "states": {
+                        "loading": {
+                            "show_loader": true
+                        },
+                        "loaded": {
+                            "components_enabled": true
+                        },
+                        "saving": {
+                            "disable_all": true,
+                            "toast": "updating..."
+                        }
+                    },
+                    "transitions": {
+                        "from": [
+                            "settings_page"
+                        ],
+                        "to": [
+                            "settings_page"
+                        ]
+                    },
+                    "interactions": {
+                        "on_change_handle": {
+                            "haptic": "light"
+                        },
+                        "on_change_city": {
+                            "haptic": "light"
+                        },
+                        "on_delete_account": {
+                            "haptic": "heavy"
+                        }
+                    }
+                }
+            },
+            "blocked_users_page": {
+                "purpose": "view_and_manage_blocked_users",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "blocked_list",
+                            "type": "vertical_list",
+                            "item_component": "blocked_user_row"
+                        },
+                        {
+                            "id": "blocked_user_row",
+                            "type": "row",
+                            "children": [
+                                {
+                                    "id": "handle",
+                                    "type": "text",
+                                    "content": "@{{handle}}"
+                                },
+                                {
+                                    "id": "unblock_button",
+                                    "type": "button",
+                                    "label": "unblock",
+                                    "action": "unblock_user"
+                                }
+                            ]
+                        }
+                    ],
+                    "states": {
+                        "loading": {
+                            "show_loader": true
+                        },
+                        "loaded": {
+                            "components_enabled": true
+                        },
+                        "empty": {
+                            "toast": "you haven't blocked anyone.",
+                            "components_enabled": []
+                        }
+                    },
+                    "transitions": {
+                        "from": [
+                            "settings_page"
+                        ],
+                        "to": [
+                            "settings_page"
+                        ]
+                    },
+                    "interactions": {
+                        "on_unblock": {
+                            "haptic": "light",
+                            "toast": "user unblocked"
+                        }
+                    }
+                }
+            },
+            "notifications_settings_page": {
+                "purpose": "configure_notification_preferences",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "daily_quest_notification",
+                            "type": "toggle",
+                            "label": "daily quest reminder",
+                            "value": "{{settings.daily_quest}}",
+                            "action": "toggle_daily_quest"
+                        },
+                        {
+                            "id": "audit_reminder",
+                            "type": "toggle",
+                            "label": "audit reminder",
+                            "value": "{{settings.audit_reminder}}",
+                            "action": "toggle_audit_reminder"
+                        },
+                        {
+                            "id": "aura_milestone",
+                            "type": "toggle",
+                            "label": "aura milestone",
+                            "value": "{{settings.aura_milestone}}",
+                            "action": "toggle_aura_milestone"
+                        }
+                    ],
+                    "states": {
+                        "loading": {
+                            "show_loader": true
+                        },
+                        "loaded": {
+                            "components_enabled": true
+                        },
+                        "saving": {
+                            "disable_all": true,
+                            "toast": "saving..."
+                        }
+                    },
+                    "transitions": {
+                        "from": [
+                            "settings_page"
+                        ],
+                        "to": [
+                            "settings_page"
+                        ]
+                    },
+                    "interactions": {
+                        "on_toggle": {
+                            "haptic": "light"
+                        }
+                    }
+                }
+            },
+            "privacy_page": {
+                "purpose": "display_privacy_policy",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "privacy_text",
+                            "type": "scrollable_text",
+                            "content": "we collect your email, handle, and city to operate the service. your videos are stored and may be viewed by other users for audit purposes. we do not share your data with third parties. for full policy, visit glitch.com/privacy."
+                        }
+                    ],
+                    "states": {
+                        "loaded": {
+                            "components_enabled": true
+                        }
+                    },
+                    "transitions": {
+                        "from": [
+                            "settings_page"
+                        ],
+                        "to": [
+                            "settings_page"
+                        ]
+                    }
+                }
+            },
+            "terms_page": {
+                "purpose": "display_terms_of_service",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "terms_text",
+                            "type": "scrollable_text",
+                            "content": "by using glitch you agree to follow the human protocol. you must be 13 or older. do not upload harmful or illegal content. we may suspend accounts for violations. for full terms, visit glitch.com/terms."
+                        }
+                    ],
+                    "states": {
+                        "loaded": {
+                            "components_enabled": true
+                        }
+                    },
+                    "transitions": {
+                        "from": [
+                            "settings_page"
+                        ],
+                        "to": [
+                            "settings_page"
+                        ]
+                    }
+                }
+            },
+            "audit_history_page": {
+                "purpose": "view_past_audits",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "audit_history_list",
+                            "type": "vertical_list",
+                            "item_component": "audit_history_row"
+                        },
+                        {
+                            "id": "audit_history_row",
+                            "type": "row",
+                            "children": [
+                                {
+                                    "id": "date",
+                                    "type": "text",
+                                    "content": "{{created_at}}"
+                                },
+                                {
+                                    "id": "signal_preview",
+                                    "type": "thumbnail",
+                                    "source": "{{signal.video_url}}"
+                                },
+                                {
+                                    "id": "vote",
+                                    "type": "text",
+                                    "content": "{{vote}}"
+                                },
+                                {
+                                    "id": "consensus",
+                                    "type": "text",
+                                    "content": "{{consensus}}"
+                                },
+                                {
+                                    "id": "aura_change",
+                                    "type": "text",
+                                    "content": "{{aura_change}}"
+                                }
+                            ]
+                        }
+                    ],
+                    "states": {
+                        "loading": {
+                            "show_loader": true
+                        },
+                        "loaded": {
+                            "components_enabled": true
+                        },
+                        "empty": {
+                            "toast": "no audit history yet."
+                        }
+                    },
+                    "transitions": {
+                        "from": [
+                            "profile"
+                        ],
+                        "to": [
+                            "profile"
+                        ]
+                    }
+                }
+            },
+            "aura_history_page": {
+                "purpose": "view_aura_changes_over_time",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "aura_chart",
+                            "type": "line_chart",
+                            "data_source": "aura_log"
+                        },
+                        {
+                            "id": "aura_log_list",
+                            "type": "vertical_list",
+                            "item_component": "aura_log_row"
+                        },
+                        {
+                            "id": "aura_log_row",
+                            "type": "row",
+                            "children": [
+                                {
+                                    "id": "timestamp",
+                                    "type": "text",
+                                    "content": "{{created_at}}"
+                                },
+                                {
+                                    "id": "delta",
+                                    "type": "text",
+                                    "content": "{{delta}}"
+                                },
+                                {
+                                    "id": "reason",
+                                    "type": "text",
+                                    "content": "{{reason}}"
+                                }
+                            ]
+                        }
+                    ],
+                    "states": {
+                        "loading": {
+                            "show_loader": true
+                        },
+                        "loaded": {
+                            "components_enabled": true
+                        },
+                        "empty": {
+                            "toast": "no aura history yet."
+                        }
+                    },
+                    "transitions": {
+                        "from": [
+                            "profile"
+                        ],
+                        "to": [
+                            "profile"
+                        ]
+                    }
+                }
+            },
+            "report_status_page": {
+                "purpose": "view_status_of_user_reports",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "report_list",
+                            "type": "vertical_list",
+                            "item_component": "report_row"
+                        },
+                        {
+                            "id": "report_row",
+                            "type": "row",
+                            "children": [
+                                {
+                                    "id": "signal_thumbnail",
+                                    "type": "thumbnail",
+                                    "source": "{{signal.video_url}}"
+                                },
+                                {
+                                    "id": "reason",
+                                    "type": "text",
+                                    "content": "{{reason}}"
+                                },
+                                {
+                                    "id": "status",
+                                    "type": "text",
+                                    "content": "{{status}}"
+                                },
+                                {
+                                    "id": "created_at",
+                                    "type": "text",
+                                    "content": "{{created_at}}"
+                                }
+                            ]
+                        }
+                    ],
+                    "states": {
+                        "loading": {
+                            "show_loader": true
+                        },
+                        "loaded": {
+                            "components_enabled": true
+                        },
+                        "empty": {
+                            "toast": "no reports submitted."
+                        }
+                    },
+                    "transitions": {
+                        "from": [
+                            "profile"
+                        ],
+                        "to": [
+                            "profile"
+                        ]
+                    }
+                }
+            },
+            "appeal_submission_page": {
+                "purpose": "submit_appeal_for_suspension",
+                "access_rule": "only_when_suspended",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "appeal_reason_field",
+                            "type": "text_area",
+                            "placeholder": "explain why your account should be reinstated"
+                        },
+                        {
+                            "id": "submit_button",
+                            "type": "button",
+                            "label": "submit appeal",
+                            "action": "submit_appeal"
+                        },
+                        {
+                            "id": "status_message",
+                            "type": "text",
+                            "content": ""
+                        }
+                    ],
+                    "states": {
+                        "idle": {
+                            "components_enabled": [
+                                "appeal_reason_field",
+                                "submit_button"
+                            ]
+                        },
+                        "submitting": {
+                            "submit_button_loading": true,
+                            "appeal_reason_field_disabled": true
+                        },
+                        "success": {
+                            "toast": "appeal submitted. we'll review.",
+                            "disable_all": true
+                        },
+                        "error": {
+                            "toast": "submission failed. try again."
+                        }
+                    },
+                    "transitions": {
+                        "from": [
+                            "account_suspension_page"
+                        ],
+                        "to": [
+                            "account_suspension_page"
+                        ]
+                    },
+                    "interactions": {
+                        "on_submit": {
+                            "haptic": "light"
+                        }
+                    }
+                }
+            },
+            "maintenance_mode_page": {
+                "purpose": "inform_users_of_scheduled_maintenance",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "message",
+                            "type": "text",
+                            "content": "glitch is down for maintenance. check back soon."
+                        },
+                        {
+                            "id": "estimated_time",
+                            "type": "text",
+                            "content": "estimated return: {{eta}}"
+                        }
+                    ],
+                    "states": {
+                        "loaded": {
+                            "components_enabled": true
+                        }
+                    },
+                    "transitions": {
+                        "from": "*"
+                    }
+                }
+            },
+            "account_suspension_page": {
+                "purpose": "notify_user_of_suspension",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "suspension_message",
+                            "type": "text",
+                            "content": "your account has been suspended. reason: {{reason}}"
+                        },
+                        {
+                            "id": "appeal_button",
+                            "type": "button",
+                            "label": "appeal suspension",
+                            "action": "navigate_to_appeal_submission_page"
+                        }
+                    ],
+                    "states": {
+                        "loaded": {
+                            "components_enabled": true
+                        }
+                    },
+                    "transitions": {
+                        "from": "*",
+                        "to": [
+                            "appeal_submission_page"
+                        ]
+                    }
+                }
+            },
+            "change_handle_modal": {
+                "purpose": "allow_user_to_change_handle",
+                "type": "modal",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "new_handle_field",
+                            "type": "text_input",
+                            "placeholder": "new handle",
+                            "rules": {
+                                "lowercase_only": true,
+                                "max_length": 16
+                            }
+                        },
+                        {
+                            "id": "save_button",
+                            "type": "button",
+                            "label": "save",
+                            "action": "update_handle"
+                        },
+                        {
+                            "id": "cancel_button",
+                            "type": "button",
+                            "label": "cancel",
+                            "action": "dismiss"
+                        }
+                    ],
+                    "states": {
+                        "idle": {
+                            "components_enabled": true
+                        },
+                        "saving": {
+                            "save_button_loading": true,
+                            "new_handle_field_disabled": true
+                        },
+                        "success": {
+                            "dismiss": true,
+                            "toast": "handle updated"
+                        },
+                        "error": {
+                            "toast": "handle taken or invalid"
+                        }
+                    }
+                }
+            },
+            "change_city_modal": {
+                "purpose": "allow_user_to_change_city",
+                "type": "modal",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "city_field",
+                            "type": "text_input",
+                            "placeholder": "city name"
+                        },
+                        {
+                            "id": "save_button",
+                            "type": "button",
+                            "label": "save",
+                            "action": "update_city"
+                        },
+                        {
+                            "id": "cancel_button",
+                            "type": "button",
+                            "label": "cancel",
+                            "action": "dismiss"
+                        }
+                    ],
+                    "states": {
+                        "idle": {
+                            "components_enabled": true
+                        },
+                        "saving": {
+                            "save_button_loading": true,
+                            "city_field_disabled": true
+                        },
+                        "success": {
+                            "dismiss": true,
+                            "toast": "city updated"
+                        },
+                        "error": {
+                            "toast": "update failed"
+                        }
+                    }
+                }
+            },
+            "logout_confirmation_dialog": {
+                "purpose": "confirm_logout",
+                "type": "dialog",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "message",
+                            "type": "text",
+                            "content": "are you sure you want to log out?"
+                        },
+                        {
+                            "id": "confirm_button",
+                            "type": "button",
+                            "label": "log out",
+                            "action": "logout"
+                        },
+                        {
+                            "id": "cancel_button",
+                            "type": "button",
+                            "label": "cancel",
+                            "action": "dismiss"
+                        }
+                    ]
+                }
+            },
+            "delete_account_confirmation_dialog": {
+                "purpose": "confirm_account_deletion",
+                "type": "dialog",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "message",
+                            "type": "text",
+                            "content": "this action is permanent. all data will be deleted. are you sure?"
+                        },
+                        {
+                            "id": "confirm_button",
+                            "type": "button",
+                            "label": "delete",
+                            "action": "delete_account",
+                            "style": "destructive"
+                        },
+                        {
+                            "id": "cancel_button",
+                            "type": "button",
+                            "label": "cancel",
+                            "action": "dismiss"
+                        }
+                    ]
+                }
+            },
+            "report_signal_modal": {
+                "purpose": "report_a_signal",
+                "type": "modal",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "reason_picker",
+                            "type": "picker",
+                            "options": [
+                                "harassment",
+                                "dangerous",
+                                "spam",
+                                "other"
+                            ],
+                            "action": "select_reason"
+                        },
+                        {
+                            "id": "description_field",
+                            "type": "text_area",
+                            "placeholder": "additional details (optional)"
+                        },
+                        {
+                            "id": "submit_button",
+                            "type": "button",
+                            "label": "submit report",
+                            "action": "submit_report"
+                        },
+                        {
+                            "id": "cancel_button",
+                            "type": "button",
+                            "label": "cancel",
+                            "action": "dismiss"
+                        }
+                    ],
+                    "states": {
+                        "idle": {
+                            "components_enabled": true
+                        },
+                        "submitting": {
+                            "submit_button_loading": true,
+                            "disable_all": true
+                        },
+                        "success": {
+                            "dismiss": true,
+                            "toast": "report submitted"
+                        },
+                        "error": {
+                            "toast": "report failed"
+                        }
+                    }
+                }
+            },
+            "offline_page": {
+                "purpose": "show_when_no_internet",
+                "ui": {
+                    "components": [
+                        {
+                            "id": "message",
+                            "type": "text",
+                            "content": "you're offline. reconnect to glitch."
+                        },
+                        {
+                            "id": "retry_button",
+                            "type": "button",
+                            "label": "retry",
+                            "action": "check_connection_and_reload"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "backend_architecture": {
+        "api_style": "REST",
+        "auth": {
+            "provider": "supabase_auth",
+            "session": "jwt"
+        },
+        "services": {
+            "glitch_scheduler": {
+                "type": "cron",
+                "randomized_release": true
+            },
+            "aura_engine": {
+                "inputs": [
+                    "audit_votes",
+                    "submission_timing",
+                    "consistency"
+                ],
+                "outputs": [
+                    "aura_delta"
+                ]
+            },
+            "audit_system": {
+                "constraints": {
+                    "one_vote_per_user_per_signal": true,
+                    "blind_metadata": true
+                }
+            },
+            "video_pipeline": {
+                "max_duration": 7,
+                "transcoding": "async",
+                "storage": "object_storage",
+                "cdn": true
+            }
+        },
+        "api_endpoints": [
+            {
+                "name": "request_magic_link",
+                "method": "POST",
+                "path": "/api/auth/magic-link",
+                "auth_required": false,
+                "request": {
+                    "body": {
+                        "email": "string"
+                    }
+                },
+                "responses": {
+                    "204": {},
+                    "400": {
+                        "description": "invalid email"
+                    },
+                    "429": {
+                        "description": "rate limited"
+                    }
+                },
+                "rate_limit": {
+                    "per_ip": "10 per hour"
+                }
+            },
+            {
+                "name": "verify_magic_link",
+                "method": "POST",
+                "path": "/api/auth/verify",
+                "auth_required": false,
+                "request": {
+                    "body": {
+                        "token": "string"
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "body": {
+                            "user": {
+                                "id": "uuid",
+                                "handle": "string",
+                                "aura": "integer"
+                            },
+                            "jwt": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid or expired token"
+                    }
+                },
+                "rate_limit": {
+                    "per_ip": "10 per minute"
+                }
+            },
+            {
+                "name": "get_current_quest",
+                "method": "GET",
+                "path": "/api/quests/current",
+                "auth_required": true,
+                "responses": {
+                    "200": {
+                        "body": {
+                            "id": "bigint",
+                            "quest_text": "string",
+                            "expires_at": "timestamp"
+                        }
+                    },
+                    "404": {
+                        "description": "no active quest"
+                    }
+                },
+                "rate_limit": {
+                    "per_user": "60 per minute"
+                }
+            },
+            {
+                "name": "submit_signal",
+                "method": "POST",
+                "path": "/api/signals",
+                "auth_required": true,
+                "request": {
+                    "multipart": {
+                        "video": "file",
+                        "quest_id": "bigint"
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "body": {
+                            "signal_id": "bigint",
+                            "status": "processing"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid quest or video"
+                    },
+                    "403": {
+                        "description": "already submitted"
+                    },
+                    "429": {
+                        "description": "rate limited"
+                    }
+                },
+                "rate_limit": {
+                    "per_user": "1 per quest window"
+                }
+            },
+            {
+                "name": "get_signals_for_audit",
+                "method": "GET",
+                "path": "/api/signals",
+                "auth_required": true,
+                "query": {
+                    "quest_id": "bigint (optional)",
+                    "limit": "integer (default 5)"
+                },
+                "responses": {
+                    "200": {
+                        "body": [
+                            {
+                                "id": "bigint",
+                                "video_url": "string",
+                                "quest_id": "bigint"
+                            }
+                        ]
+                    },
+                    "429": {
+                        "description": "rate limited"
+                    }
+                },
+                "rate_limit": {
+                    "per_user": "100 per day"
+                }
+            },
+            {
+                "name": "submit_audit",
+                "method": "POST",
+                "path": "/api/audits",
+                "auth_required": true,
+                "request": {
+                    "body": {
+                        "signal_id": "bigint",
+                        "vote": "enum (human, slop)"
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "body": {
+                            "aura_change": "integer"
+                        }
+                    },
+                    "400": {
+                        "description": "already voted"
+                    },
+                    "429": {
+                        "description": "rate limited"
+                    }
+                },
+                "rate_limit": {
+                    "per_user": "100 per day"
+                }
+            },
+            {
+                "name": "get_leaderboard",
+                "method": "GET",
+                "path": "/api/leaderboard",
+                "auth_required": true,
+                "query": {
+                    "scope": "enum (global, city)",
+                    "city": "string (if scope=city)"
+                },
+                "responses": {
+                    "200": {
+                        "body": [
+                            {
+                                "rank": "integer",
+                                "handle": "string",
+                                "aura": "integer"
+                            }
+                        ]
+                    }
+                },
+                "rate_limit": {
+                    "per_user": "60 per minute"
+                }
+            },
+            {
+                "name": "get_profile",
+                "method": "GET",
+                "path": "/api/profiles/:handle",
+                "auth_required": true,
+                "responses": {
+                    "200": {
+                        "body": {
+                            "handle": "string",
+                            "aura": "integer",
+                            "city": "string",
+                            "created_at": "timestamp",
+                            "recent_signals": [
+                                {
+                                    "id": "bigint",
+                                    "video_url": "string",
+                                    "quest_text": "string",
+                                    "created_at": "timestamp"
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "profile not found"
+                    }
+                },
+                "rate_limit": {
+                    "per_user": "60 per minute"
+                }
+            },
+            {
+                "name": "create_vouch",
+                "method": "POST",
+                "path": "/api/vouches",
+                "auth_required": true,
+                "request": {
+                    "body": {
+                        "code": "string"
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "body": {
+                            "referred_id": "uuid"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid or used code"
+                    },
+                    "403": {
+                        "description": "insufficient aura"
+                    },
+                    "429": {
+                        "description": "rate limited"
+                    }
+                },
+                "rate_limit": {
+                    "per_referrer": "5 per week"
+                }
+            },
+            {
+                "name": "get_recap",
+                "method": "GET",
+                "path": "/api/recaps/:user_id/latest",
+                "auth_required": true,
+                "responses": {
+                    "200": {
+                        "body": {
+                            "week_start": "date",
+                            "total_glitches": "integer",
+                            "most_chaotic_day": "string",
+                            "aura_change": "integer",
+                            "audit_accuracy": "integer"
+                        }
+                    },
+                    "404": {
+                        "description": "no recap yet"
+                    }
+                },
+                "rate_limit": {
+                    "per_user": "10 per minute"
+                }
+            },
+            {
+                "name": "report_signal",
+                "method": "POST",
+                "path": "/api/reports",
+                "auth_required": true,
+                "request": {
+                    "body": {
+                        "signal_id": "bigint",
+                        "reason": "enum (harassment, dangerous, spam, other)",
+                        "description": "string (optional)"
+                    }
+                },
+                "responses": {
+                    "201": {},
+                    "429": {
+                        "description": "rate limited"
+                    }
+                },
+                "rate_limit": {
+                    "per_user": "5 per day"
+                }
+            },
+            {
+                "name": "get_reports",
+                "method": "GET",
+                "path": "/api/reports",
+                "auth_required": true,
+                "authorization": "moderator_only",
+                "responses": {
+                    "200": {
+                        "body": [
+                            {
+                                "id": "bigint",
+                                "reporter_id": "uuid",
+                                "signal_id": "bigint",
+                                "reason": "enum",
+                                "description": "string",
+                                "status": "enum",
+                                "created_at": "timestamp"
+                            }
+                        ]
+                    }
+                },
+                "rate_limit": {
+                    "per_user": "100 per minute"
+                }
+            },
+            {
+                "name": "update_report",
+                "method": "PATCH",
+                "path": "/api/reports/:id",
+                "auth_required": true,
+                "authorization": "moderator_only",
+                "request": {
+                    "body": {
+                        "status": "enum (resolved, dismissed)",
+                        "resolution_note": "string (optional)"
+                    }
+                },
+                "responses": {
+                    "200": {}
+                }
+            },
+            {
+                "name": "block_user",
+                "method": "POST",
+                "path": "/api/blocks",
+                "auth_required": true,
+                "request": {
+                    "body": {
+                        "blocked_id": "uuid"
+                    }
+                },
+                "responses": {
+                    "201": {}
+                }
+            },
+            {
+                "name": "unblock_user",
+                "method": "DELETE",
+                "path": "/api/blocks/:blocked_id",
+                "auth_required": true,
+                "responses": {
+                    "204": {}
+                }
+            },
+            {
+                "name": "get_blocked_users",
+                "method": "GET",
+                "path": "/api/blocks",
+                "auth_required": true,
+                "responses": {
+                    "200": {
+                        "body": [
+                            {
+                                "blocked_id": "uuid",
+                                "handle": "string",
+                                "blocked_at": "timestamp"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "name": "get_notification_settings",
+                "method": "GET",
+                "path": "/api/settings/notifications",
+                "auth_required": true,
+                "responses": {
+                    "200": {
+                        "body": {
+                            "daily_quest": "boolean",
+                            "audit_reminder": "boolean",
+                            "aura_milestone": "boolean"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "update_notification_settings",
+                "method": "PATCH",
+                "path": "/api/settings/notifications",
+                "auth_required": true,
+                "request": {
+                    "body": {
+                        "daily_quest": "boolean (optional)",
+                        "audit_reminder": "boolean (optional)",
+                        "aura_milestone": "boolean (optional)"
+                    }
+                },
+                "responses": {
+                    "200": {}
+                }
+            },
+            {
+                "name": "change_handle",
+                "method": "POST",
+                "path": "/api/profile/handle",
+                "auth_required": true,
+                "request": {
+                    "body": {
+                        "new_handle": "string"
+                    }
+                },
+                "responses": {
+                    "200": {},
+                    "400": {
+                        "description": "invalid or taken"
+                    },
+                    "429": {
+                        "description": "rate limited"
+                    }
+                },
+                "rate_limit": {
+                    "per_user": "1 per month"
+                }
+            },
+            {
+                "name": "change_city",
+                "method": "POST",
+                "path": "/api/profile/city",
+                "auth_required": true,
+                "request": {
+                    "body": {
+                        "city": "string"
+                    }
+                },
+                "responses": {
+                    "200": {}
+                },
+                "rate_limit": {
+                    "per_user": "5 per day"
+                }
+            },
+            {
+                "name": "delete_account",
+                "method": "DELETE",
+                "path": "/api/profile",
+                "auth_required": true,
+                "responses": {
+                    "204": {}
+                }
+            },
+            {
+                "name": "get_audit_history",
+                "method": "GET",
+                "path": "/api/audits/history",
+                "auth_required": true,
+                "query": {
+                    "limit": "integer (default 20)",
+                    "offset": "integer (default 0)"
+                },
+                "responses": {
+                    "200": {
+                        "body": [
+                            {
+                                "id": "bigint",
+                                "signal_id": "bigint",
+                                "vote": "enum",
+                                "created_at": "timestamp",
+                                "signal": {
+                                    "video_url": "string",
+                                    "quest_text": "string"
+                                },
+                                "consensus": "enum",
+                                "aura_change": "integer"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "name": "get_aura_history",
+                "method": "GET",
+                "path": "/api/aura/history",
+                "auth_required": true,
+                "query": {
+                    "limit": "integer (default 20)",
+                    "offset": "integer (default 0)"
+                },
+                "responses": {
+                    "200": {
+                        "body": [
+                            {
+                                "created_at": "timestamp",
+                                "delta": "integer",
+                                "reason": "string"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "name": "submit_appeal",
+                "method": "POST",
+                "path": "/api/appeals",
+                "auth_required": true,
+                "request": {
+                    "body": {
+                        "reason": "string"
+                    }
+                },
+                "responses": {
+                    "201": {}
+                },
+                "rate_limit": {
+                    "per_user": "1 per week"
+                }
+            }
+        ],
+        "background_jobs": [
+            {
+                "name": "process_video",
+                "trigger": "on_signal_upload",
+                "description": "transcode video to multiple resolutions, upload to CDN, update signal.video_url"
+            },
+            {
+                "name": "expire_quests",
+                "schedule": "every minute",
+                "description": "deactivate expired quests, mark signals as expired if not submitted"
+            },
+            {
+                "name": "release_new_quest",
+                "schedule": "randomized daily",
+                "description": "create new quest with random text from pool, set active_at and expires_at"
+            },
+            {
+                "name": "update_aura_from_audits",
+                "trigger": "after_audit_insert",
+                "description": "recalculate signal aura, update user aura when consensus reached"
+            },
+            {
+                "name": "generate_weekly_recaps",
+                "schedule": "every monday 00:00 UTC",
+                "description": "aggregate user data for past week, store in recap_data"
+            },
+            {
+                "name": "update_leaderboard_views",
+                "schedule": "every 5 minutes",
+                "description": "precompute global and city leaderboards for caching"
+            },
+            {
+                "name": "audit_penalty_check",
+                "schedule": "hourly",
+                "description": "detect auditors with low accuracy, apply temporary bans"
+            },
+            {
+                "name": "process_appeals",
+                "schedule": "daily",
+                "description": "notify moderators of new appeals"
+            }
+        ],
+        "aura_calculation": {
+            "base_per_signal": 10,
+            "audit_vote_weight": {
+                "human_vote_matches_consensus": 2,
+                "slop_vote_matches_consensus": 2,
+                "human_vote_against_consensus": -2,
+                "slop_vote_against_consensus": -2
+            },
+            "consistency_bonus": {
+                "consecutive_days": 5,
+                "max_bonus": 50
+            },
+            "submission_timing_bonus": {
+                "within_first_10_minutes": 3,
+                "within_last_10_minutes": 1
+            },
+            "audit_accuracy_bonus": {
+                "daily_accuracy_above_80": 5,
+                "weekly_accuracy_above_90": 20
+            },
+            "slop_penalty": {
+                "signal_voted_slop_by_consensus": -5,
+                "serial_slop_threshold": 3,
+                "serial_slop_penalty_multiplier": 2
+            }
+        },
+        "rate_limits": {
+            "default": {
+                "per_user": "1000 per minute",
+                "per_ip": "5000 per minute"
+            },
+            "auth_endpoints": {
+                "per_ip": "10 per minute"
+            },
+            "audit_endpoints": {
+                "per_user": "100 per day"
+            },
+            "vouch_endpoints": {
+                "per_user": "5 per week"
+            },
+            "report_endpoints": {
+                "per_user": "5 per day"
+            }
+        },
+        "data_partitioning": {
+            "signals": "by created_at (monthly)",
+            "audits": "by created_at (monthly)",
+            "reports": "by created_at (monthly)",
+            "aura_log": "by created_at (monthly)"
+        },
+        "realtime_channels": {
+            "global_feed": {
+                "type": "broadcast",
+                "events": [
+                    "new_signal",
+                    "audit_complete"
+                ],
+                "payload": {
+                    "new_signal": {
+                        "id": "bigint",
+                        "video_url": "string",
+                        "quest_id": "bigint"
+                    },
+                    "audit_complete": {
+                        "signal_id": "bigint",
+                        "consensus": "enum (human, slop)"
+                    }
+                }
+            },
+            "leaderboard": {
+                "type": "presence",
+                "channels": [
+                    "leaderboard:global",
+                    "leaderboard:city:{{city}}"
+                ],
+                "events": [
+                    "update"
+                ],
+                "payload": {
+                    "update": {
+                        "rankings": "array"
+                    }
+                }
+            },
+            "user_aura": {
+                "type": "broadcast",
+                "channel": "user:{{user_id}}",
+                "events": [
+                    "aura_change"
+                ],
+                "payload": {
+                    "aura_change": {
+                        "new_aura": "integer",
+                        "delta": "integer"
+                    }
+                }
+            }
+        },
+        "cache_strategy": {
+            "leaderboards": {
+                "ttl": "5 minutes",
+                "store": "redis"
+            },
+            "profiles": {
+                "ttl": "10 minutes",
+                "store": "redis",
+                "invalidate_on_update": true
+            },
+            "current_quest": {
+                "ttl": "1 minute",
+                "store": "redis"
+            },
+            "video_cdn": {
+                "ttl": "1 year",
+                "edge_cache": true
+            }
+        }
+    },
+    "database_schema": {
+        "enums": {
+            "vote_type": [
+                "human",
+                "slop"
+            ],
+            "report_reason": [
+                "harassment",
+                "dangerous",
+                "spam",
+                "other"
+            ],
+            "report_status": [
+                "pending",
+                "resolved",
+                "dismissed"
+            ],
+            "aura_reason": [
+                "signal_submission",
+                "audit_correct",
+                "audit_incorrect",
+                "consistency_bonus",
+                "timing_bonus",
+                "accuracy_bonus",
+                "slop_penalty",
+                "report_penalty"
+            ]
+        },
+        "tables": {
+            "profiles": {
+                "columns": {
+                    "id": {
+                        "type": "uuid",
+                        "primary_key": true,
+                        "references": "auth.users(id)",
+                        "on_delete": "cascade"
+                    },
+                    "handle": {
+                        "type": "text",
+                        "nullable": false,
+                        "unique": true,
+                        "check": "handle ~ '^[a-z0-9_]{3,16}$'"
+                    },
+                    "aura_score": {
+                        "type": "integer",
+                        "nullable": false,
+                        "default": 0
+                    },
+                    "city": {
+                        "type": "text",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "timestamp with time zone",
+                        "nullable": false,
+                        "default": "now()"
+                    },
+                    "last_audit_at": {
+                        "type": "timestamp with time zone",
+                        "nullable": true
+                    },
+                    "is_suspended": {
+                        "type": "boolean",
+                        "nullable": false,
+                        "default": false
+                    },
+                    "suspension_reason": {
+                        "type": "text",
+                        "nullable": true
+                    },
+                    "suspended_until": {
+                        "type": "timestamp with time zone",
+                        "nullable": true
+                    }
+                },
+                "indexes": [
+                    "handle",
+                    "aura_score",
+                    "city"
+                ]
+            },
+            "quests": {
+                "columns": {
+                    "id": {
+                        "type": "bigint",
+                        "primary_key": true,
+                        "generated_by_default_as_identity": true
+                    },
+                    "quest_text": {
+                        "type": "text",
+                        "nullable": false
+                    },
+                    "active_at": {
+                        "type": "timestamp with time zone",
+                        "nullable": false
+                    },
+                    "expires_at": {
+                        "type": "timestamp with time zone",
+                        "nullable": false
+                    }
+                },
+                "indexes": [
+                    "active_at",
+                    "expires_at"
+                ]
+            },
+            "signals": {
+                "columns": {
+                    "id": {
+                        "type": "bigint",
+                        "primary_key": true,
+                        "generated_by_default_as_identity": true
+                    },
+                    "user_id": {
+                        "type": "uuid",
+                        "nullable": false,
+                        "references": "profiles(id)",
+                        "on_delete": "cascade"
+                    },
+                    "quest_id": {
+                        "type": "bigint",
+                        "nullable": false,
+                        "references": "quests(id)",
+                        "on_delete": "cascade"
+                    },
+                    "video_url": {
+                        "type": "text",
+                        "nullable": false
+                    },
+                    "created_at": {
+                        "type": "timestamp with time zone",
+                        "nullable": false,
+                        "default": "now()"
+                    },
+                    "consensus": {
+                        "type": "enum vote_type",
+                        "nullable": true
+                    },
+                    "final_aura_delta": {
+                        "type": "integer",
+                        "nullable": true
+                    }
+                },
+                "indexes": [
+                    "user_id",
+                    "quest_id",
+                    "created_at"
+                ]
+            },
+            "audits": {
+                "columns": {
+                    "id": {
+                        "type": "bigint",
+                        "primary_key": true,
+                        "generated_by_default_as_identity": true
+                    },
+                    "signal_id": {
+                        "type": "bigint",
+                        "nullable": false,
+                        "references": "signals(id)",
+                        "on_delete": "cascade"
+                    },
+                    "auditor_id": {
+                        "type": "uuid",
+                        "nullable": false,
+                        "references": "profiles(id)",
+                        "on_delete": "cascade"
+                    },
+                    "vote": {
+                        "type": "enum vote_type",
+                        "nullable": false
+                    },
+                    "created_at": {
+                        "type": "timestamp with time zone",
+                        "nullable": false,
+                        "default": "now()"
+                    }
+                },
+                "indexes": [
+                    "signal_id",
+                    "auditor_id",
+                    {
+                        "unique": true,
+                        "columns": [
+                            "signal_id",
+                            "auditor_id"
+                        ]
+                    }
+                ]
+            },
+            "vouches": {
+                "columns": {
+                    "id": {
+                        "type": "bigint",
+                        "primary_key": true,
+                        "generated_by_default_as_identity": true
+                    },
+                    "referrer_id": {
+                        "type": "uuid",
+                        "nullable": false,
+                        "references": "profiles(id)",
+                        "on_delete": "cascade"
+                    },
+                    "referred_id": {
+                        "type": "uuid",
+                        "nullable": false,
+                        "unique": true,
+                        "references": "profiles(id)",
+                        "on_delete": "cascade"
+                    },
+                    "created_at": {
+                        "type": "timestamp with time zone",
+                        "nullable": false,
+                        "default": "now()"
+                    }
+                },
+                "indexes": [
+                    "referrer_id",
+                    "referred_id"
+                ]
+            },
+            "reports": {
+                "columns": {
+                    "id": {
+                        "type": "bigint",
+                        "primary_key": true,
+                        "generated_by_default_as_identity": true
+                    },
+                    "reporter_id": {
+                        "type": "uuid",
+                        "nullable": false,
+                        "references": "profiles(id)",
+                        "on_delete": "cascade"
+                    },
+                    "signal_id": {
+                        "type": "bigint",
+                        "nullable": false,
+                        "references": "signals(id)",
+                        "on_delete": "cascade"
+                    },
+                    "reason": {
+                        "type": "enum report_reason",
+                        "nullable": false
+                    },
+                    "description": {
+                        "type": "text",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "enum report_status",
+                        "nullable": false,
+                        "default": "pending"
+                    },
+                    "created_at": {
+                        "type": "timestamp with time zone",
+                        "nullable": false,
+                        "default": "now()"
+                    },
+                    "resolved_at": {
+                        "type": "timestamp with time zone",
+                        "nullable": true
+                    },
+                    "resolved_by": {
+                        "type": "uuid",
+                        "nullable": true,
+                        "references": "profiles(id)"
+                    },
+                    "resolution_note": {
+                        "type": "text",
+                        "nullable": true
+                    }
+                },
+                "indexes": [
+                    "signal_id",
+                    "status"
+                ]
+            },
+            "recap_data": {
+                "columns": {
+                    "id": {
+                        "type": "bigint",
+                        "primary_key": true,
+                        "generated_by_default_as_identity": true
+                    },
+                    "user_id": {
+                        "type": "uuid",
+                        "nullable": false,
+                        "references": "profiles(id)",
+                        "on_delete": "cascade"
+                    },
+                    "week_start_date": {
+                        "type": "date",
+                        "nullable": false
+                    },
+                    "data": {
+                        "type": "jsonb",
+                        "nullable": false
+                    },
+                    "created_at": {
+                        "type": "timestamp with time zone",
+                        "nullable": false,
+                        "default": "now()"
+                    }
+                },
+                "indexes": [
+                    {
+                        "unique": true,
+                        "columns": [
+                            "user_id",
+                            "week_start_date"
+                        ]
+                    }
+                ]
+            },
+            "scheduler_state": {
+                "columns": {
+                    "id": {
+                        "type": "integer",
+                        "primary_key": true,
+                        "default": 1,
+                        "check": "id = 1"
+                    },
+                    "last_quest_release": {
+                        "type": "timestamp with time zone",
+                        "nullable": true
+                    },
+                    "next_quest_time": {
+                        "type": "timestamp with time zone",
+                        "nullable": true
+                    },
+                    "current_quest_id": {
+                        "type": "bigint",
+                        "nullable": true,
+                        "references": "quests(id)",
+                        "on_delete": "set null"
+                    }
+                }
+            },
+            "blocks": {
+                "columns": {
+                    "id": {
+                        "type": "bigint",
+                        "primary_key": true,
+                        "generated_by_default_as_identity": true
+                    },
+                    "blocker_id": {
+                        "type": "uuid",
+                        "nullable": false,
+                        "references": "profiles(id)",
+                        "on_delete": "cascade"
+                    },
+                    "blocked_id": {
+                        "type": "uuid",
+                        "nullable": false,
+                        "references": "profiles(id)",
+                        "on_delete": "cascade"
+                    },
+                    "created_at": {
+                        "type": "timestamp with time zone",
+                        "nullable": false,
+                        "default": "now()"
+                    }
+                },
+                "indexes": [
+                    {
+                        "unique": true,
+                        "columns": [
+                            "blocker_id",
+                            "blocked_id"
+                        ]
+                    }
+                ]
+            },
+            "notification_settings": {
+                "columns": {
+                    "user_id": {
+                        "type": "uuid",
+                        "primary_key": true,
+                        "references": "profiles(id)",
+                        "on_delete": "cascade"
+                    },
+                    "daily_quest": {
+                        "type": "boolean",
+                        "nullable": false,
+                        "default": true
+                    },
+                    "audit_reminder": {
+                        "type": "boolean",
+                        "nullable": false,
+                        "default": true
+                    },
+                    "aura_milestone": {
+                        "type": "boolean",
+                        "nullable": false,
+                        "default": true
+                    }
+                }
+            },
+            "aura_log": {
+                "columns": {
+                    "id": {
+                        "type": "bigint",
+                        "primary_key": true,
+                        "generated_by_default_as_identity": true
+                    },
+                    "user_id": {
+                        "type": "uuid",
+                        "nullable": false,
+                        "references": "profiles(id)",
+                        "on_delete": "cascade"
+                    },
+                    "delta": {
+                        "type": "integer",
+                        "nullable": false
+                    },
+                    "reason": {
+                        "type": "enum aura_reason",
+                        "nullable": false
+                    },
+                    "reference_id": {
+                        "type": "bigint",
+                        "nullable": true,
+                        "comment": "signal_id or audit_id"
+                    },
+                    "created_at": {
+                        "type": "timestamp with time zone",
+                        "nullable": false,
+                        "default": "now()"
+                    }
+                },
+                "indexes": [
+                    "user_id",
+                    "created_at"
+                ]
+            },
+            "appeals": {
+                "columns": {
+                    "id": {
+                        "type": "bigint",
+                        "primary_key": true,
+                        "generated_by_default_as_identity": true
+                    },
+                    "user_id": {
+                        "type": "uuid",
+                        "nullable": false,
+                        "references": "profiles(id)",
+                        "on_delete": "cascade"
+                    },
+                    "reason": {
+                        "type": "text",
+                        "nullable": false
+                    },
+                    "status": {
+                        "type": "enum (pending, reviewed, rejected, accepted)",
+                        "nullable": false,
+                        "default": "pending"
+                    },
+                    "created_at": {
+                        "type": "timestamp with time zone",
+                        "nullable": false,
+                        "default": "now()"
+                    },
+                    "reviewed_at": {
+                        "type": "timestamp with time zone",
+                        "nullable": true
+                    },
+                    "reviewed_by": {
+                        "type": "uuid",
+                        "nullable": true,
+                        "references": "profiles(id)"
+                    }
+                },
+                "indexes": [
+                    "user_id",
+                    "status"
+                ]
+            }
+        },
+        "materialized_views": {
+            "leaderboard_global": {
+                "refresh": "every 5 minutes",
+                "query": "select row_number() over (order by aura_score desc) as rank, handle, aura_score from profiles where not is_suspended"
+            },
+            "leaderboard_city": {
+                "refresh": "every 5 minutes",
+                "query": "select city, row_number() over (partition by city order by aura_score desc) as rank, handle, aura_score from profiles where city is not null and not is_suspended"
+            }
+        }
+    },
+    "security_and_rules": {
+        "row_level_security": {
+            "profiles": [
+                {
+                    "name": "users_can_read_all_profiles",
+                    "using": "true",
+                    "with_check": null
+                },
+                {
+                    "name": "users_can_update_own_profile",
+                    "using": "auth.uid() = id",
+                    "with_check": "auth.uid() = id"
+                }
+            ],
+            "quests": [
+                {
+                    "name": "anyone_can_read_quests",
+                    "using": "true",
+                    "with_check": null
+                }
+            ],
+            "signals": [
+                {
+                    "name": "users_can_read_all_signals",
+                    "using": "true",
+                    "with_check": null
+                },
+                {
+                    "name": "users_can_insert_own_signals",
+                    "using": "auth.uid() = user_id",
+                    "with_check": "auth.uid() = user_id"
+                }
+            ],
+            "audits": [
+                {
+                    "name": "users_can_insert_own_audits",
+                    "using": "auth.uid() = auditor_id",
+                    "with_check": "auth.uid() = auditor_id"
+                },
+                {
+                    "name": "users_can_read_own_audits",
+                    "using": "auth.uid() = auditor_id",
+                    "with_check": null
+                }
+            ],
+            "vouches": [
+                {
+                    "name": "users_can_read_own_vouches",
+                    "using": "auth.uid() = referrer_id OR auth.uid() = referred_id",
+                    "with_check": null
+                },
+                {
+                    "name": "users_can_insert_vouches",
+                    "using": "auth.uid() = referrer_id",
+                    "with_check": "auth.uid() = referrer_id"
+                }
+            ],
+            "reports": [
+                {
+                    "name": "users_can_insert_own_reports",
+                    "using": "auth.uid() = reporter_id",
+                    "with_check": "auth.uid() = reporter_id"
+                },
+                {
+                    "name": "users_can_read_own_reports",
+                    "using": "auth.uid() = reporter_id",
+                    "with_check": null
+                },
+                {
+                    "name": "moderators_can_read_all_reports",
+                    "using": "auth.role() = 'moderator'",
+                    "with_check": null
+                },
+                {
+                    "name": "moderators_can_update_reports",
+                    "using": "auth.role() = 'moderator'",
+                    "with_check": "auth.role() = 'moderator'"
+                }
+            ],
+            "recap_data": [
+                {
+                    "name": "users_can_read_own_recap",
+                    "using": "auth.uid() = user_id",
+                    "with_check": null
+                }
+            ],
+            "blocks": [
+                {
+                    "name": "users_can_read_own_blocks",
+                    "using": "auth.uid() = blocker_id",
+                    "with_check": null
+                },
+                {
+                    "name": "users_can_insert_blocks",
+                    "using": "auth.uid() = blocker_id",
+                    "with_check": "auth.uid() = blocker_id"
+                },
+                {
+                    "name": "users_can_delete_own_blocks",
+                    "using": "auth.uid() = blocker_id",
+                    "with_check": null
+                }
+            ],
+            "notification_settings": [
+                {
+                    "name": "users_can_read_own_settings",
+                    "using": "auth.uid() = user_id",
+                    "with_check": null
+                },
+                {
+                    "name": "users_can_update_own_settings",
+                    "using": "auth.uid() = user_id",
+                    "with_check": "auth.uid() = user_id"
+                }
+            ],
+            "aura_log": [
+                {
+                    "name": "users_can_read_own_log",
+                    "using": "auth.uid() = user_id",
+                    "with_check": null
+                }
+            ],
+            "appeals": [
+                {
+                    "name": "users_can_read_own_appeals",
+                    "using": "auth.uid() = user_id",
+                    "with_check": null
+                },
+                {
+                    "name": "users_can_insert_appeals",
+                    "using": "auth.uid() = user_id AND EXISTS (select 1 from profiles where id = auth.uid() and is_suspended = true)",
+                    "with_check": "auth.uid() = user_id"
+                },
+                {
+                    "name": "moderators_can_read_all_appeals",
+                    "using": "auth.role() = 'moderator'",
+                    "with_check": null
+                },
+                {
+                    "name": "moderators_can_update_appeals",
+                    "using": "auth.role() = 'moderator'",
+                    "with_check": "auth.role() = 'moderator'"
+                }
+            ]
+        },
+        "abuse_prevention": {
+            "rate_limits": true,
+            "aura_burn": true,
+            "community_reports": true,
+            "anti_gaming": {
+                "collusion_detection": "flag audits from same IP within short time",
+                "suspicious_patterns": [
+                    "multiple accounts from same IP",
+                    "rapid aura gain from audits",
+                    "consistent voting against consensus"
+                ],
+                "actions": [
+                    "temporary audit ban",
+                    "aura penalty",
+                    "account suspension after review"
+                ]
+            },
+            "abuse_reporting_flow": {
+                "submission": "user submits report with reason",
+                "queue": "reports enter pending queue",
+                "moderator_review": "moderators review evidence",
+                "resolution": "if valid, signal removed, user penalized (aura burn, temporary ban, permanent ban)",
+                "appeal": "users can appeal via appeal submission"
+            }
+        }
+    },
+    "system_flows": {
+        "first_time_user_flow": {
+            "steps": [
+                "landing_page",
+                "onboarding (step 1: enter vouch code)",
+                "onboarding (step 2: create handle)",
+                "onboarding (step 3: human protocol oath)",
+                "daily_glitch (active quest)"
+            ],
+            "entry_points": [
+                "direct_link",
+                "social_share"
+            ]
+        },
+        "returning_user_flow": {
+            "steps": [
+                "landing_page (if not authenticated) -> magic link email",
+                "daily_glitch (if authenticated)"
+            ],
+            "entry_points": [
+                "app_launch",
+                "notification"
+            ]
+        },
+        "missed_quest_flow": {
+            "trigger": "user opens daily_glitch after quest expired",
+            "steps": [
+                "daily_glitch (expired state)",
+                "global_feed (or leaderboard)"
+            ],
+            "recovery": "wait for next quest"
+        },
+        "failed_upload_recovery_flow": {
+            "trigger": "upload_failed state in daily_glitch",
+            "steps": [
+                "daily_glitch (upload_failed)",
+                "retry upload (same video)",
+                "if retry fails, discard and record new video"
+            ]
+        },
+        "audit_ban_flow": {
+            "trigger": "user exceeds audit penalty threshold",
+            "steps": [
+                "backend job applies temporary audit ban",
+                "user receives notification",
+                "global_feed becomes inaccessible",
+                "profile shows banner: 'audit privileges suspended for 24 hours'"
+            ],
+            "recovery": "after ban expires, privileges restored"
+        },
+        "account_warning_flow": {
+            "trigger": "user receives report or suspicious activity",
+            "steps": [
+                "moderator sends warning",
+                "user receives in-app notification and email",
+                "profile shows warning banner",
+                "if repeated, suspension follows"
+            ]
+        },
+        "account_suspension_flow": {
+            "trigger": "moderator suspends account",
+            "steps": [
+                "profile.is_suspended = true",
+                "user redirected to account_suspension_page on next app open",
+                "all actions disabled except appeal"
+            ],
+            "recovery": "user submits appeal, moderator reviews"
+        },
+        "appeal_flow": {
+            "trigger": "user clicks appeal on suspension page",
+            "steps": [
+                "appeal_submission_page",
+                "submit appeal",
+                "appeal stored in appeals table",
+                "moderator notified",
+                "moderator reviews and updates status",
+                "if accepted, account reinstated"
+            ]
+        },
+        "logout_flow": {
+            "trigger": "user taps logout in settings",
+            "steps": [
+                "logout_confirmation_dialog",
+                "on confirm, clear session",
+                "redirect to landing_page"
+            ]
+        },
+        "account_deletion_flow": {
+            "trigger": "user taps delete account in account management",
+            "steps": [
+                "delete_account_confirmation_dialog",
+                "on confirm, DELETE /api/profile",
+                "all user data anonymized or deleted",
+                "redirect to landing_page"
+            ]
+        },
+        "report_signal_flow": {
+            "trigger": "user taps report on a signal (e.g., from global_feed)",
+            "steps": [
+                "report_signal_modal",
+                "select reason, optional description",
+                "submit report",
+                "report stored in reports table",
+                "moderator reviews"
+            ]
+        }
+    }
+}

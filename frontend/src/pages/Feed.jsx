@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ThumbsUp, ThumbsDown, MoreVertical } from 'lucide-react';
-import { useToast } from '../../context/ToastContext';
-import { api } from '../../api/client';
+import { useToast } from '../context/ToastContext';
+import { api } from '../api/client';
 
 import ReportSignalModal from '../components/features/ReportSignalModal';
 
