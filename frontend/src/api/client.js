@@ -14,12 +14,20 @@ async function request(endpoint, options = {}) {
     // Merge headers
     options.headers = { ...defaults.headers, ...options.headers };
 
+    // If Content-Type is explicitly undefined (e.g. FormData uploads),
+    // delete it so fetch auto-sets multipart/form-data with boundary
+    Object.keys(options.headers).forEach(key => {
+        if (options.headers[key] === undefined) {
+            delete options.headers[key];
+        }
+    });
+
     const response = await fetch(`${API_BASE}${endpoint}`, options);
 
     if (!response.ok) {
-        if (response.status === 401) {
+        if (response.status === 401 || response.status === 403) {
             localStorage.removeItem('token');
-            if (window.location.pathname !== '/login' && window.location.pathname !== '/') {
+            if (window.location.pathname !== '/login' && window.location.pathname !== '/' && window.location.pathname !== '/onboarding') {
                 window.location.href = '/login';
             }
         }
