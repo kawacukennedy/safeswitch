@@ -62,11 +62,14 @@ export const Camera = forwardRef(({
         if (!streamRef.current) return;
 
         chunksRef.current = [];
-        const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
-            ? 'video/webm;codecs=vp9'
-            : 'video/webm';
+        chunksRef.current = [];
+        const mimeType = [
+            'video/webm;codecs=vp9',
+            'video/webm',
+            'video/mp4'
+        ].find(type => MediaRecorder.isTypeSupported(type)) || '';
 
-        const recorder = new MediaRecorder(streamRef.current, { mimeType });
+        const recorder = new MediaRecorder(streamRef.current, mimeType ? { mimeType } : undefined);
 
         recorder.ondataavailable = (e) => {
             if (e.data.size > 0) chunksRef.current.push(e.data);
