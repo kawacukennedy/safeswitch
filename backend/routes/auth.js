@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
+const { sendMagicLink } = require('../services/email');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_do_not_use_in_prod';
 const FRONTEND_URL = process.env.FRONTEND_URL || 'https://glitchgen.vercel.app';
@@ -21,14 +22,10 @@ module.exports = (pool) => {
 
             const magicLink = `${FRONTEND_URL}/verify?token=${token}`;
 
-            // In production, send this via email (e.g. Resend, SendGrid)
-            // For now, LOG IT so the user can login
-            console.log('==================================================');
-            console.log(`MAGIC LINK FOR ${email}:`);
-            console.log(magicLink);
-            console.log('==================================================');
+            // Send via Resend
+            await sendMagicLink(email, magicLink);
 
-            res.json({ message: 'Magic link sent (check console for now)' });
+            res.json({ message: 'Magic link sent' });
         } catch (err) {
             console.error('Magic link error:', err);
             res.status(500).json({ error: 'Failed to generate link' });

@@ -7,6 +7,8 @@ const rateLimit = require('./utils/rateLimiter');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.set('trust proxy', 1); // Trust first proxy (Render)
+
 // Middleware
 app.use(cors({
     origin: [
