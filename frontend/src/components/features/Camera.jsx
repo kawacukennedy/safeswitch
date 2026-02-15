@@ -27,21 +27,35 @@ export const Camera = forwardRef(({
 
     const startCamera = async () => {
         try {
+            // First attempt: Ideal mobile constraints
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 1280 } },
                 audio: true
             });
-
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream;
-                streamRef.current = stream;
-                setHasPermission(true);
-                if (onStreamReady) onStreamReady(stream);
-            }
+            handleStream(stream);
         } catch (err) {
-            console.error("Camera error:", err);
-            setHasPermission(false);
-            if (onError) onError(err);
+            console.warn("Mobile constraints failed, retrying with generic...", err);
+            try {
+                // Second attempt: Generic fallback (Laptops/Desktops)
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true
+                });
+                handleStream(stream);
+            } catch (fallbackErr) {
+                console.error("Camera error:", fallbackErr);
+                setHasPermission(false);
+                if (onError) onError(fallbackErr);
+            }
+        }
+    };
+
+    const handleStream = (stream) => {
+        if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+            streamRef.current = stream;
+            setHasPermission(true);
+            if (onStreamReady) onStreamReady(stream);
         }
     };
 
