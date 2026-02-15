@@ -52,13 +52,18 @@ export const Camera = forwardRef(({
     };
 
     const handleStream = (stream) => {
+        console.log("Stream acquired:", stream.id);
+        streamRef.current = stream;
+        setHasPermission(true); // Stop loading regardless
+
         if (videoRef.current) {
             videoRef.current.srcObject = stream;
             videoRef.current.play().catch(e => console.warn("Auto-play failed:", e));
-            streamRef.current = stream;
-            setHasPermission(true);
-            if (onStreamReady) onStreamReady(stream);
+        } else {
+            console.error("Camera error: videoRef is null during handleStream");
         }
+
+        if (onStreamReady) onStreamReady(stream);
     };
 
     const stopCamera = () => {
