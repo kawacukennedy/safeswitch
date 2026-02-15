@@ -27,6 +27,11 @@ export const Camera = forwardRef(({
     }));
 
     const startCamera = async () => {
+        if (streamRef.current) {
+            console.log("Stream already active, skipping startCamera");
+            return;
+        }
+
         try {
             // First attempt: Ideal mobile constraints
             const stream = await navigator.mediaDevices.getUserMedia({
@@ -136,6 +141,7 @@ export const Camera = forwardRef(({
     const [errorMsg, setErrorMsg] = useState(null);
 
     useEffect(() => {
+        console.log("Camera Component Mounted");
         let timeout;
         if (autoStart) {
             startCamera();
@@ -156,7 +162,7 @@ export const Camera = forwardRef(({
     }, []);
 
     return (
-        <div className={className} style={{ position: 'relative', background: 'black', borderRadius: '12px', overflow: 'hidden', aspectRatio: '9/16' }}>
+        <div className={className} style={{ position: 'relative', background: 'black', borderRadius: '12px', overflow: 'hidden', height: '100%', width: '100%' }}>
             <video
                 ref={videoRef}
                 autoPlay
