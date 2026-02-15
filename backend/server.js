@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { Pool } = require('pg');
 const rateLimit = require('./utils/rateLimiter');
 const dns = require('dns').promises;
@@ -21,6 +22,9 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
+
+// Serve local uploads when Supabase is unavailable
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Load Routes (factories)
 const authRoutes = require('./routes/auth');

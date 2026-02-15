@@ -34,16 +34,24 @@ module.exports = (pool, realtime) => {
 
     // POST /api/signals (upload)
     router.post('/', upload.single('video'), async (req, res) => {
-        const { quest_id } = req.body;
+        let { quest_id } = req.body;
         const user_id = req.user.id;
         const file = req.file;
 
-        if (!file || !quest_id) {
-            return res.status(400).json({ error: 'Missing video file or quest_id' });
+        if (!file) {
+            return res.status(400).json({ error: 'Missing video file' });
         }
 
         try {
-            // Upload to Supabase
+            // If no quest_id, use the most recent quest
+            if (!quest_id) {
+                const latestQuest = await pool.query('SELECT id FROM quests ORDER BY created_at DESC LIMIT 1');
+                if (latestQuest.rows.length > 0) {
+                    quest_id = latestQuest.rows[0].id;
+                }
+            }
+
+            // Upload video (Supabase or local fallback)
             const video_url = await StorageService.uploadFile(file.buffer, file.mimetype);
 
             const result = await pool.query(
@@ -51,13 +59,18 @@ module.exports = (pool, realtime) => {
                 [user_id, quest_id, video_url]
             );
 
-            // Calculate Aura Reward
-            const quest = await pool.query('SELECT * FROM quests WHERE id = $1', [quest_id]);
-            const reward = AuraService.calculateSubmissionReward(
-                new Date(),
-                quest.rows[0].active_at,
-                quest.rows[0].expires_at
-            );
+            // Calculate Aura Reward (with fallback if quest not found)
+            let reward = 10; // default reward
+            if (quest_id) {
+                const quest = await pool.query('SELECT * FROM quests WHERE id = $1', [quest_id]);
+                if (quest.rows.length > 0) {
+                    reward = AuraService.calculateSubmissionReward(
+                        new Date(),
+                        quest.rows[0].active_at,
+                        quest.rows[0].expires_at
+                    );
+                }
+            }
 
             // Award aura
             await pool.query(
@@ -89,7 +102,7 @@ module.exports = (pool, realtime) => {
 
             res.status(201).json({ signal_id: result.rows[0].id, video_url, status: 'processing' });
         } catch (err) {
-            console.error(err);
+            console.error('Signal upload error:', err);
             res.status(500).json({ error: 'Upload failed: ' + err.message });
         }
     });
