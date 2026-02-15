@@ -94,39 +94,49 @@ const Onboarding = () => {
     };
 
     return (
-        <div className="onboarding-page min-h-screen">
-            <Header showBack={step > 0} />
+        <div className="onboarding-page min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-black text-white">
+            {/* Background effects */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.03)_0%,transparent_50%)] animate-spin-slow" />
+            </div>
 
-            <main className="container" style={{ marginTop: '40px' }}>
+            <Header showBack={step > 0} className="z-20 w-full" />
+
+            <main className="container flex flex-col items-center justify-center w-full max-w-md px-6 relative z-10 flex-1">
                 <AnimatePresence mode="wait">
 
                     {step === STEPS.VOUCH && (
                         <motion.div
                             key="step-vouch"
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
+                            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                            transition={{ duration: 0.4 }}
+                            className="w-full"
                         >
-                            <h2 style={{ marginBottom: '8px' }}>enter vouch code</h2>
-                            <p style={{ color: 'var(--color-text-secondary)', marginBottom: '32px' }}>
-                                glitch is invite-only. get a code from a verified human.
+                            <h2 className="text-3xl font-black mb-2 tracking-tight">ENTER VOUCH CODE</h2>
+                            <p className="text-neutral-400 mb-8 text-sm">
+                                Glitch is invite-only. Retrieve a code from a verified human or wait for the drop.
                             </p>
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                            <div className="flex flex-col gap-6">
                                 <Input
-                                    label="vouch code"
-                                    placeholder="e.g. human-8821"
+                                    label="VOUCH CODE"
+                                    placeholder="human-8821"
                                     value={vouchCode}
                                     onChange={(e) => setVouchCode(e.target.value)}
                                     error={error}
                                     autoFocus
+                                    className="bg-zinc-900/50 border-white/10 focus:border-neon-green/50 focus:ring-neon-green/20"
                                 />
                                 <Button
                                     isLoading={loading}
                                     onClick={handleVouchSubmit}
                                     disabled={!vouchCode}
+                                    variant="primary"
+                                    className="w-full h-12 text-black font-bold tracking-wide"
                                 >
-                                    verify
+                                    VERIFY IDENTITY
                                 </Button>
                             </div>
                         </motion.div>
@@ -135,42 +145,48 @@ const Onboarding = () => {
                     {step === STEPS.HANDLE && (
                         <motion.div
                             key="step-handle"
-                            initial={{ opacity: 0, x: 20 }}
+                            initial={{ opacity: 0, x: 50 }}
                             animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
+                            exit={{ opacity: 0, x: -50 }}
+                            transition={{ duration: 0.4 }}
+                            className="w-full"
                         >
-                            <h2 style={{ marginBottom: '8px' }}>choose your handle</h2>
-                            <p style={{ color: 'var(--color-text-secondary)', marginBottom: '32px' }}>
-                                this is your permanent identity on the network.
+                            <h2 className="text-3xl font-black mb-2 tracking-tight">CLAIM YOUR HANDLE</h2>
+                            <p className="text-neutral-400 mb-8 text-sm">
+                                This is your permanent signature on the network. Choose wisely.
                             </p>
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                                <div style={{ position: 'relative' }}>
+                            <div className="flex flex-col gap-6">
+                                <div className="relative">
                                     <Input
-                                        label="handle"
+                                        label="HANDLE"
                                         placeholder="lowercase_only"
                                         value={handle}
                                         onChange={(e) => handleHandleCheck(e.target.value)}
                                         autoFocus
+                                        className="bg-zinc-900/50 border-white/10"
                                     />
                                     {handle.length >= 3 && isHandleAvailable !== null && (
-                                        <span style={{
-                                            position: 'absolute',
-                                            right: '16px',
-                                            top: '42px',
-                                            color: isHandleAvailable ? 'var(--color-aura-positive)' : 'var(--color-aura-negative)',
-                                            fontSize: '14px'
-                                        }}>
-                                            {isHandleAvailable ? '✓ available' : '✗ taken'}
-                                        </span>
+                                        <motion.span
+                                            initial={{ opacity: 0, x: 10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            className={clsx(
+                                                "absolute right-4 top-[44px] text-xs font-bold tracking-wider",
+                                                isHandleAvailable ? "text-neon-green text-glow-positive" : "text-neon-pink text-glow-negative"
+                                            )}
+                                        >
+                                            {isHandleAvailable ? 'AVAILABLE' : 'TAKEN'}
+                                        </motion.span>
                                     )}
                                 </div>
 
                                 <Button
                                     onClick={handleHandleSubmit}
                                     disabled={!isHandleAvailable}
+                                    variant="primary"
+                                    className="w-full h-12 text-black font-bold tracking-wide"
                                 >
-                                    continue
+                                    LOCK IT IN
                                 </Button>
                             </div>
                         </motion.div>
@@ -179,18 +195,19 @@ const Onboarding = () => {
                     {step === STEPS.OATH && (
                         <motion.div
                             key="step-oath"
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            style={{ textAlign: 'center', marginTop: '40px' }}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }}
+                            className="text-center w-full"
                         >
-                            <h2 style={{ marginBottom: '32px' }}>the oath</h2>
+                            <h2 className="text-sm font-bold text-neutral-500 tracking-[0.3em] uppercase mb-8">Final Protocol</h2>
 
-                            <Card style={{ marginBottom: '48px', padding: '32px' }}>
-                                <p style={{ fontSize: '24px', lineHeight: '1.4', fontStyle: 'italic' }}>
-                                    "i am human.<br />
-                                    i will not use ai.<br />
-                                    i will glitch with chaos."
+                            <Card className="glass-card mb-12 p-10 border-white/5 relative overflow-hidden group">
+                                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                                <p className="text-3xl md:text-4xl font-black leading-tight italic text-transparent bg-clip-text bg-gradient-to-b from-white to-white/50">
+                                    "I am human.<br />
+                                    I will not use AI.<br />
+                                    I will glitch with chaos."
                                 </p>
                             </Card>
 
@@ -200,24 +217,25 @@ const Onboarding = () => {
                                 onTouchStart={startHold}
                                 onTouchEnd={stopHold}
                                 onMouseLeave={stopHold}
-                                style={{ position: 'relative', display: 'inline-block', width: '100%' }}
+                                className="relative inline-block w-full max-w-xs select-none touch-none"
                             >
-                                <div style={{
-                                    position: 'absolute',
-                                    bottom: 0,
-                                    left: 0,
-                                    width: `${holdProgress}%`,
-                                    height: '100%',
-                                    background: 'rgba(255,255,255,0.2)',
-                                    borderRadius: 'var(--radius-full)',
-                                    transition: 'width 0.05s linear'
-                                }} />
+                                {/* Progress Bar Background */}
+                                <div className="absolute inset-0 bg-zinc-800 rounded-full overflow-hidden">
+                                    <motion.div
+                                        className="h-full bg-gradient-brand shadow-[0_0_30px_rgba(124,255,178,0.4)]"
+                                        style={{ width: `${holdProgress}%` }}
+                                        transition={{ duration: 0 }}
+                                    />
+                                </div>
 
                                 <Button
-                                    className={clsx({ 'animate-pulse': holdProgress > 0 && holdProgress < 100 })}
-                                    style={{ position: 'relative', zIndex: 1 }}
+                                    variant="ghost"
+                                    className={clsx(
+                                        "relative z-10 w-full h-14 font-bold tracking-widest transition-all",
+                                        holdProgress > 0 ? "text-black" : "text-white"
+                                    )}
                                 >
-                                    {holdProgress >= 100 ? 'welcome, human.' : 'hold to swear'}
+                                    {holdProgress >= 100 ? 'ACCESS GRANTED' : 'HOLD TO SWEAR'}
                                 </Button>
                             </div>
                         </motion.div>

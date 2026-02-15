@@ -159,13 +159,18 @@ const Feed = () => {
                             <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/80" />
 
                             {/* Controls & Info */}
-                            <div className="absolute bottom-0 left-0 right-0 p-6 pb-24">
-                                <div className="mb-4">
-                                    <h3 className="text-white font-bold text-lg drop-shadow-md">
-                                        @{currentSignal.handle || 'unknown'}
-                                    </h3>
-                                    <p className="text-white/80 text-sm drop-shadow-md">
-                                        Aura: {currentSignal.aura_score || '?'}
+                            <div className="absolute bottom-0 left-0 right-0 p-6 pb-24 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
+                                <div className="mb-6">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <h3 className="text-white font-black text-2xl tracking-tight drop-shadow-md">
+                                            @{currentSignal.handle || 'unknown'}
+                                        </h3>
+                                        <span className="px-2 py-0.5 rounded-full bg-white/10 text-[10px] font-bold text-white/80 border border-white/20">
+                                            PRO
+                                        </span>
+                                    </div>
+                                    <p className="text-white/60 text-sm font-medium tracking-wide">
+                                        Active Aura: <span className="text-neon-green">{currentSignal.aura_score || '0'}</span>
                                     </p>
                                 </div>
 
@@ -173,18 +178,22 @@ const Feed = () => {
                                 <div className="flex gap-4">
                                     <button
                                         onClick={() => handleVote('slop')}
-                                        className="flex-1 py-4 rounded-xl bg-red-500/20 hover:bg-red-500/40 border border-red-500/50 backdrop-blur-md flex flex-col items-center gap-1 transition-colors"
+                                        className="flex-1 h-14 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center gap-3 transition-all active:scale-95 active:bg-red-500/20 hover:border-red-500/50 group"
                                     >
-                                        <ThumbsDown className="text-red-500" size={24} />
-                                        <span className="text-xs font-bold text-red-400">SLOP</span>
+                                        <div className="p-2 rounded-full bg-white/5 group-hover:bg-red-500/20 transition-colors">
+                                            <ThumbsDown className="text-white group-hover:text-red-500 transition-colors" size={20} />
+                                        </div>
+                                        <span className="text-xs font-black tracking-widest text-white group-hover:text-red-500">SLOP</span>
                                     </button>
 
                                     <button
                                         onClick={() => handleVote('human')}
-                                        className="flex-1 py-4 rounded-xl bg-neon-green/20 hover:bg-neon-green/40 border border-neon-green/50 backdrop-blur-md flex flex-col items-center gap-1 transition-colors"
+                                        className="flex-1 h-14 rounded-2xl bg-white text-black border border-white flex items-center justify-center gap-3 transition-all active:scale-95 hover:bg-neon-green hover:border-neon-green group shadow-[0_0_20px_rgba(255,255,255,0.2)]"
                                     >
-                                        <ThumbsUp className="text-neon-green" size={24} />
-                                        <span className="text-xs font-bold text-neon-green">HUMAN</span>
+                                        <div className="p-2 rounded-full bg-black/10">
+                                            <ThumbsUp className="text-black" size={20} />
+                                        </div>
+                                        <span className="text-xs font-black tracking-widest text-black">HUMAN</span>
                                     </button>
                                 </div>
                             </div>

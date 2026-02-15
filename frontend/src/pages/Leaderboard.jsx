@@ -25,66 +25,84 @@ const Leaderboard = () => {
     }, [view]);
 
     return (
-        <div className="leaderboard-page container" style={{ paddingTop: '20px', paddingBottom: '80px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
-                <div style={{ display: 'flex', background: 'rgba(255,255,255,0.1)', padding: '4px', borderRadius: 'var(--radius-full)' }}>
+        <div className="leaderboard-page container min-h-screen pt-20 pb-24 px-4 bg-black">
+            <div className="flex flex-col items-center justify-center mb-8 relative">
+                <div className="absolute inset-0 bg-gradient-to-b from-neon-purple/20 to-transparent blur-3xl pointer-events-none" />
+
+                <h1 className="text-4xl font-black text-white italic tracking-tighter mb-6 relative z-10 text-center">
+                    TOP <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-purple to-neon-blue">GLITCHERS</span>
+                </h1>
+
+                <div className="flex background-blur-md bg-white/5 p-1 rounded-full border border-white/10 relative z-10">
                     <button
                         onClick={() => setView('global')}
-                        style={{ padding: '8px 16px', borderRadius: '99px', background: view === 'global' ? 'white' : 'transparent', color: view === 'global' ? 'black' : 'rgba(255,255,255,0.7)', transition: 'all 0.2s' }}
+                        className={clsx(
+                            "px-6 py-2 rounded-full text-xs font-bold tracking-widest transition-all",
+                            view === 'global' ? "bg-white text-black shadow-lg" : "text-white/60 hover:text-white"
+                        )}
                     >
-                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                            <Globe size={14} /> global
-                        </div>
+                        GLOBAL
                     </button>
                     <button
                         onClick={() => setView('city')}
-                        style={{ padding: '8px 16px', borderRadius: '99px', background: view === 'city' ? 'white' : 'transparent', color: view === 'city' ? 'black' : 'rgba(255,255,255,0.7)', transition: 'all 0.2s' }}
+                        className={clsx(
+                            "px-6 py-2 rounded-full text-xs font-bold tracking-widest transition-all",
+                            view === 'city' ? "bg-white text-black shadow-lg" : "text-white/60 hover:text-white"
+                        )}
                     >
-                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                            <MapPin size={14} /> city
-                        </div>
+                        LOCAL
                     </button>
                 </div>
             </div>
 
             {loading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
-                    <Loader2 size={24} style={{ animation: 'spin 1s linear infinite' }} />
+                <div className="flex justify-center padding-20">
+                    <Loader2 size={32} className="text-neon-purple animate-spin" />
                 </div>
             ) : entries.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-secondary)' }}>
-                    <Trophy size={32} style={{ marginBottom: '12px', opacity: 0.5 }} />
-                    <p>no data yet. be the first!</p>
+                <div className="text-center py-20 text-white/40 flex flex-col items-center">
+                    <Trophy size={48} className="mb-4 opacity-20" />
+                    <p className="font-mono text-sm">NO DATA DETECTED</p>
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div className="flex flex-col gap-3 max-w-md mx-auto relative z-10">
                     {entries.map((user, index) => (
                         <motion.div
                             key={user.handle || index}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.05 }}
                         >
-                            <Card className="glass-panel" style={{ display: 'flex', alignItems: 'center', padding: '16px' }}>
-                                <span style={{
-                                    width: '32px',
-                                    fontSize: '18px',
-                                    fontWeight: '600',
-                                    color: index < 3 ? 'var(--color-aura-positive)' : 'var(--color-text-secondary)'
-                                }}>
+                            <Card className={clsx(
+                                "flex items-center p-4 border transition-all hover:scale-[1.02]",
+                                index === 0 ? "bg-gradient-to-r from-yellow-500/20 to-transparent border-yellow-500/50 shadow-[0_0_20px_rgba(234,179,8,0.2)]" :
+                                    index === 1 ? "bg-gradient-to-r from-gray-400/20 to-transparent border-gray-400/50" :
+                                        index === 2 ? "bg-gradient-to-r from-orange-700/20 to-transparent border-orange-700/50" :
+                                            "glass-panel border-white/5 bg-white/5"
+                            )}>
+                                <div className={clsx(
+                                    "w-8 text-xl font-black italic mr-4 text-center",
+                                    index === 0 ? "text-yellow-500" :
+                                        index === 1 ? "text-gray-400" :
+                                            index === 2 ? "text-orange-500" :
+                                                "text-white/30"
+                                )}>
                                     #{user.rank || index + 1}
-                                </span>
-                                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                                    <span style={{ fontSize: '16px', fontWeight: '500' }}>@{user.handle}</span>
                                 </div>
-                                <span style={{
-                                    fontFamily: 'monospace',
-                                    fontSize: '16px',
-                                    color: 'var(--color-aura-positive)',
-                                    textShadow: '0 0 10px rgba(124, 255, 178, 0.4)'
-                                }}>
-                                    {(user.aura_score || user.aura || 0).toLocaleString()}
-                                </span>
+
+                                <div className="flex-1 min-w-0">
+                                    <div className="text-white font-bold text-lg truncate">@{user.handle}</div>
+                                    <div className="text-xs text-white/40 uppercase tracking-wider font-mono">
+                                        Level {Math.floor((user.aura_score || 0) / 1000) + 1}
+                                    </div>
+                                </div>
+
+                                <div className="text-right">
+                                    <div className="font-mono text-lg font-bold text-neon-purple text-glow-purple">
+                                        {(user.aura_score || user.aura || 0).toLocaleString()}
+                                    </div>
+                                    <div className="text-[10px] text-neon-purple/60 tracking-widest">AURA</div>
+                                </div>
                             </Card>
                         </motion.div>
                     ))}
