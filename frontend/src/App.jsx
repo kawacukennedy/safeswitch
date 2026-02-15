@@ -9,7 +9,6 @@ import Feed from './pages/Feed';
 import Leaderboard from './pages/Leaderboard';
 import Profile from './pages/Profile';
 import WeeklyRecap from './pages/WeeklyRecap';
-import { ToastProvider } from './context/ToastContext';
 import Settings from './pages/settings/Settings';
 import AccountManagement from './pages/settings/AccountManagement';
 import BlockedUsers from './pages/settings/BlockedUsers';
@@ -82,7 +81,6 @@ function App() {
           <Route path="/history/reports" element={<ReportStatus />} />
 
           {/* Standalone Pages */}
-          <Route path="/recap" element={<WeeklyRecap />} />
           <Route path="/suspended" element={<Suspension />} />
         </Route>
 
