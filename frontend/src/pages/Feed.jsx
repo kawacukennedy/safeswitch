@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ThumbsUp, ThumbsDown, MoreVertical } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, MoreVertical, Activity } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { api } from '../api/client';
 
