@@ -15,11 +15,17 @@ module.exports = (pool) => {
                 params = [city];
             }
 
-            // Note: leaderboard_global is a Materialized View in schema.sql
-            // If it's empty in dev, we might fallback to raw query
-            const result = await pool.query(query, params);
+            let result;
+            try {
+                // Note: leaderboard_global is a Materialized View in schema.sql
+                // If it's empty in dev, we might fallback to raw query
+                result = await pool.query(query, params);
+            } catch (err) {
+                console.warn('Leaderboard MV query failed, falling back to raw query:', err.message);
+                result = { rows: [] }; // Trigger fallback below
+            }
 
-            if (result.rows.length === 0) {
+            if (!result || result.rows.length === 0) {
                 // Fallback raw query
                 const rawQuery = 'SELECT handle, aura_score as aura, RANK() OVER (ORDER BY aura_score DESC) as rank FROM profiles LIMIT 10';
                 const rawResult = await pool.query(rawQuery);
