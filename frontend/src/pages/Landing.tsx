@@ -44,13 +44,13 @@ export default function Landing() {
           </div>
 
           {/* Stats Bar */}
-          <div className="mt-16 pt-10 border-t border-neutral-200 flex justify-center gap-16">
+          <div className="mt-16 pt-10 border-t border-neutral-200 flex justify-center gap-12">
             {[
               { value: '$3.4M', label: 'stolen in Rwanda, March 2026' },
               { value: '43%', label: 'of fraud via SIM swap' },
               { value: '<2s', label: 'SafeSwitch response time' },
             ].map((stat, i) => (
-              <div key={i} className={i > 0 ? 'pl-16 border-l border-neutral-200' : ''}>
+              <div key={i} className={i > 0 ? 'pl-6 border-l border-neutral-200' : ''}>
                 <div className="font-instrument text-display-lg text-neutral-900">{stat.value}</div>
                 <div className="text-label-lg text-neutral-500 uppercase tracking-wider mt-1">{stat.label}</div>
               </div>

@@ -35,6 +35,7 @@ export interface TransactionListItem {
   risk_score: number
   decision: string
   total_response_ms: number
+  signals: ApiSignal[]
 }
 
 export interface DashboardStats {
@@ -52,7 +53,10 @@ export async function analyzeTransaction(data: TransactionRequest): Promise<Tran
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
-  if (!res.ok) throw new Error('Failed to analyze transaction')
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Failed to analyze transaction: ${res.status} ${text}`)
+  }
   return res.json()
 }
 

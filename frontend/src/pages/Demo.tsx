@@ -7,7 +7,7 @@ import Card from '../components/ui/Card'
 import { useTypewriter } from '../hooks/useTypewriter'
 import { analyzeTransaction, TransactionResponse } from '../lib/api'
 
-type Scenario = 'clean' | 'device_swap' | 'sim_swap'
+type Scenario = 'a' | 'b' | 'c'
 
 interface ScenarioConfig {
   phone_number: string
@@ -16,22 +16,89 @@ interface ScenarioConfig {
 }
 
 const scenarios: Record<Scenario, ScenarioConfig> = {
-  clean: { phone_number: '+99999991000', amount_rwf: 50000, recipient_wallet: 'wallet_rw_001' },
-  device_swap: { phone_number: '+99999991234', amount_rwf: 180000, recipient_wallet: 'wallet_rw_002' },
-  'sim_swap': { phone_number: '+99999991500', amount_rwf: 320000, recipient_wallet: 'wallet_rw_003' },
+  a: { phone_number: '+99999991000', amount_rwf: 50000, recipient_wallet: 'wallet_rw_001' },
+  b: { phone_number: '+99999991234', amount_rwf: 180000, recipient_wallet: 'wallet_rw_002' },
+  c: { phone_number: '+99999991500', amount_rwf: 320000, recipient_wallet: 'wallet_rw_003' },
 }
 
 const apiNames = ['sim_swap', 'device_swap', 'number_verification', 'device_status']
 
+const apiLabels: Record<string, string> = {
+  sim_swap: 'SIM Swap API',
+  device_swap: 'Device Swap API',
+  number_verification: 'Number Verification',
+  device_status: 'Device Status',
+}
+
+const decisionBgMap: Record<string, string> = {
+  block: 'bg-status-block-bg',
+  challenge: 'bg-status-warn-bg',
+  approve: 'bg-status-safe-bg',
+}
+
+const decisionBorderMap: Record<string, string> = {
+  block: 'border-status-block',
+  challenge: 'border-status-warn',
+  approve: 'border-status-safe',
+}
+
+const decisionIconMap: Record<string, string> = {
+  block: '\u2715',
+  challenge: '\u26A0',
+  approve: '\u2713',
+}
+
+const decisionLabelMap: Record<string, string> = {
+  block: 'TRANSACTION BLOCKED',
+  challenge: 'USSD CHALLENGE SENT',
+  approve: 'TRANSACTION APPROVED',
+}
+
+const riskBorderMap: Record<string, string> = {
+  high: 'border-status-block',
+  medium: 'border-status-warn',
+  low: 'border-status-safe',
+}
+
+const riskBadgeMap: Record<string, { status: 'block' | 'warn' | 'safe'; label: string }> = {
+  high: { status: 'block', label: 'HIGH RISK' },
+  medium: { status: 'warn', label: 'MEDIUM' },
+  low: { status: 'safe', label: 'LOW RISK' },
+}
+
+const barColorMap: Record<string, string> = {
+  high: 'bg-status-block',
+  medium: 'bg-status-warn',
+  low: 'bg-status-safe',
+}
+
+function getRiskLevel(contribution: number): string {
+  if (contribution > 20) return 'high'
+  if (contribution > 0) return 'medium'
+  return 'low'
+}
+
+function getSignalLevel(score: number): string {
+  if (score >= 70) return 'high'
+  if (score >= 40) return 'medium'
+  return 'low'
+}
+
+function maskPhone(phone: string): string {
+  if (phone.length < 6) return phone
+  return phone.slice(0, 4) + ' *** *** ' + phone.slice(-3)
+}
+
 export default function Demo() {
-  const [activeScenario, setActiveScenario] = useState<Scenario>('clean')
-  const [phone, setPhone] = useState(scenarios.clean.phone_number)
-  const [amount, setAmount] = useState(scenarios.clean.amount_rwf)
-  const [recipient, setRecipient] = useState(scenarios.clean.recipient_wallet)
-  const [window, setWindow] = useState('24')
+  const [activeScenario, setActiveScenario] = useState<Scenario>('a')
+  const [phone, setPhone] = useState(scenarios.a.phone_number)
+  const [amount, setAmount] = useState(scenarios.a.amount_rwf)
+  const [recipient, setRecipient] = useState(scenarios.a.recipient_wallet)
+  const [windowHours, setWindowHours] = useState('24')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<TransactionResponse | null>(null)
-  const [completedApis, setCompletedApis] = useState<string[]>([])
+  const [progressPhase, setProgressPhase] = useState(0)
+  const [error, setError] = useState<string | null>(null)
 
   const handleScenarioChange = (scenario: Scenario) => {
     setActiveScenario(scenario)
@@ -44,210 +111,329 @@ export default function Demo() {
   const handleAnalyze = async () => {
     setLoading(true)
     setResult(null)
-    setCompletedApis([])
+    setProgressPhase(0)
+    setError(null)
 
     try {
       const data = await analyzeTransaction({
         phone_number: phone,
         amount_rwf: amount,
         recipient_wallet: recipient,
-        sim_swap_window_hours: parseInt(window),
+        sim_swap_window_hours: parseInt(windowHours),
       })
 
       setResult(data)
 
-      for (const api of apiNames) {
-        await new Promise(r => setTimeout(r, 400))
-        setCompletedApis(prev => [...prev, api])
+      for (let i = 0; i < apiNames.length; i++) {
+        await new Promise(r => setTimeout(r, 350))
+        setProgressPhase(i + 1)
       }
     } catch (e) {
-      console.error(e)
+      const message = e instanceof Error ? e.message : 'Request failed'
+      if (message.includes('Failed to fetch') || message.includes('NetworkError')) {
+        setError('Cannot reach the backend. Make sure the server is running on port 8000.')
+      } else if (message.includes('422')) {
+        setError('Invalid request. Check the phone number and amount.')
+      } else if (message.includes('500')) {
+        setError('The backend encountered an error. Check the server logs.')
+      } else {
+        setError(message)
+      }
     } finally {
       setLoading(false)
     }
   }
 
   const displayedReasoning = useTypewriter(result?.reasoning_text ?? '', 14)
+  const isTyping = displayedReasoning.length < (result?.reasoning_text?.length ?? 0)
 
-  const getStatusColor = (decision: string) => {
-    if (decision === 'block') return 'status-block'
-    if (decision === 'challenge') return 'status-warn'
-    return 'status-safe'
-  }
+  const decision = result?.decision ?? 'approve'
+  const decisionLevel = getSignalLevel(result?.risk_score ?? 0)
 
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
       <div className="flex h-[calc(100vh-60px)]">
         {/* Left Panel */}
-        <div className="w-[40%] bg-neutral-50 border-r border-neutral-200 p-10 overflow-y-auto">
-          <p className="text-label-lg text-neutral-500 mb-2">SIMULATE TRANSACTION</p>
-          <p className="text-body-sm text-neutral-500 mb-8">Run a real check against Nokia Network as Code</p>
+        <div className="w-[40%] min-w-[380px] bg-neutral-50 border-r border-neutral-200 p-10 overflow-y-auto flex flex-col">
+          <div className="flex-shrink-0">
+            <p className="text-label-lg text-neutral-500 mb-2">TEST TRANSACTION</p>
+            <p className="text-body-sm text-neutral-500 mb-8">Check a phone number against Nokia Network as Code</p>
 
-          {/* Scenario Selector */}
-          <div className="flex gap-2 mb-8">
-            {(['clean', 'device_swap', 'sim_swap'] as const).map((scenario) => (
-              <button
-                key={scenario}
-                onClick={() => handleScenarioChange(scenario)}
-                className={`px-4 py-2 rounded-full text-body-sm font-medium transition-colors ${
-                  activeScenario === scenario
-                    ? 'bg-white border border-neutral-200 text-neutral-900'
-                    : 'text-neutral-500 hover:text-neutral-700'
-                }`}
-              >
-                {scenario === 'clean' ? 'Clean transaction' : scenario === 'device_swap' ? 'Recent device swap' : 'SIM swap + anomaly'}
-              </button>
-            ))}
+            {/* Preset Numbers */}
+            <div className="flex gap-2 mb-8 flex-wrap">
+              {(['a', 'b', 'c'] as const).map((scenario) => (
+                <button
+                  key={scenario}
+                  onClick={() => handleScenarioChange(scenario)}
+                  className={`px-4 py-2 rounded-full text-body-sm font-medium transition-colors ${
+                    activeScenario === scenario
+                      ? 'bg-white border border-neutral-200 text-neutral-900'
+                      : 'text-neutral-500 hover:text-neutral-700'
+                  }`}
+                >
+                  {scenarios[scenario].phone_number}
+                </button>
+              ))}
+            </div>
+
+            {/* Form */}
+            <div className="space-y-6">
+              <div>
+                <label className="text-label-sm text-neutral-500 block mb-2">PHONE NUMBER</label>
+                <input
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl font-mono text-mono bg-white focus:outline-none focus:border-neutral-400 transition-colors"
+                />
+              </div>
+              <div>
+                <label className="text-label-sm text-neutral-500 block mb-2">AMOUNT (RWF)</label>
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(parseFloat(e.target.value))}
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl font-mono text-mono bg-white focus:outline-none focus:border-neutral-400 transition-colors"
+                />
+              </div>
+              <div>
+                <label className="text-label-sm text-neutral-500 block mb-2">RECIPIENT WALLET</label>
+                <input
+                  value={recipient}
+                  onChange={(e) => setRecipient(e.target.value)}
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl bg-white focus:outline-none focus:border-neutral-400 transition-colors"
+                />
+              </div>
+              <div>
+                <label className="text-label-sm text-neutral-500 block mb-2">SIM SWAP WINDOW</label>
+                <select
+                  value={windowHours}
+                  onChange={(e) => setWindowHours(e.target.value)}
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl bg-white focus:outline-none focus:border-neutral-400 transition-colors"
+                >
+                  <option value="24">24 hours</option>
+                  <option value="48">48 hours</option>
+                  <option value="72">72 hours</option>
+                </select>
+              </div>
+            </div>
           </div>
 
-          {/* Form */}
-          <div className="space-y-6">
-            <div>
-              <label className="text-label-sm text-neutral-500 block mb-2">PHONE NUMBER</label>
-              <input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full px-4 py-3 border border-neutral-200 rounded-xl font-mono text-mono focus:outline-none focus:border-neutral-400"
-              />
+          {/* Submit Button or Progress Bar */}
+          {loading ? (
+            <div className="mt-8">
+              <p className="text-body-sm text-neutral-500 mb-3 font-mono">
+                {progressPhase === 0 ? 'Connecting to Nokia Network as Code...' : 'Querying Nokia Network as Code...'}
+              </p>
+              <div className="flex gap-1 h-1 w-full bg-neutral-200 rounded-full overflow-hidden">
+                {apiNames.map((api, i) => {
+                  const isDone = progressPhase > 0 && i < progressPhase
+                  const label = api.replace(/_/g, ' ')
+                  return (
+                    <div
+                      key={api}
+                      className={`h-full transition-all duration-500 rounded-full ${
+                        isDone ? 'bg-neutral-900' : progressPhase === 0 ? 'bg-neutral-300' : 'bg-neutral-200'
+                      }`}
+                      style={{ width: `${100 / apiNames.length}%` }}
+                      title={label}
+                    />
+                  )
+                })}
+              </div>
+              <div className="flex justify-between mt-2">
+                {apiNames.map((api, i) => {
+                  const isDone = progressPhase > 0 && i < progressPhase
+                  return (
+                    <span
+                      key={api}
+                      className={`text-[10px] font-mono transition-colors ${
+                        isDone ? 'text-neutral-600' : 'text-neutral-300'
+                      }`}
+                      style={{ width: `${100 / apiNames.length}%`, textAlign: 'center' }}
+                    >
+                      {i + 1}
+                    </span>
+                  )
+                })}
+              </div>
             </div>
-            <div>
-              <label className="text-label-sm text-neutral-500 block mb-2">AMOUNT (RWF)</label>
-              <input
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(parseFloat(e.target.value))}
-                className="w-full px-4 py-3 border border-neutral-200 rounded-xl font-mono text-mono focus:outline-none focus:border-neutral-400"
-              />
-            </div>
-            <div>
-              <label className="text-label-sm text-neutral-500 block mb-2">RECIPIENT WALLET</label>
-              <input
-                value={recipient}
-                onChange={(e) => setRecipient(e.target.value)}
-                className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:outline-none focus:border-neutral-400"
-              />
-            </div>
-            <div>
-              <label className="text-label-sm text-neutral-500 block mb-2">SIM SWAP WINDOW</label>
-              <select
-                value={window}
-                onChange={(e) => setWindow(e.target.value)}
-                className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:outline-none focus:border-neutral-400"
-              >
-                <option value="24">24 hours</option>
-                <option value="48">48 hours</option>
-                <option value="72">72 hours</option>
-              </select>
-            </div>
-          </div>
+          ) : (
+            <button
+              onClick={handleAnalyze}
+              className="w-full bg-neutral-900 text-white rounded-xl py-4 text-heading-sm font-medium mt-8 hover:bg-neutral-700 transition-colors"
+            >
+              Analyze Transaction
+            </button>
+          )}
 
-          <button
-            onClick={handleAnalyze}
-            disabled={loading}
-            className="w-full bg-neutral-900 text-white rounded-xl py-4 text-heading-sm font-medium mt-8 hover:bg-neutral-700 transition-colors disabled:opacity-50"
-          >
-            {loading ? 'Analyzing...' : 'Analyze Transaction'}
-          </button>
-
-          {loading && (
-            <div className="mt-6">
-              <p className="text-body-sm text-neutral-500 mb-3 font-mono">Querying Nokia Network as Code...</p>
-              <div className="space-y-2">
-                {apiNames.map((api) => (
-                  <div key={api} className="flex items-center gap-2">
-                    <div className={`w-4 h-4 rounded-full ${completedApis.includes(api) ? 'bg-neutral-900' : 'bg-neutral-300'}`} />
-                    <span className="text-body-sm text-neutral-600">{api.replace('_', ' ')}</span>
-                  </div>
-                ))}
+          {error && (
+            <div className="mt-4 p-4 rounded-xl border border-status-block bg-status-block-bg">
+              <div className="flex items-start gap-3">
+                <span className="text-status-block text-lg flex-shrink-0">&#9888;</span>
+                <div className="min-w-0">
+                  <p className="text-body-sm font-medium text-neutral-900">API Error</p>
+                  <p className="text-body-sm text-neutral-600 mt-1 break-words">{error}</p>
+                </div>
               </div>
             </div>
           )}
 
-          <p className="text-body-sm text-neutral-400 mt-6">
-            Live calls to Nokia Network as Code sandbox.
+          <p className="text-body-sm text-neutral-400 mt-auto pt-6">
+            Nokia sandbox reports recent SIM and device swaps for all test numbers.
           </p>
         </div>
 
         {/* Right Panel */}
-        <div className="w-[60%] bg-white p-10 overflow-y-auto">
-          {!result && (
+        <div className="flex-1 bg-white p-10 overflow-y-auto">
+          {error && !loading && (
             <div className="flex items-center justify-center h-full">
-              <p className="text-body-lg text-neutral-400">Select a scenario and run analysis to see live results</p>
+              <div className="text-center max-w-md">
+                <p className="text-body-lg text-neutral-500 mb-2">Analysis failed</p>
+                <p className="text-body-sm text-neutral-400">{error}</p>
+                <button onClick={() => setError(null)} className="mt-6 text-body-sm text-neutral-600 hover:text-neutral-900 font-medium underline">Try again</button>
+              </div>
+            </div>
+          )}
+
+          {!error && !result && !loading && (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center max-w-md">
+                <p className="text-body-lg text-neutral-400 mb-2">Enter a phone number and run analysis</p>
+                <p className="text-body-sm text-neutral-300">SafeSwitch queries all four Nokia CAMARA APIs in parallel and produces a risk assessment using only the live sandbox.</p>
+              </div>
+            </div>
+          )}
+
+          {loading && !result && (
+            <div className="flex items-center justify-center h-full">
+              <p className="text-body-lg text-neutral-400 font-mono">Waiting for response...</p>
             </div>
           )}
 
           {result && (
-            <div className="space-y-8">
-              {/* API Signal Cards */}
-              <div>
+            <div className="space-y-8 max-w-2xl">
+              {/* Section A: API Signal Cards */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+              >
                 <h3 className="text-heading-sm text-neutral-900 mb-4">API Signals</h3>
                 <div className="grid grid-cols-2 gap-4">
-                  {result.signals.map((signal, i: number) => (
-                    <motion.div
-                      key={signal.api_name}
-                      initial={{ opacity: 0, y: 16 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.15 }}
-                    >
-                      <Card borderColor={`border-${getStatusColor(result.decision)}`} className="p-6">
-                        <div className="flex justify-between items-start">
-                          <p className="text-heading-sm text-neutral-900">{signal.api_name.replace('_', ' ').toUpperCase()}</p>
-                          <span className="text-label-sm text-neutral-400 bg-neutral-100 rounded-full px-2 py-0.5">Nokia NaC</span>
-                        </div>
-                        <p className="text-body-sm text-neutral-500 mt-3">{signal.summary}</p>
-                        <div className="flex justify-between items-center mt-4">
-                          <Badge status={signal.risk_contribution > 20 ? 'block' : signal.risk_contribution > 10 ? 'warn' : 'safe'}>
-                            {signal.risk_contribution > 20 ? 'HIGH RISK' : signal.risk_contribution > 0 ? 'MEDIUM' : 'LOW RISK'}
-                          </Badge>
-                          <span className="font-mono text-label-sm text-neutral-400">{signal.response_ms}ms</span>
-                        </div>
-                      </Card>
-                    </motion.div>
-                  ))}
+                  {result.signals.map((signal, i: number) => {
+                    const level = getRiskLevel(signal.risk_contribution)
+                    return (
+                      <motion.div
+                        key={signal.api_name}
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.15, duration: 0.4 }}
+                      >
+                        <Card borderColor={riskBorderMap[level]} className="p-6">
+                          <div className="flex justify-between items-start">
+                            <p className="text-label-lg text-neutral-900 uppercase tracking-wider">{apiLabels[signal.api_name] || signal.api_name}</p>
+                            <span className="text-label-sm text-neutral-400 bg-neutral-100 rounded-full px-2 py-0.5 whitespace-nowrap">Nokia NaC</span>
+                          </div>
+                          <p className="text-body-sm text-neutral-500 mt-4 border-t border-neutral-100 pt-3">{signal.summary}</p>
+                          <div className="flex justify-between items-center mt-4">
+                            <Badge status={riskBadgeMap[level].status}>{riskBadgeMap[level].label}</Badge>
+                            <span className="font-mono text-label-sm text-neutral-400">{signal.response_ms}ms</span>
+                          </div>
+                        </Card>
+                      </motion.div>
+                    )
+                  })}
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Reasoning Engine Output */}
-              <div>
+              {/* Section B: Signal Aggregation */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25, duration: 0.4 }}
+              >
+                <h3 className="text-heading-sm text-neutral-900 mb-4">SIGNAL AGGREGATION</h3>
+                <div className="bg-white border border-neutral-200 rounded-2xl p-6 space-y-4">
+                  {result.signals.map((signal) => {
+                    const level = getRiskLevel(signal.risk_contribution)
+                    const barWidth = Math.min(Math.max(Math.abs(signal.risk_contribution) * 1.5, 8), 50)
+                    return (
+                      <div key={signal.api_name} className="flex items-center gap-4">
+                        <span className="text-body-sm text-neutral-600 w-32 flex-shrink-0">{apiLabels[signal.api_name] || signal.api_name}</span>
+                        <div className="flex-1 h-2 bg-neutral-100 rounded-full">
+                          <div
+                            className={`h-full rounded-full transition-all duration-700 ${barColorMap[level]}`}
+                            style={{ width: `${barWidth}px` }}
+                          />
+                        </div>
+                        <span className={`font-mono text-body-sm w-16 text-right ${
+                          signal.risk_contribution > 0 ? 'text-status-block' : signal.risk_contribution < 0 ? 'text-status-safe' : 'text-neutral-400'
+                        }`}>
+                          {signal.risk_contribution >= 0 ? '+' : ''}{signal.risk_contribution} pts
+                        </span>
+                      </div>
+                    )
+                  })}
+                  <div className="pt-3 border-t border-neutral-200">
+                    <span className={`text-heading-sm font-semibold ${
+                      decisionLevel === 'high' ? 'text-status-block' : decisionLevel === 'medium' ? 'text-status-warn' : 'text-status-safe'
+                    }`}>
+                      Combined risk signal: {decisionLevel === 'high' ? 'CRITICAL' : decisionLevel === 'medium' ? 'MODERATE' : 'LOW'}
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Section C: Reasoning Engine Output */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.4 }}
+              >
                 <div className="flex items-center gap-3 mb-4">
                   <h3 className="text-heading-sm text-neutral-900">REASONING ENGINE</h3>
-                  <span className="text-label-sm text-neutral-500 bg-neutral-100 rounded-full px-2 py-0.5">on-device · no external APIs</span>
+                  <span className="text-label-sm text-neutral-500 bg-neutral-100 rounded-full px-2 py-0.5">built-in &middot; no external APIs</span>
                 </div>
                 <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-6">
                   <p className="text-body-md text-neutral-700 leading-relaxed font-mono">
                     {displayedReasoning}
-                    <span className="animate-pulse">|</span>
+                    {isTyping && <span className="animate-pulse text-neutral-400">|</span>}
                   </p>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Decision Banner */}
-              <div className={`border rounded-xl p-6 bg-${getStatusColor(result.decision)}-bg border-${getStatusColor(result.decision)}`}>
+              {/* Section D: Decision Banner */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.55, duration: 0.4 }}
+                className={`border rounded-xl p-6 ${decisionBgMap[decision]} ${decisionBorderMap[decision]}`}
+              >
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="text-2xl">{result.decision === 'block' ? '✕' : result.decision === 'challenge' ? '⚠' : '✓'}</span>
+                  <span className="text-xl">{decisionIconMap[decision]}</span>
                   <p className="text-heading-md text-neutral-900">
-                    TRANSACTION {result.decision.toUpperCase()}
+                    {decisionLabelMap[decision]}
                   </p>
                 </div>
                 <p className="text-body-md text-neutral-600">
-                  Risk score {result.risk_score}/100 · {result.decision === 'block' ? 'Blocked' : result.decision === 'challenge' ? 'Challenged' : 'Cleared'} in {(result.total_response_ms / 1000).toFixed(1)}s
+                  Risk score {result.risk_score}/100 &middot; {decision === 'block' ? 'Blocked' : decision === 'challenge' ? 'Step-up verification required' : 'Cleared'} in {(result.total_response_ms / 1000).toFixed(1)}s
                 </p>
-                {result.decision === 'block' && result.alert_kinyarwanda && (
+                {decision === 'block' && result.alert_kinyarwanda && (
                   <p className="text-body-sm text-neutral-600 mt-3">
-                    Alert sent: "{result.alert_kinyarwanda}"
+                    &ldquo;{result.alert_kinyarwanda}&rdquo;
                   </p>
                 )}
-                {result.decision === 'challenge' && (
+                {decision === 'challenge' && (
                   <p className="text-body-sm text-neutral-600 mt-3">
-                    USSD pushed to {phone}
+                    USSD pushed to {maskPhone(result.phone_number)}
                   </p>
                 )}
-                <div className="flex gap-4 mt-4">
-                  <Link to="/dashboard" className="text-body-sm text-neutral-600 hover:text-neutral-900">View in Dashboard →</Link>
-                  <button onClick={() => { setResult(null); }} className="text-body-sm text-neutral-600 hover:text-neutral-900">Run another scenario →</button>
+                <div className="flex gap-6 mt-4">
+                  <Link to="/dashboard" className="text-body-sm text-neutral-600 hover:text-neutral-900 font-medium">View in Dashboard &rarr;</Link>
+                  <button onClick={() => { setResult(null); setProgressPhase(0); }} className="text-body-sm text-neutral-600 hover:text-neutral-900 font-medium">Run another scenario &rarr;</button>
                 </div>
-              </div>
+              </motion.div>
             </div>
           )}
         </div>
