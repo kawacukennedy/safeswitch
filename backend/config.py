@@ -5,8 +5,6 @@ No AI API keys. No external model dependencies.
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    # Nokia Network as Code
-    # Register: https://developer.networkascode.nokia.io/
     NAC_API_KEY: str
 
     APP_ENV: str = "development"
@@ -14,9 +12,7 @@ class Settings(BaseSettings):
 
     BLOCK_THRESHOLD: int = 70
     CHALLENGE_THRESHOLD: int = 40
-    CAMARA_TIMEOUT_SECONDS: float = 1.5
-
-    MOCK_MODE: bool = False
+    CAMARA_TIMEOUT_SECONDS: float = 15.0
 
     class Config:
         env_file = ".env"

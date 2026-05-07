@@ -1,7 +1,3 @@
-"""
-Pydantic schemas for request validation and response serialisation.
-FastAPI uses these to auto-generate /docs.
-"""
 from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
@@ -44,6 +40,7 @@ class TransactionListItem(BaseModel):
     risk_score: int
     decision: str
     total_response_ms: int
+    signals: List[ApiSignalResponse]
 
 class DashboardStats(BaseModel):
     total_transactions: int

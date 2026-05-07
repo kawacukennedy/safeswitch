@@ -112,7 +112,7 @@ async def main():
     avg_time = sum(r['total_ms'] for r in results if r) / len(results) if results else 0
     print(f"  Average pipeline time: {avg_time:.0f}ms")
     if avg_time > 3000:
-        print("  ⚠ HIGH LATENCY: Consider reducing timeout or using mock mode")
+        print("  ⚠ HIGH LATENCY: First request is typically cold start")
     elif avg_time > 2000:
         print("  ⚠ MODERATE LATENCY: Close to 2s target")
     else:
