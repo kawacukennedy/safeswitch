@@ -123,11 +123,7 @@ export default function Demo() {
       })
 
       setResult(data)
-
-      for (let i = 0; i < apiNames.length; i++) {
-        await new Promise(r => setTimeout(r, 350))
-        setProgressPhase(i + 1)
-      }
+      setProgressPhase(apiNames.length)
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Request failed'
       if (message.includes('Failed to fetch') || message.includes('NetworkError')) {

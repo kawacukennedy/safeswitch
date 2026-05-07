@@ -53,9 +53,9 @@ async def test_scenario(phone_number: str, description: str, amount: float = 500
     print(f"  SIM swap detected: {signals.get('sim_swap_detected')}")
     print(f"  Device swap detected: {signals.get('device_swap_detected')}")
     
-    # Step 3: Score
+    # Step 3: Score (no velocity data in test — None = no penalty)
     print("\n[3/4] Computing risk score...")
-    score, confidence, contributions = compute_risk_score(signals)
+    score, confidence, contributions = compute_risk_score(signals, amount_rwf=amount, velocity=None)
     print(f"  Risk Score: {score}/100")
     print(f"  Confidence: {confidence:.2f}")
     print(f"  Contributions: {contributions}")
@@ -72,7 +72,8 @@ async def test_scenario(phone_number: str, description: str, amount: float = 500
         decision=decision,
         amount_rwf=amount,
         contributions=contributions,
-        phone_number=phone_number
+        phone_number=phone_number,
+        velocity=None
     )
     print(f"\nReasoning: {reasoning[:100]}...")
     if kinyarwanda:

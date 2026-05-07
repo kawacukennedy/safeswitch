@@ -4,6 +4,9 @@ THE CORE ENGINE — Parallel CAMARA API execution.
 Fires all four Nokia Network as Code CAMARA API calls simultaneously using
 asyncio.gather(). Total latency = max(individual latencies), not sum.
 
+Device object fetched once and shared across all SIM/Device/Status calls,
+eliminating redundant devices.get() lookups.
+
 Nokia Network as Code Python SDK v8.0.0:
   Install: pip install network-as-code==8.0.0
   Docs: https://networkascode.nokia.io/docs
@@ -13,9 +16,9 @@ The sandbox reports recent SIM swaps and device swaps for every query.
 
 CAMARA APIs called:
   1. SIM Swap:          device.verify_sim_swap(max_age=hours) → bool
-                          device.get_sim_swap_date()            → datetime
+                           device.get_sim_swap_date()            → datetime
   2. Device Swap:       device.verify_device_swap(max_age=hours) → bool
-                          device.get_device_swap_date()            → datetime
+                           device.get_device_swap_date()            → datetime
   3. Number Verification: device.verify_number(code, state) → bool  [REQUIRES OAUTH]
   4. Device Status:     device.get_roaming() → bool
 
@@ -38,9 +41,8 @@ def _get_nac_client():
     return _nac_client
 
 
-async def _call_sim_swap(phone_number: str, window_hours: int) -> Dict[str, Any]:
+async def _call_sim_swap(device: Any, window_hours: int) -> Dict[str, Any]:
     try:
-        device = _get_nac_client().devices.get(phone_number=phone_number)
         start = time.time()
         detected = await asyncio.wait_for(
             asyncio.to_thread(device.verify_sim_swap, max_age=window_hours),
@@ -81,9 +83,8 @@ async def _call_sim_swap(phone_number: str, window_hours: int) -> Dict[str, Any]
         }
 
 
-async def _call_device_swap(phone_number: str, window_hours: int) -> Dict[str, Any]:
+async def _call_device_swap(device: Any, window_hours: int) -> Dict[str, Any]:
     try:
-        device = _get_nac_client().devices.get(phone_number=phone_number)
         start = time.time()
         detected = await asyncio.wait_for(
             asyncio.to_thread(device.verify_device_swap, max_age=window_hours),
@@ -143,9 +144,8 @@ async def _call_number_verification(phone_number: str) -> Dict[str, Any]:
         }
 
 
-async def _call_device_status(phone_number: str) -> Dict[str, Any]:
+async def _call_device_status(device: Any) -> Dict[str, Any]:
     try:
-        device = _get_nac_client().devices.get(phone_number=phone_number)
         start = time.time()
         status = await asyncio.wait_for(
             asyncio.to_thread(device.get_roaming),
@@ -186,18 +186,21 @@ async def _call_device_status(phone_number: str) -> Dict[str, Any]:
 async def run_parallel_checks(phone_number: str, window_hours: int = 24) -> Dict[str, Any]:
     """
     PUBLIC INTERFACE. Fires all four CAMARA calls simultaneously.
+    Fetches the device object once and reuses it across SIM/Device/Status calls.
     Total latency = max(individual latencies), not sum.
     """
     wall_start = time.time()
     sim = dev_swap = num_verify = dev_status = None
 
+    device = _get_nac_client().devices.get(phone_number=phone_number)
+
     try:
         results = await asyncio.wait_for(
             asyncio.gather(
-                _call_sim_swap(phone_number, window_hours),
-                _call_device_swap(phone_number, window_hours),
+                _call_sim_swap(device, window_hours),
+                _call_device_swap(device, window_hours),
                 _call_number_verification(phone_number),
-                _call_device_status(phone_number)
+                _call_device_status(device)
             ),
             timeout=settings.CAMARA_TIMEOUT_SECONDS * 4
         )

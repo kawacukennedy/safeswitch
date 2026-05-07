@@ -12,7 +12,12 @@ class Settings(BaseSettings):
 
     BLOCK_THRESHOLD: int = 70
     CHALLENGE_THRESHOLD: int = 40
-    CAMARA_TIMEOUT_SECONDS: float = 15.0
+    CAMARA_TIMEOUT_SECONDS: float = 10.0
+
+    AMOUNT_HIGH_THRESHOLD: float = 100000.0
+    VELOCITY_WINDOW_MINUTES: int = 60
+    VELOCITY_TX_WARN: int = 3
+    VELOCITY_TX_HIGH: int = 5
 
     class Config:
         env_file = ".env"

@@ -10,11 +10,13 @@ Endpoints:
 Pipeline order:
   1. Parallel CAMARA calls (orchestrator.py)
   2. Aggregate signals (aggregator.py)
-  3. Compute risk score (scorer.py)
-  4. Make decision (decision.py)
-  5. Generate reasoning text (reasoning_engine.py) — pure Python, <1ms
-  6. Persist to SQLite (models.py)
-  7. Return structured JSON response
+  3. Compute transaction velocity from DB
+  4. Compute risk score (scorer.py) — now with continuous recency,
+     combo synergy bonus, amount-weighted risk, and velocity check
+  5. Make decision (decision.py)
+  6. Generate reasoning text (reasoning_engine.py) — pure Python, <1ms
+  7. Persist to SQLite (models.py)
+  8. Return structured JSON response
 
 No streaming endpoint needed — reasoning_engine.py returns instantly.
 The frontend typewriter animation is purely a CSS/JS effect on the full
@@ -22,8 +24,10 @@ text returned in the JSON response. It gives the "thinking" feel without
 any backend streaming.
 """
 import time
+from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import func
 from database import get_db
 from schemas import TransactionRequest, TransactionResponse, TransactionListItem, DashboardStats
 from orchestrator import run_parallel_checks
@@ -31,10 +35,29 @@ from aggregator import aggregate_signals
 from scorer import compute_risk_score
 from reasoning_engine import generate_reasoning
 from decision import make_decision
+from config import settings
 import models
 from typing import List
 
 router = APIRouter()
+
+
+def _compute_velocity(phone_number: str, db: Session) -> dict:
+    cutoff = datetime.now(timezone.utc) - timedelta(minutes=settings.VELOCITY_WINDOW_MINUTES)
+    recent = db.query(models.Transaction).filter(
+        models.Transaction.phone_number == phone_number,
+        models.Transaction.created_at >= cutoff
+    ).all()
+
+    unique_recipients = len(set(tx.recipient_wallet for tx in recent))
+    total_amount = sum(tx.amount_rwf for tx in recent)
+
+    return {
+        "tx_count_last_window": len(recent),
+        "total_amount_last_window": total_amount,
+        "unique_recipients_last_window": unique_recipients,
+    }
+
 
 @router.post("/analyze", response_model=TransactionResponse)
 async def analyze_transaction(request: TransactionRequest, db: Session = Depends(get_db)):
@@ -46,7 +69,12 @@ async def analyze_transaction(request: TransactionRequest, db: Session = Depends
     )
 
     signals = aggregate_signals(raw_results)
-    score, confidence, contributions = compute_risk_score(signals)
+    velocity = _compute_velocity(request.phone_number, db)
+    score, confidence, contributions = compute_risk_score(
+        signals,
+        amount_rwf=request.amount_rwf,
+        velocity=velocity
+    )
     decision = make_decision(score, confidence)
 
     reasoning_text, kinyarwanda = generate_reasoning(
@@ -55,7 +83,8 @@ async def analyze_transaction(request: TransactionRequest, db: Session = Depends
         decision=decision,
         amount_rwf=request.amount_rwf,
         contributions=contributions,
-        phone_number=request.phone_number
+        phone_number=request.phone_number,
+        velocity=velocity
     )
 
     total_ms = int((time.time() - wall_start) * 1000)
