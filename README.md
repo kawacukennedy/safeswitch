@@ -2,13 +2,13 @@
 
 **Real-time fraud prevention for mobile money. Built on Nokia's Network as Code.**
 
-[Live Demo](https://safeswitch.vercel.app) · [API Docs](https://your-railway-url/docs) · [GSMA Africa Ignite 2026](https://www.hackerearth.com/challenges/hackathon/africa-ignite-hackathon/)
+[GSMA Africa Ignite 2026](https://www.hackerearth.com/challenges/hackathon/africa-ignite-hackathon/)
 
 ---
 
 ## What it does
 
-SafeSwitch intercepts mobile money transactions in the 1–2 second window before approval.
+SafeSwitch intercepts mobile money transactions in the 1-2 second window before approval.
 It fires four CAMARA API calls simultaneously through Nokia's Network as Code:
 
 | API | What it checks |
@@ -28,6 +28,58 @@ In March 2026, fraudsters stole $3.4M from Equity Bank Rwanda using SIM swap.
 SafeSwitch uses telecom-layer intelligence that most fraud systems never see — and
 acts before the transaction completes, not after.
 
+## Quick start (development)
+
+```bash
+./start.sh
+```
+
+Starts backend (:8000) and frontend (:5173) in parallel. Press Ctrl+C to stop both.
+
+Requires `backend/.env` with a valid `NAC_API_KEY`.
+
+## Deploy to production
+
+### Option A: Railway (single service, Docker)
+
+1. Push to GitHub
+2. On [Railway](https://railway.app), create a new project → **Deploy from GitHub repo**
+3. Railway auto-detects the `Dockerfile` and builds the image
+4. Set environment variables:
+   - `NAC_API_KEY` — your Nokia Network as Code key
+   - `PORT` — Railway sets this automatically (default: 8000)
+   - `ALLOWED_ORIGINS` — set to your Railway domain, e.g. `https://safeswitch.up.railway.app`
+5. That's it. The Dockerfile builds the frontend, bundles it with the backend, and serves everything from one URL.
+
+### Option B: Render (single service, Docker)
+
+Same as Railway. Create a new **Web Service**, connect your repo, Render detects the `Dockerfile`.
+
+### Option C: Fly.io (single service, Docker)
+
+```bash
+fly launch --dockerfile Dockerfile
+fly secrets set NAC_API_KEY=your_key_here
+fly deploy
+```
+
+### Option D: Split deployment (Vercel + Railway)
+
+**Backend → Railway:**
+```bash
+cd backend
+railway up
+# Set NAC_API_KEY in Railway dashboard
+```
+
+**Frontend → Vercel:**
+```bash
+cd frontend
+VERCEL_BUILD_COMMAND="npm run build"
+# Set VITE_API_URL to https://your-railway-url/api/v1
+vercel --prod
+```
+
 ## Dependencies
 
 | Requirement | Purpose |
@@ -36,69 +88,14 @@ acts before the transaction completes, not after.
 
 No other API keys. No external AI services.
 
-## Nokia Network as Code APIs
+## API
 
-- `device.verify_sim_swap(max_age=24)` — SIM Swap
-- `device.verify_device_swap(max_age=24)` — Device Swap
-- `device.verify_number()` — Number Verification
-- `device.get_connectivity()` — Device Status
-
-All fired in parallel via `asyncio.gather()`. Sandbox numbers pre-loaded in demo UI.
-
-## Nokia Network as Code Setup
-
-1. Register at https://developer.networkascode.nokia.io/
-2. Create application → get API key
-3. Subscribe to these APIs in your dashboard:
-   - SIM Swap (sim-swap)
-   - Device Swap (device-swap)
-   - Number Verification (number-verification)
-   - Device Status (device-status)
-4. Note your sandbox test numbers from the dashboard
-
-## Quick start
-
-```bash
-# Backend setup
-cd backend
-pip3 install -r requirements.txt
-cp .env.example .env
-# Edit .env and add: NAC_API_KEY=your_key_from_dashboard
-python3 main.py
-
-# Frontend setup
-cd frontend
-npm install  # already done
-echo "VITE_API_URL=http://localhost:8000/api/v1" > .env
-npm run dev
-```
-
-## Test Scenarios
-
-Based on Nokia NaC sandbox configuration:
-
-| Scenario | Phone Number | Expected Result |
-|----------|-------------|-----------------|
-| Clean transaction | `+99999991000` | APPROVE (~12/100) |
-| Device swap only | `+99999991234` | CHALLENGE (~25/100) |
-| SIM swap + anomaly | `+99999991000`* | BLOCK (~91/100) |
-
-*Note: Sandbox behavior may vary. Check your Nokia dashboard at https://dashboard.networkascode.nokia.io/hub for exact test numbers.
-
-## Deployment
-
-**Frontend (Vercel):**
-1. Connect GitHub repo, set root: `frontend`
-2. Build: `npm run build`, Output: `dist`
-3. Env var: `VITE_API_URL=https://your-railway-url.railway.app/api/v1`
-
-**Backend (Railway):**
-1. Connect GitHub repo, set root: `backend`
-2. Railway auto-detects `Procfile`
-3. Env vars: `NAC_API_KEY=your_key`, `ALLOWED_ORIGINS=https://safeswitch.vercel.app`
-
-## API Documentation
-
-Once backend is running: http://localhost:8000/docs
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/docs` | OpenAPI documentation |
+| POST | `/api/v1/analyze` | Run full fraud analysis pipeline |
+| GET | `/api/v1/transactions` | Paginated transaction history |
+| GET | `/api/v1/dashboard/stats` | Aggregate dashboard statistics |
+| GET | `/api/v1/health` | Health check |
 
 Built by KAWACU RUGIRANEZA Arnaud Kennedy · Rwanda Coding Academy · GSMA Africa Ignite 2026

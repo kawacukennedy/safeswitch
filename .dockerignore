@@ -1,0 +1,9 @@
+.git
+**/__pycache__
+**/.DS_Store
+**/.env
+**/venv
+**/node_modules
+frontend/node_modules
+backend/venv
+backend/safeswitch.db
