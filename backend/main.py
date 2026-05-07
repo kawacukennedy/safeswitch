@@ -4,10 +4,10 @@ In production, serves the built frontend via catch-all SPA route so that client-
 router paths like /dashboard and /demo work on page refresh or direct navigation.
 """
 import os
-from fastapi import FastAPI, FileResponse
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from database import engine, Base
 from router import router
 from config import settings
