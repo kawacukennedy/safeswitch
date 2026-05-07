@@ -23,7 +23,7 @@ any backend streaming.
 """
 import time
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from database import get_db
 from schemas import TransactionRequest, TransactionResponse, TransactionListItem, DashboardStats
 from orchestrator import run_parallel_checks
@@ -40,22 +40,15 @@ router = APIRouter()
 async def analyze_transaction(request: TransactionRequest, db: Session = Depends(get_db)):
     wall_start = time.time()
 
-    # 1. Parallel CAMARA API calls
     raw_results = await run_parallel_checks(
         phone_number=request.phone_number,
         window_hours=request.sim_swap_window_hours
     )
 
-    # 2. Aggregate
     signals = aggregate_signals(raw_results)
-
-    # 3. Score
     score, confidence, contributions = compute_risk_score(signals)
-
-    # 4. Decide
     decision = make_decision(score, confidence)
 
-    # 5. Generate reasoning (pure Python, <1ms)
     reasoning_text, kinyarwanda = generate_reasoning(
         signals=signals,
         score=score,
@@ -67,7 +60,6 @@ async def analyze_transaction(request: TransactionRequest, db: Session = Depends
 
     total_ms = int((time.time() - wall_start) * 1000)
 
-    # 6. Persist
     transaction = models.Transaction(
         phone_number=request.phone_number,
         amount_rwf=request.amount_rwf,
@@ -79,7 +71,7 @@ async def analyze_transaction(request: TransactionRequest, db: Session = Depends
         total_response_ms=total_ms
     )
     db.add(transaction)
-    db.flush()  # Flush to get the transaction.id
+    db.flush()
 
     for api_name, raw in [
         ("sim_swap", raw_results["sim_swap"]),
@@ -100,7 +92,6 @@ async def analyze_transaction(request: TransactionRequest, db: Session = Depends
     db.commit()
     db.refresh(transaction)
 
-    # 7. Build response
     signal_responses = []
     for api_name in ["sim_swap", "device_swap", "number_verification", "device_status"]:
         raw = raw_results[api_name]
@@ -127,9 +118,33 @@ async def analyze_transaction(request: TransactionRequest, db: Session = Depends
 
 @router.get("/transactions", response_model=List[TransactionListItem])
 def get_transactions(skip: int = 0, limit: int = 50, db: Session = Depends(get_db)):
-    return db.query(models.Transaction)\
-             .order_by(models.Transaction.created_at.desc())\
-             .offset(skip).limit(limit).all()
+    transactions = db.query(models.Transaction)\
+        .options(joinedload(models.Transaction.signals))\
+        .order_by(models.Transaction.created_at.desc())\
+        .offset(skip).limit(limit).all()
+
+    result = []
+    for tx in transactions:
+        signal_responses = []
+        for sig in tx.signals:
+            signal_responses.append({
+                "api_name": sig.api_name,
+                "risk_contribution": sig.risk_contribution,
+                "response_ms": sig.response_ms,
+                "timed_out": sig.timed_out,
+                "summary": sig.error_message or _signal_summary_fallback(sig)
+            })
+        result.append({
+            "id": tx.id,
+            "created_at": tx.created_at,
+            "phone_number": tx.phone_number,
+            "amount_rwf": tx.amount_rwf,
+            "risk_score": tx.risk_score,
+            "decision": tx.decision,
+            "total_response_ms": tx.total_response_ms,
+            "signals": signal_responses,
+        })
+    return result
 
 
 @router.get("/dashboard/stats", response_model=DashboardStats)
@@ -157,7 +172,10 @@ def _summarise_signal(api_name: str, signals: dict, raw: dict) -> str:
     if raw.get("timed_out"):
         return "API timeout — signal unavailable"
     if raw.get("error"):
-        return f"Error: {raw['error'][:60]}"
+        err = raw["error"]
+        if "422" in str(err):
+            return "API rejected request (invalid phone number)"
+        return f"Error: {str(err)[:60]}"
     if api_name == "sim_swap":
         if signals.get("sim_swap_detected"):
             mins = signals.get("sim_swap_minutes_ago")
@@ -173,3 +191,55 @@ def _summarise_signal(api_name: str, signals: dict, raw: dict) -> str:
     if api_name == "device_status":
         return "Anomalous signal detected (roaming)" if signals.get("device_anomalous") else "Device status nominal"
     return "Signal processed"
+
+
+def _signal_summary_fallback(sig: models.ApiSignal) -> str:
+    if sig.timed_out:
+        return "API timeout"
+    if sig.error_message:
+        if "OAuth2" in sig.error_message:
+            return "Verification unavailable"
+        if "422" in str(sig.error_message):
+            return "API rejected request (invalid number)"
+        return f"Error: {sig.error_message[:60]}"
+
+    raw = sig.raw_response or {}
+
+    if sig.api_name == "sim_swap":
+        detected = raw.get("detected")
+        if detected is True:
+            swap_date = raw.get("swap_date")
+            if swap_date:
+                from aggregator import _minutes_since
+                mins = _minutes_since(swap_date)
+                return f"SIM replaced {mins} minutes ago" if mins else "SIM recently replaced"
+            return "SIM recently replaced"
+        if detected is False:
+            return "No SIM swap detected"
+        return "SIM swap status unknown"
+
+    if sig.api_name == "device_swap":
+        detected = raw.get("detected")
+        if detected is True:
+            return "SIM moved to new device"
+        if detected is False:
+            return "No device swap detected"
+        return "Device swap status unknown"
+
+    if sig.api_name == "number_verification":
+        verified = raw.get("verified")
+        if verified is True:
+            return "Number verified"
+        if verified is False:
+            return "Verification failed"
+        return "Verification unavailable"
+
+    if sig.api_name == "device_status":
+        anomalous = raw.get("anomalous")
+        if anomalous is True:
+            return "Anomalous signal detected (roaming)"
+        if anomalous is False:
+            return "Device status nominal"
+        return "Device status unknown"
+
+    return "Processed"
