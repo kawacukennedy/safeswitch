@@ -1,10 +1,8 @@
 # ── Frontend build ──────────────────────────────────────────
 FROM node:20-alpine AS frontend
 WORKDIR /build/frontend
-COPY frontend/package*.json ./
-RUN npm ci
 COPY frontend/ .
-RUN npm run build
+RUN npm install && npm run build
 
 # ── Backend runtime ─────────────────────────────────────────
 FROM python:3.12-slim
