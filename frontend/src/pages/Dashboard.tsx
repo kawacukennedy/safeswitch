@@ -124,7 +124,7 @@ export default function Dashboard() {
               { label: 'Total Analyzed', value: stats.total_transactions },
               { label: 'Fraud Blocked', value: `${stats.total_blocked} (${stats.block_rate_pct}%)` },
               { label: 'Avg Response', value: `${stats.avg_response_ms}ms` },
-              { label: 'API Uptime', value: '99.8%' },
+              { label: 'API Health', value: `${stats.signals_ok_pct}%` },
             ].map((stat, i) => (
               <Card key={i} className="p-6">
                 <p className="font-instrument text-display-lg text-neutral-900">{stat.value}</p>

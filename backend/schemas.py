@@ -49,3 +49,6 @@ class DashboardStats(BaseModel):
     total_approved: int
     block_rate_pct: float
     avg_response_ms: float
+    signals_total: int
+    signals_healthy: int
+    signals_ok_pct: float

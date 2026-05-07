@@ -184,11 +184,21 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
     challenged = db.query(models.Transaction).filter(models.Transaction.decision == "challenge").count()
     approved = db.query(models.Transaction).filter(models.Transaction.decision == "approve").count()
     avg_ms = db.query(func.avg(models.Transaction.total_response_ms)).scalar() or 0
+
+    signals_total = db.query(models.ApiSignal).count()
+    signals_healthy = db.query(models.ApiSignal).filter(
+        models.ApiSignal.timed_out == False,
+        models.ApiSignal.error_message.is_(None)
+    ).count()
+
     return DashboardStats(
         total_transactions=total, total_blocked=blocked,
         total_challenged=challenged, total_approved=approved,
         block_rate_pct=round((blocked / total * 100) if total > 0 else 0, 1),
-        avg_response_ms=round(avg_ms, 0)
+        avg_response_ms=round(avg_ms, 0),
+        signals_total=signals_total,
+        signals_healthy=signals_healthy,
+        signals_ok_pct=round((signals_healthy / signals_total * 100) if signals_total > 0 else 100, 1)
     )
 
 
@@ -201,10 +211,12 @@ def _summarise_signal(api_name: str, signals: dict, raw: dict) -> str:
     if raw.get("timed_out"):
         return "API timeout — signal unavailable"
     if raw.get("error"):
-        err = raw["error"]
-        if "422" in str(err):
+        err = str(raw["error"])
+        if "422" in err:
             return "API rejected request (invalid phone number)"
-        return f"Error: {str(err)[:60]}"
+        if "429" in err:
+            return "Rate limited — too many requests, please wait"
+        return f"Error: {err[:60]}"
     if api_name == "sim_swap":
         if signals.get("sim_swap_detected"):
             mins = signals.get("sim_swap_minutes_ago")
@@ -226,11 +238,14 @@ def _signal_summary_fallback(sig: models.ApiSignal) -> str:
     if sig.timed_out:
         return "API timeout"
     if sig.error_message:
-        if "OAuth2" in sig.error_message:
+        err = str(sig.error_message)
+        if "OAuth2" in err:
             return "Verification unavailable"
-        if "422" in str(sig.error_message):
+        if "422" in err:
             return "API rejected request (invalid number)"
-        return f"Error: {sig.error_message[:60]}"
+        if "429" in err:
+            return "Rate limited — too many requests, please wait"
+        return f"Error: {err[:60]}"
 
     raw = sig.raw_response or {}
 

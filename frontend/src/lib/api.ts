@@ -45,6 +45,9 @@ export interface DashboardStats {
   total_approved: number
   block_rate_pct: number
   avg_response_ms: number
+  signals_total: number
+  signals_healthy: number
+  signals_ok_pct: number
 }
 
 export async function analyzeTransaction(data: TransactionRequest): Promise<TransactionResponse> {
