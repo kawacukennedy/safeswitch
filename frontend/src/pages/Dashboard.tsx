@@ -61,34 +61,12 @@ export default function Dashboard() {
     }
   }
 
-  const approvedData = transactions.filter(tx => tx.decision === 'approve').map(tx => ({
+  const chartData = transactions.map(tx => ({
     time: new Date(tx.created_at).toLocaleTimeString(),
-    approved: tx.risk_score,
-  }))
-
-  const challengedData = transactions.filter(tx => tx.decision === 'challenge').map(tx => ({
-    time: new Date(tx.created_at).toLocaleTimeString(),
-    challenged: tx.risk_score,
-  }))
-
-  const blockedData = transactions.filter(tx => tx.decision === 'block').map(tx => ({
-    time: new Date(tx.created_at).toLocaleTimeString(),
-    blocked: tx.risk_score,
-  }))
-
-  const allTimes = [...new Set(transactions.map(tx => new Date(tx.created_at).toLocaleTimeString()))].sort()
-
-  const chartData = allTimes.map(time => {
-    const approved = approvedData.find(d => d.time === time)
-    const challenged = challengedData.find(d => d.time === time)
-    const blocked = blockedData.find(d => d.time === time)
-    return {
-      time,
-      approved: approved?.approved || 0,
-      challenged: challenged?.challenged || 0,
-      blocked: blocked?.blocked || 0,
-    }
-  })
+    approved: tx.decision === 'approve' ? tx.risk_score : null,
+    challenged: tx.decision === 'challenge' ? tx.risk_score : null,
+    blocked: tx.decision === 'block' ? tx.risk_score : null,
+  })).sort((a, b) => a.time.localeCompare(b.time))
 
   return (
     <div className="h-screen bg-white flex flex-col">
@@ -138,7 +116,7 @@ export default function Dashboard() {
           <Card className="mb-6 p-6">
             <h2 className="text-heading-sm text-neutral-900 mb-4">Risk Score Distribution</h2>
             <ResponsiveContainer width="100%" height={160}>
-              <LineChart data={chartData.length > 0 ? chartData : [{ time: '', approved: 0, challenged: 0, blocked: 0 }]}>
+              <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E8E7E4" vertical={false} />
                 <XAxis dataKey="time" tick={{ fontSize: 11, fill: '#A8A59D' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: '#A8A59D' }} axisLine={false} tickLine={false} domain={[0, 100]} />
@@ -155,9 +133,9 @@ export default function Dashboard() {
                   iconType="circle"
                   wrapperStyle={{ fontSize: '12px', color: '#757270' }}
                 />
-                <Line type="monotone" dataKey="approved" stroke="#1A7A4A" strokeWidth={2} dot={true} name="Approved" />
-                <Line type="monotone" dataKey="challenged" stroke="#B45309" strokeWidth={2} dot={true} name="Challenged" />
-                <Line type="monotone" dataKey="blocked" stroke="#9B1C1C" strokeWidth={2} dot={true} name="Blocked" />
+                <Line type="monotone" dataKey="approved" stroke="#1A7A4A" strokeWidth={2} dot={true} name="Approved" connectNulls={false} />
+                <Line type="monotone" dataKey="challenged" stroke="#B45309" strokeWidth={2} dot={true} name="Challenged" connectNulls={false} />
+                <Line type="monotone" dataKey="blocked" stroke="#9B1C1C" strokeWidth={2} dot={true} name="Blocked" connectNulls={false} />
               </LineChart>
             </ResponsiveContainer>
           </Card>
