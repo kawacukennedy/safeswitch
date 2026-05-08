@@ -21,7 +21,7 @@
 
 ## What it does
 
-SafeSwitch intercepts mobile money transactions in the 1-2 second window before approval. It fires **four CAMARA API calls simultaneously** through Nokia's Network as Code, then feeds those signals into an **on-device reasoning engine** that computes a fraud score and generates plain-language analysis — all without any external AI API.
+SafeSwitch intercepts mobile money transactions in the 1-2 second window before approval. It fires **four CAMARA API calls simultaneously** through Nokia's Network as Code, then feeds those signals into an **on-device reasoning engine** that computes a fraud score and generates plain-language analysis, all without any external AI API.
 
 | API | What it checks |
 |-----|---------------|
@@ -30,13 +30,13 @@ SafeSwitch intercepts mobile money transactions in the 1-2 second window before 
 | **Number Verification** | Does this number match the session device? |
 | **Device Status** | Is this device showing anomalous connectivity? |
 
-All four calls execute in parallel via `asyncio.gather()` — total latency equals the **slowest** individual call, not the sum.
+All four calls execute in parallel via `asyncio.gather()`, total latency equals the **slowest** individual call, not the sum.
 
 ## Why this matters
 
 > In March 2026, fraudsters stole **$3.4 million** from Equity Bank Rwanda using SIM swap attacks.
 
-Most fraud detection is reactive — by the time a flag is raised, the money is gone. SafeSwitch puts the check **inside the transaction window**, using telecom-layer intelligence that most fraud systems never see. It acts before the transaction completes, not after.
+Most fraud detection is reactive, by the time a flag is raised, the money is gone. SafeSwitch puts the check **inside the transaction window**, using telecom-layer intelligence that most fraud systems never see. It acts before the transaction completes, not after.
 
 ## Architecture
 
@@ -66,19 +66,19 @@ User → Transaction Request
 | **Orchestrator** | `orchestrator.py` | Fires 4 CAMARA calls in parallel, handles timeouts/errors gracefully |
 | **Aggregator** | `aggregator.py` | Normalises API responses into a consistent signal dict |
 | **Scorer** | `scorer.py` | Continuous recency scoring, combo synergy bonus, velocity checks, amount weighting |
-| **Reasoning Engine** | `reasoning_engine.py` | Pure-Python pattern matcher — no LLM, no external API, runs in <1ms |
+| **Reasoning Engine** | `reasoning_engine.py` | Pure-Python pattern matcher, no LLM, no external API, runs in <1ms |
 | **Decision Engine** | `decision.py` | Applies configurable risk thresholds (block ≥70, challenge ≥40) |
 
 ### The Reasoning Engine (no LLM required)
 
 SafeSwitch's reasoning engine uses a **multi-layer template composition system**:
 
-1. **Signal classification** — each API response is classified into named states (e.g. `critical_fresh`, `combo_attack`, `anomalous`)
-2. **Pattern matching** — signal combinations match known fraud patterns (`active_account_takeover`, `probable_sim_swap_fraud`, `device_hijack`, etc.)
-3. **Sentence composition** — classified signals select from curated sentence fragment libraries, assembled into a coherent paragraph
-4. **Kinyarwanda alerts** — block decisions include Kinyarwanda-language fraud alerts for Rwandan users
+1. **Signal classification**: each API response is classified into named states (e.g. `critical_fresh`, `combo_attack`, `anomalous`)
+2. **Pattern matching**: signal combinations match known fraud patterns (`active_account_takeover`, `probable_sim_swap_fraud`, `device_hijack`, etc.)
+3. **Sentence composition**: classified signals select from curated sentence fragment libraries, assembled into a coherent paragraph
+4. **Kinyarwanda alerts**: block decisions include Kinyarwanda-language fraud alerts for Rwandan users
 
-This approach is **deterministic, auditable, and fully explainable** — properties that regulators and MNOs require in production fraud systems.
+This approach is **deterministic, auditable, and fully explainable**, properties that regulators and MNOs require in production fraud systems.
 
 ## Scoring Model
 
@@ -150,11 +150,11 @@ The Nokia sandbox differentiates by phone number:
 
 | Number | Behaviour |
 |--------|-----------|
-| `+99999991000` | Clean — normally no swaps detected |
+| `+99999991000` | Clean, normally no swaps detected |
 | `+99999991234` | Device swap detected |
 | `+99999991500` | SIM swap + roaming + anomalous connectivity |
 
-**Number Verification** returns "Verification unavailable" due to sandbox OAuth limitations — this is expected and handled gracefully.
+**Number Verification** returns "Verification unavailable" due to sandbox OAuth limitations, this is expected and handled gracefully.
 
 The demo value is in observing the full pipeline execution: parallel API calls, signal aggregation, continuous recency scoring, combo synergy bonus, amount-weighted risk, and the reasoning engine's output.
 
@@ -163,8 +163,8 @@ The demo value is in observing the full pipeline execution: parallel API calls, 
 | Requirement | Source | Required |
 |-------------|--------|----------|
 | `NAC_API_KEY` | [Nokia NaC Portal](https://developer.networkascode.nokia.io/) | Yes |
-| Python 3.11+ | — | Yes |
-| Node 20+ | — | For frontend build only |
+| Python 3.11+ | - | Yes |
+| Node 20+ | - | For frontend build only |
 
 **No external AI API keys required. No model downloads. No LLM dependencies.**
 
