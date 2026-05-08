@@ -216,6 +216,8 @@ def _summarise_signal(api_name: str, signals: dict, raw: dict) -> str:
             return "API rejected request (invalid phone number)"
         if "429" in err:
             return "Rate limited — too many requests, please wait"
+        if "404" in err or "OAuth" in err:
+            return "Verification unavailable"
         return f"Error: {err[:60]}"
     if api_name == "sim_swap":
         if signals.get("sim_swap_detected"):
@@ -239,7 +241,7 @@ def _signal_summary_fallback(sig: models.ApiSignal) -> str:
         return "API timeout"
     if sig.error_message:
         err = str(sig.error_message)
-        if "OAuth2" in err:
+        if "OAuth2" in err or "404" in err:
             return "Verification unavailable"
         if "422" in err:
             return "API rejected request (invalid number)"

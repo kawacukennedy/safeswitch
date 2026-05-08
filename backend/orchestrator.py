@@ -148,12 +148,21 @@ async def _call_number_verification(device: Any) -> Dict[str, Any]:
             "error": "timeout"
         }
     except Exception as e:
+        err = str(e)
+        if "404" in err or "OAuth" in err:
+            return {
+                "api": "number_verification",
+                "verified": None,
+                "response_ms": 0,
+                "timed_out": False,
+                "error": None
+            }
         return {
             "api": "number_verification",
             "verified": None,
             "response_ms": 0,
             "timed_out": False,
-            "error": str(e)
+            "error": err
         }
 
 
