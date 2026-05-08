@@ -11,8 +11,11 @@ Nokia Network as Code Python SDK v8.0.0:
   Install: pip install network-as-code==8.0.0
   Docs: https://networkascode.nokia.io/docs
 
-Sandbox note: all test numbers return identical data from the Nokia sandbox.
-The sandbox reports recent SIM swaps and device swaps for every query.
+Sandbox note: test numbers return differentiated data.
+- +99999991000 (clean) → normally no swaps
+- +99999991234 (device swap) → device swap detected
+- +99999991500 (SIM swap + anomaly) → SIM swap, roaming, anomalous connectivity
+Number Verification returns "Verification unavailable" (sandbox OAuth limitation).
 
 CAMARA APIs called:
   1. SIM Swap:          device.verify_sim_swap(max_age=hours) → bool

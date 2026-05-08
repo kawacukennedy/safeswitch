@@ -99,10 +99,6 @@ This approach is **deterministic, auditable, and fully explainable** — propert
 ## Quick Start (Development)
 
 ```bash
-# One-command launcher (backend + frontend)
-./start.sh
-
-# Or manually:
 cd backend && pip install -r requirements.txt
 cp .env.example .env   # Add your NAC_API_KEY
 uvicorn main:app --reload --port 8000
@@ -150,7 +146,17 @@ POST /api/v1/analyze
 
 ## Sandbox Notes
 
-The Nokia sandbox returns identical data for all test phone numbers (recent SIM swap + device swap). Every transaction scores **75** and is blocked. This is the sandbox's fixed behaviour — not a bug. The demo value is in observing the full pipeline execution: parallel API calls, signal aggregation, continuous recency scoring, combo synergy bonus, amount-weighted risk, and the reasoning engine's output.
+The Nokia sandbox differentiates by phone number:
+
+| Number | Behaviour |
+|--------|-----------|
+| `+99999991000` | Clean — normally no swaps detected |
+| `+99999991234` | Device swap detected |
+| `+99999991500` | SIM swap + roaming + anomalous connectivity |
+
+**Number Verification** returns "Verification unavailable" due to sandbox OAuth limitations — this is expected and handled gracefully.
+
+The demo value is in observing the full pipeline execution: parallel API calls, signal aggregation, continuous recency scoring, combo synergy bonus, amount-weighted risk, and the reasoning engine's output.
 
 ## Dependencies
 
