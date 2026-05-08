@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     NAC_API_KEY: str
 
     APP_ENV: str = "development"
-    ALLOWED_ORIGINS: str = "http://localhost:5173,https://safeswitch.vercel.app"
+    ALLOWED_ORIGINS: str = "http://localhost:5173"
 
     BLOCK_THRESHOLD: int = 70
     CHALLENGE_THRESHOLD: int = 40
