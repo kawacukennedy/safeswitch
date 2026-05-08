@@ -41,6 +41,7 @@ class TransactionListItem(BaseModel):
     decision: str
     total_response_ms: int
     signals: List[ApiSignalResponse]
+    signals: List[ApiSignalResponse]
 
 class DashboardStats(BaseModel):
     total_transactions: int

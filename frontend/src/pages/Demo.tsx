@@ -151,10 +151,10 @@ export default function Demo() {
       <Navbar />
       <div className="flex h-[calc(100vh-60px)]">
         {/* Left Panel */}
-        <div className="w-[40%] min-w-[380px] bg-neutral-50 border-r border-neutral-200 p-10 overflow-y-auto flex flex-col">
+        <div className="w-[40%] min-w-[360px] bg-neutral-50 border-r border-neutral-200 p-8 overflow-y-auto flex flex-col">
           <div className="flex-shrink-0">
             <p className="text-label-lg text-neutral-500 mb-2">TEST TRANSACTION</p>
-            <p className="text-body-sm text-neutral-500 mb-8">Check a phone number against Nokia Network as Code</p>
+            <p className="text-body-sm text-neutral-500 mb-6">Check a phone number against Nokia Network as Code</p>
 
             {/* Preset Numbers */}
             <div className="flex gap-2 mb-8 flex-wrap">
@@ -281,7 +281,7 @@ export default function Demo() {
         </div>
 
         {/* Right Panel */}
-        <div className="flex-1 bg-white p-10 overflow-y-auto">
+        <div className="flex-1 bg-white p-8 overflow-y-auto">
           {error && !loading && (
             <div className="flex items-center justify-center h-full">
               <div className="text-center max-w-md">
@@ -308,15 +308,15 @@ export default function Demo() {
           )}
 
           {result && (
-            <div className="space-y-8 max-w-2xl">
-              {/* Section A: API Signal Cards */}
+            <div className="space-y-5 max-w-2xl">
+              {/* Section A: API Signal Cards */
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
               >
-                <h3 className="text-heading-sm text-neutral-900 mb-4">API Signals</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <h3 className="text-heading-sm text-neutral-900 mb-3">API Signals</h3>
+                <div className="grid grid-cols-2 gap-3">
                   {result.signals.map((signal, i: number) => {
                     const level = getRiskLevel(signal.risk_contribution)
                     return (
@@ -326,13 +326,13 @@ export default function Demo() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.15, duration: 0.4 }}
                       >
-                        <Card borderColor={riskBorderMap[level]} className="p-6">
+                        <Card borderColor={riskBorderMap[level]} className="p-5">
                           <div className="flex justify-between items-start">
                             <p className="text-label-lg text-neutral-900 uppercase tracking-wider">{apiLabels[signal.api_name] || signal.api_name}</p>
                             <span className="text-label-sm text-neutral-400 bg-neutral-100 rounded-full px-2 py-0.5 whitespace-nowrap">Nokia NaC</span>
                           </div>
-                          <p className="text-body-sm text-neutral-500 mt-4 border-t border-neutral-100 pt-3">{signal.summary}</p>
-                          <div className="flex justify-between items-center mt-4">
+                          <p className="text-body-sm text-neutral-500 mt-3 border-t border-neutral-100 pt-3">{signal.summary}</p>
+                          <div className="flex justify-between items-center mt-3">
                             <Badge status={riskBadgeMap[level].status}>{riskBadgeMap[level].label}</Badge>
                             <span className="font-mono text-label-sm text-neutral-400">{signal.response_ms}ms</span>
                           </div>
@@ -349,8 +349,8 @@ export default function Demo() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25, duration: 0.4 }}
               >
-                <h3 className="text-heading-sm text-neutral-900 mb-4">SIGNAL AGGREGATION</h3>
-                <div className="bg-white border border-neutral-200 rounded-2xl p-6 space-y-4">
+                <h3 className="text-heading-sm text-neutral-900 mb-3">SIGNAL AGGREGATION</h3>
+                <div className="bg-white border border-neutral-200 rounded-2xl p-5 space-y-3">
                   {result.signals.map((signal) => {
                     const level = getRiskLevel(signal.risk_contribution)
                     const barWidth = Math.min(Math.max(Math.abs(signal.risk_contribution) * 1.5, 8), 50)
@@ -387,11 +387,11 @@ export default function Demo() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.4 }}
               >
-                <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-3 mb-3">
                   <h3 className="text-heading-sm text-neutral-900">REASONING ENGINE</h3>
-                  <span className="text-label-sm text-neutral-500 bg-neutral-100 rounded-full px-2 py-0.5">built-in &middot; no external APIs</span>
+                  <span className="text-label-sm text-neutral-500 bg-neutral-100 rounded-full px-2 py-0.5 whitespace-nowrap">built-in &middot; no external APIs</span>
                 </div>
-                <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-6">
+                <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-5">
                   <p className="text-body-md text-neutral-700 leading-relaxed font-mono">
                     {displayedReasoning}
                     {isTyping && <span className="animate-pulse text-neutral-400">|</span>}
@@ -404,7 +404,7 @@ export default function Demo() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.55, duration: 0.4 }}
-                className={`border rounded-xl p-6 ${decisionBgMap[decision]} ${decisionBorderMap[decision]}`}
+                className={`border rounded-xl p-5 ${decisionBgMap[decision]} ${decisionBorderMap[decision]}`}
               >
                 <div className="flex items-center gap-3 mb-2">
                   <span className="text-xl">{decisionIconMap[decision]}</span>

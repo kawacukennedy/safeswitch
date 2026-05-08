@@ -123,7 +123,7 @@ export default function Landing() {
             </p>
           </div>
           <hr className="my-10 border-neutral-200" />
-          <a href="#architecture" className="text-body-md text-neutral-600 hover:text-neutral-900">
+          <a href="https://github.com/kawacukennedy/safeswitch.git" target="_blank" rel="noopener noreferrer" className="text-body-md text-neutral-600 hover:text-neutral-900">
             Read the full architecture →
           </a>
         </motion.div>
@@ -140,27 +140,27 @@ export default function Landing() {
           <div className="grid grid-cols-3 gap-6">
             {[
               {
-                status: 'safe' as const,
-                badge: 'APPROVE',
-                title: 'Clean transaction',
-                desc: 'verified number, stable device, no recent swaps',
-                score: 12,
-                outcome: 'Transaction proceeds in 1.4s',
-              },
-              {
-                status: 'warn' as const,
-                badge: 'USSD CHALLENGE',
-                title: 'Device swap 6 hours ago',
-                desc: 'transaction amount 3× user average',
-                score: 58,
-                outcome: 'USSD verification sent to registered number',
+                status: 'block' as const,
+                badge: 'BLOCKED',
+                title: 'All sandbox numbers blocked',
+                desc: 'Nokia sandbox reports recent SIM+device swap for every number',
+                score: 75,
+                outcome: 'All numbers blocked. Reasoning engine explains why.',
               },
               {
                 status: 'block' as const,
                 badge: 'BLOCKED',
-                title: 'SIM swap + anomaly',
-                desc: 'SIM swap 22 min ago, new device, roaming',
-                score: 91,
+                title: 'Large amount amplified risk',
+                desc: '200k RWF + recent SIM swap = higher score',
+                score: 78,
+                outcome: 'Amount-weighted scoring raises risk to 78.',
+              },
+              {
+                status: 'block' as const,
+                badge: 'BLOCKED',
+                title: 'Full pipeline demo',
+                desc: '4 parallel CAMARA APIs, <1ms reasoning engine',
+                score: 75,
                 outcome: 'Transaction blocked. Alert sent in Kinyarwanda.',
               },
             ].map((scenario, i) => (
@@ -192,7 +192,7 @@ export default function Landing() {
           </div>
           <div className="flex gap-6">
             <a href="#" className="text-body-sm text-neutral-500 hover:text-neutral-700">Privacy</a>
-            <a href="#" className="text-body-sm text-neutral-500 hover:text-neutral-700">GitHub</a>
+            <a href="https://github.com/kawacukennedy/safeswitch.git" target="_blank" rel="noopener noreferrer" className="text-body-sm text-neutral-500 hover:text-neutral-700">GitHub</a>
             <a href="#" className="text-body-sm text-neutral-500 hover:text-neutral-700">Hackathon</a>
           </div>
           <p className="text-body-sm text-neutral-500">

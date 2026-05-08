@@ -15,7 +15,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-body-sm text-neutral-600 hover:text-neutral-900 hidden sm:block">View on GitHub</a>
+          <a href="https://github.com/kawacukennedy/safeswitch.git" target="_blank" rel="noopener noreferrer" className="text-body-sm text-neutral-600 hover:text-neutral-900 hidden sm:block">View on GitHub</a>
           <Link to="/demo">
             <button className="bg-neutral-900 text-white text-body-sm font-medium rounded-full px-6 py-2.5 hover:bg-neutral-700 transition-colors duration-200">
               Try Live Demo
