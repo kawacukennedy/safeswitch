@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import Navbar from '../components/layout/Navbar'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
@@ -138,7 +138,7 @@ export default function Dashboard() {
           <Card className="mb-6 p-6">
             <h2 className="text-heading-sm text-neutral-900 mb-4">Risk Score Distribution</h2>
             <ResponsiveContainer width="100%" height={160}>
-              <AreaChart data={chartData.length > 0 ? chartData : [{ time: '', approved: 0, challenged: 0, blocked: 0 }]}>
+              <LineChart data={chartData.length > 0 ? chartData : [{ time: '', approved: 0, challenged: 0, blocked: 0 }]}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E8E7E4" vertical={false} />
                 <XAxis dataKey="time" tick={{ fontSize: 11, fill: '#A8A59D' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: '#A8A59D' }} axisLine={false} tickLine={false} domain={[0, 100]} />
@@ -155,10 +155,10 @@ export default function Dashboard() {
                   iconType="circle"
                   wrapperStyle={{ fontSize: '12px', color: '#757270' }}
                 />
-                <Area type="monotone" dataKey="approved" stroke="#1A7A4A" fill="#E8F5EE" strokeWidth={2} dot={false} name="Approved" />
-                <Area type="monotone" dataKey="challenged" stroke="#B45309" fill="#FEF3C7" strokeWidth={2} dot={false} name="Challenged" />
-                <Area type="monotone" dataKey="blocked" stroke="#9B1C1C" fill="#FEE2E2" strokeWidth={2} dot={false} name="Blocked" />
-              </AreaChart>
+                <Line type="monotone" dataKey="approved" stroke="#1A7A4A" strokeWidth={2} dot={true} name="Approved" />
+                <Line type="monotone" dataKey="challenged" stroke="#B45309" strokeWidth={2} dot={true} name="Challenged" />
+                <Line type="monotone" dataKey="blocked" stroke="#9B1C1C" strokeWidth={2} dot={true} name="Blocked" />
+              </LineChart>
             </ResponsiveContainer>
           </Card>
 

@@ -25,14 +25,14 @@ def _seed_db():
         now = datetime.now(timezone.utc)
         seeds = [
             {
-                "phone_number": "+99999991001", "amount_rwf": 45000,
-                "risk_score": 0, "decision": "approve",
+                "phone_number": "+99999991001", "amount_rwf": 95000,
+                "risk_score": 8, "decision": "approve",
                 "created_at": now - timedelta(hours=2),
                 "signals": [
                     {"name": "sim_swap", "contrib": 0, "ms": 120, "timeout": False, "err": None, "raw": {"api": "sim_swap", "detected": False, "swap_date": None}},
                     {"name": "device_swap", "contrib": 0, "ms": 120, "timeout": False, "err": None, "raw": {"api": "device_swap", "detected": False, "swap_date": None}},
                     {"name": "number_verification", "contrib": 0, "ms": 0, "timeout": False, "err": None, "raw": {"api": "number_verification", "verified": None}},
-                    {"name": "device_status", "contrib": -3, "ms": 120, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": False, "anomalous": False}},
+                    {"name": "device_status", "contrib": 8, "ms": 120, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": False, "anomalous": False}},
                 ]
             },
             {
