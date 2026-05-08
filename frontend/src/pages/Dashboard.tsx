@@ -5,7 +5,6 @@ import Navbar from '../components/layout/Navbar'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
 import { getDashboardStats, getTransactions, DashboardStats, TransactionListItem } from '../lib/api'
-import { MAX_WIDTH } from '../design-system/tokens'
 
 const decisionBadgeMap: Record<string, 'safe' | 'warn' | 'block'> = {
   approve: 'safe',

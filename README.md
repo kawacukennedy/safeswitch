@@ -112,30 +112,6 @@ cd frontend && npm install && npm run dev
 
 Requires a **Nokia Network as Code API key** from the [Nokia NaC Developer Portal](https://developer.networkascode.nokia.io/).
 
-## Deploy to Production
-
-### Option A: Render (recommended — single service, Docker)
-
-1. Push to GitHub
-2. On [Render](https://render.com), create a **New Web Service** → connect your repo
-3. Render auto-detects the `Dockerfile`
-4. Set environment variables:
-   - `NAC_API_KEY` — your Nokia Network as Code key
-   - `ALLOWED_ORIGINS` — e.g. `https://safeswitch.onrender.com`
-5. Deploy. The `Dockerfile` builds the frontend and bundles it with the backend in one image.
-
-### Option B: Railway
-
-Same flow as Render — Railway detects the `Dockerfile` automatically.
-
-### Option C: Fly.io
-
-```bash
-fly launch --dockerfile Dockerfile
-fly secrets set NAC_API_KEY=your_key_here
-fly deploy
-```
-
 ## API Reference
 
 | Method | Path | Description |

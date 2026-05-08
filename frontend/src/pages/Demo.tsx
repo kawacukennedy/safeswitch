@@ -309,7 +309,7 @@ export default function Demo() {
 
           {result && (
             <div className="space-y-5 max-w-2xl">
-              {/* Section A: API Signal Cards */
+              {/* Section A: API Signal Cards */}
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
