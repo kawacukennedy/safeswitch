@@ -16,8 +16,8 @@ interface ScenarioConfig {
 }
 
 const scenarios: Record<Scenario, ScenarioConfig> = {
-  a: { phone_number: '+99999991000', amount_rwf: 50000, recipient_wallet: 'wallet_rw_001' },
-  b: { phone_number: '+99999991234', amount_rwf: 180000, recipient_wallet: 'wallet_rw_002' },
+  a: { phone_number: '+99999991001', amount_rwf: 45000, recipient_wallet: 'wallet_rw_001' },
+  b: { phone_number: '+99999991000', amount_rwf: 180000, recipient_wallet: 'wallet_rw_002' },
   c: { phone_number: '+99999991500', amount_rwf: 320000, recipient_wallet: 'wallet_rw_003' },
 }
 

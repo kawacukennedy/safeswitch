@@ -125,14 +125,27 @@ async def _call_device_swap(device: Any, window_hours: int) -> Dict[str, Any]:
         }
 
 
-async def _call_number_verification(phone_number: str) -> Dict[str, Any]:
+async def _call_number_verification(device: Any) -> Dict[str, Any]:
     try:
+        start = time.time()
+        verified = await asyncio.wait_for(
+            asyncio.to_thread(device.verify_number, code="sandbox", state="sandbox"),
+            timeout=settings.CAMARA_TIMEOUT_SECONDS
+        )
+        return {
+            "api": "number_verification",
+            "verified": verified if isinstance(verified, bool) else None,
+            "response_ms": int((time.time() - start) * 1000),
+            "timed_out": False,
+            "error": None
+        }
+    except asyncio.TimeoutError:
         return {
             "api": "number_verification",
             "verified": None,
-            "response_ms": 0,
-            "timed_out": False,
-            "error": None
+            "response_ms": int(settings.CAMARA_TIMEOUT_SECONDS * 1000),
+            "timed_out": True,
+            "error": "timeout"
         }
     except Exception as e:
         return {
@@ -199,7 +212,7 @@ async def run_parallel_checks(phone_number: str, window_hours: int = 24) -> Dict
             asyncio.gather(
                 _call_sim_swap(device, window_hours),
                 _call_device_swap(device, window_hours),
-                _call_number_verification(phone_number),
+                _call_number_verification(device),
                 _call_device_status(device)
             ),
             timeout=settings.CAMARA_TIMEOUT_SECONDS * 4
