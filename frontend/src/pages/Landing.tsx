@@ -44,13 +44,13 @@ export default function Landing() {
           </div>
 
           {/* Stats Bar */}
-          <div className="mt-16 pt-10 border-t border-neutral-200 flex justify-center gap-12">
+          <div className="mt-12 sm:mt-16 pt-8 sm:pt-10 border-t border-neutral-200 flex flex-col sm:flex-row justify-center gap-6 sm:gap-12">
             {[
               { value: '$3.4M', label: 'stolen in Rwanda, March 2026' },
               { value: '43%', label: 'of fraud via SIM swap' },
               { value: '<2s', label: 'SafeSwitch response time' },
             ].map((stat, i) => (
-              <div key={i} className={i > 0 ? 'pl-6 border-l border-neutral-200' : ''}>
+              <div key={i} className={`${i > 0 ? 'sm:pl-6 sm:border-l border-neutral-200 pt-6 sm:pt-0' : ''} ${i < 2 ? 'pb-6 sm:pb-0 border-b sm:border-b-0 border-neutral-200' : ''}`}>
                 <div className="font-instrument text-display-lg text-neutral-900">{stat.value}</div>
                 <div className="text-label-lg text-neutral-500 uppercase tracking-wider mt-1">{stat.label}</div>
               </div>
@@ -69,7 +69,7 @@ export default function Landing() {
             </h2>
           </motion.div>
 
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col lg:flex-row items-center gap-4">
             {[
               { step: 1, title: 'User initiates transaction', icon: '→' },
               { step: 2, title: 'SafeSwitch intercepts', icon: '→' },
@@ -77,10 +77,10 @@ export default function Landing() {
               { step: 4, title: 'On-device reasoning engine', icon: '→' },
               { step: 5, title: 'Approve / Challenge / Block', icon: '' },
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-4">
-                <Card className="flex-1 min-w-[180px] p-6">
+              <div key={i} className="flex flex-col lg:flex-row items-center gap-4 w-full lg:w-auto">
+                <Card className="w-full lg:w-auto lg:flex-1 lg:min-w-[180px] p-6">
                   <p className="text-label-sm text-neutral-400">STEP {item.step}</p>
-                  <div className="text-neutral-700 text-2xl my-3">→</div>
+                  <div className="text-neutral-700 text-2xl my-3">{item.icon || '→'}</div>
                   <h3 className="text-heading-sm text-neutral-900 mt-4">{item.title}</h3>
                   {item.subItems && (
                     <div className="flex flex-wrap gap-2 mt-3">
@@ -97,7 +97,11 @@ export default function Landing() {
                     </p>
                   )}
                 </Card>
-                {item.icon && i < 4 && <span className="text-neutral-300 text-2xl">→</span>}
+                {item.icon && i < 4 && (
+                  <span className="text-neutral-300 text-2xl rotate-90 lg:rotate-0 flex-shrink-0">
+                    {item.icon}
+                  </span>
+                )}
               </div>
             ))}
           </div>
@@ -137,7 +141,7 @@ export default function Landing() {
             <h2 className="font-instrument text-display-lg text-neutral-900">Three outcomes. One system.</h2>
           </motion.div>
 
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {[
               {
                 status: 'block' as const,

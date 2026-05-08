@@ -119,7 +119,7 @@ export default function Dashboard() {
 
           {/* Stats Bar */}
           {stats && (
-            <div className="grid grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
               {[
                 { label: 'Total Analyzed', value: stats.total_transactions },
                 { label: 'Fraud Blocked', value: `${stats.total_blocked} (${stats.block_rate_pct}%)` },
