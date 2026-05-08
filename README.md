@@ -69,7 +69,7 @@ User → Transaction Request
 | **Reasoning Engine** | `reasoning_engine.py` | Pure-Python pattern matcher, no LLM, no external API, runs in <1ms |
 | **Decision Engine** | `decision.py` | Applies configurable risk thresholds (block ≥70, challenge ≥40) |
 
-### The Reasoning Engine (no LLM required)
+### The Reasoning Engine
 
 SafeSwitch's reasoning engine uses a **multi-layer template composition system**:
 
