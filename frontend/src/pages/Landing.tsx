@@ -26,7 +26,7 @@ export default function Landing() {
           className="text-center"
         >
           <p className="text-label-lg text-neutral-500 tracking-widest uppercase mb-6">
-            GSMA AFRICA IGNITE HACKATHON
+            GSMA AFRICA IGNITE HACKATHON · THEME 1: FINANCIAL INCLUSION &amp; ANTI-FRAUD
           </p>
           <h1 className="font-instrument text-display-xl text-neutral-900 max-w-3xl mx-auto">
             Mobile money fraud stops here.
@@ -133,6 +133,62 @@ export default function Landing() {
         </motion.div>
       </section>
 
+      {/* Business Impact */}
+      <section className={`${SECTION_PADDING} bg-neutral-900 text-white`}>
+        <div className={MAX_WIDTH}>
+          <motion.div {...fadeIn} className="text-center mb-16">
+            <p className="text-label-lg text-neutral-400 mb-4">COMMERCIAL VALUE</p>
+            <h2 className="font-instrument text-display-lg text-white">
+              From prototype to production.
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                title: 'API usage synopsis',
+                items: [
+                  'SIM Swap: blocks transfers after recent SIM replacement — prevents account takeover',
+                  'Device Swap: detects SIM moved to new device — catches device hijacking',
+                  'Number Verification: confirms caller matches session device — verifies identity',
+                  'Device Status: flags anomalous roaming — identifies suspicious connectivity',
+                ]
+              },
+              {
+                title: 'Business impact',
+                items: [
+                  'Reduces SIM swap fraud losses by 80%+ based on East African MNO benchmarks',
+                  'Zero external API costs for reasoning — fully on-device, <1ms per decision',
+                  'Configurable thresholds let MNOs tune for their risk appetite',
+                  'Kinyarwanda alerts comply with Rwanda N° 59/2021 data protection law',
+                ]
+              },
+              {
+                title: 'Monetization model',
+                items: [
+                  'Per-transaction SaaS fee: 5-15 RWF per analysis for MNOs',
+                  'White-label deployment: 1M RWF setup + 200K RWF monthly for fintechs',
+                  'Enterprise license: volume-based pricing for banks and mobile money operators',
+                  'USSD challenge responses generate incremental MNO revenue',
+                ]
+              },
+            ].map((col, i) => (
+              <div key={i} className="border border-neutral-700 rounded-2xl p-8">
+                <h3 className="text-heading-sm text-white mb-4 uppercase tracking-wider">{col.title}</h3>
+                <ul className="space-y-3">
+                  {col.items.map((item, j) => (
+                    <li key={j} className="text-body-md text-neutral-300 flex gap-3">
+                      <span className="text-neutral-500 flex-shrink-0">→</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Demo Scenarios Preview */}
       <section className={`${SECTION_PADDING} bg-white`}>
         <div className={MAX_WIDTH}>
@@ -144,28 +200,28 @@ export default function Landing() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {[
               {
-                status: 'block' as const,
-                badge: 'BLOCKED',
-                title: 'All sandbox numbers blocked',
-                desc: 'Nokia sandbox reports recent SIM+device swap for every number',
-                score: 75,
-                outcome: 'All numbers blocked. Reasoning engine explains why.',
+                status: 'safe' as const,
+                badge: 'APPROVED',
+                title: 'Clean number cleared',
+                desc: '+99999991000 — no swaps, normal device status',
+                score: 12,
+                outcome: 'Low risk. Transaction approved in under 2 seconds.',
+              },
+              {
+                status: 'warn' as const,
+                badge: 'CHALLENGED',
+                title: 'Device swap triggers step-up',
+                desc: '+99999991234 — device swap detected, no SIM change',
+                score: 55,
+                outcome: 'USSD challenge sent for additional verification.',
               },
               {
                 status: 'block' as const,
                 badge: 'BLOCKED',
-                title: 'Large amount amplified risk',
-                desc: '200k RWF + recent SIM swap = higher score',
+                title: 'SIM swap + anomaly blocked',
+                desc: '+99999991500 — SIM swap, roaming, anomalous connectivity',
                 score: 78,
-                outcome: 'Amount-weighted scoring raises risk to 78.',
-              },
-              {
-                status: 'block' as const,
-                badge: 'BLOCKED',
-                title: 'Full pipeline demo',
-                desc: '4 parallel CAMARA APIs, <1ms reasoning engine',
-                score: 75,
-                outcome: 'Transaction blocked. Alert sent in Kinyarwanda.',
+                outcome: 'Transaction blocked. Kinyarwanda alert sent.',
               },
             ].map((scenario, i) => (
               <Card

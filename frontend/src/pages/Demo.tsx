@@ -16,9 +16,9 @@ interface ScenarioConfig {
 }
 
 const scenarios: Record<Scenario, ScenarioConfig> = {
-  a: { phone_number: '+99999991001', amount_rwf: 45000, recipient_wallet: 'wallet_rw_001' },
-  b: { phone_number: '+99999991000', amount_rwf: 180000, recipient_wallet: 'wallet_rw_002' },
-  c: { phone_number: '+99999991500', amount_rwf: 320000, recipient_wallet: 'wallet_rw_003' },
+  a: { phone_number: '+99999991000', amount_rwf: 45000, recipient_wallet: 'wallet_rw_001' },
+  b: { phone_number: '+99999991234', amount_rwf: 80000, recipient_wallet: 'wallet_rw_002' },
+  c: { phone_number: '+99999991500', amount_rwf: 150000, recipient_wallet: 'wallet_rw_003' },
 }
 
 const apiNames = ['sim_swap', 'device_swap', 'number_verification', 'device_status']
@@ -277,8 +277,8 @@ export default function Demo() {
             )}
 
             <p className="text-body-sm text-neutral-400 mt-auto pt-6">
-              Nokia sandbox reports recent SIM and device swaps for all test numbers.
-              Risk differentiation comes from transaction amount and velocity scoring.
+              Nokia sandbox differentiates by number: +99999991000 (clean), +99999991234 (device swap),
+              +99999991500 (SIM swap + roaming + anomaly). Number Verification returns "unavailable" in sandbox.
             </p>
           </div>
 
