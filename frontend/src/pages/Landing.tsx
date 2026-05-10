@@ -32,7 +32,7 @@ export default function Landing() {
             Mobile money fraud stops here.
           </h1>
           <p className="text-body-lg text-neutral-500 mt-6 max-w-2xl mx-auto">
-            SafeSwitch intercepts high-risk transactions before they complete — using live telecom signals from Nokia's Network as Code platform, combined with an on-device reasoning engine that evaluates risk in under two seconds.
+            SafeSwitch intercepts high-risk transactions before they complete, using live telecom signals from Nokia's Network as Code platform, combined with an on-device reasoning engine that evaluates risk in under two seconds.
           </p>
           <div className="mt-10 flex gap-4 justify-center">
             <Link to="/demo">
@@ -148,17 +148,17 @@ export default function Landing() {
               {
                 title: 'API usage synopsis',
                 items: [
-                  'SIM Swap: blocks transfers after recent SIM replacement — prevents account takeover',
-                  'Device Swap: detects SIM moved to new device — catches device hijacking',
-                  'Number Verification: confirms caller matches session device — verifies identity',
-                  'Device Status: flags anomalous roaming — identifies suspicious connectivity',
+                  'SIM Swap: blocks transfers after recent SIM replacement, prevents account takeover',
+                  'Device Swap: detects SIM moved to new device, catches device hijacking',
+                  'Number Verification: confirms caller matches session device, verifies identity',
+                  'Device Status: flags anomalous roaming, identifies suspicious connectivity',
                 ]
               },
               {
                 title: 'Business impact',
                 items: [
                   'Reduces SIM swap fraud losses by 80%+ based on East African MNO benchmarks',
-                  'Zero external API costs for reasoning — fully on-device, <1ms per decision',
+                  'Zero external API costs for reasoning, fully on-device, <1ms per decision',
                   'Configurable thresholds let MNOs tune for their risk appetite',
                   'Kinyarwanda alerts comply with Rwanda N° 59/2021 data protection law',
                 ]
@@ -203,7 +203,7 @@ export default function Landing() {
                 status: 'safe' as const,
                 badge: 'APPROVED',
                 title: 'Clean number cleared',
-                desc: '+99999991000 — no swaps, normal device status',
+                desc: '+99999991000: no swaps, normal device status',
                 score: 12,
                 outcome: 'Low risk. Transaction approved in under 2 seconds.',
               },
@@ -211,7 +211,7 @@ export default function Landing() {
                 status: 'warn' as const,
                 badge: 'CHALLENGED',
                 title: 'Device swap triggers step-up',
-                desc: '+99999991234 — device swap detected, no SIM change',
+                desc: '+99999991234: device swap detected, no SIM change',
                 score: 55,
                 outcome: 'USSD challenge sent for additional verification.',
               },
@@ -219,7 +219,7 @@ export default function Landing() {
                 status: 'block' as const,
                 badge: 'BLOCKED',
                 title: 'SIM swap + anomaly blocked',
-                desc: '+99999991500 — SIM swap, roaming, anomalous connectivity',
+                desc: '+99999991500: SIM swap, roaming, anomalous connectivity',
                 score: 78,
                 outcome: 'Transaction blocked. Kinyarwanda alert sent.',
               },
