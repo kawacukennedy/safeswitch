@@ -144,7 +144,29 @@ POST /api/v1/analyze
 }
 ```
 
-## Sandbox Notes
+## Nokia Network as Code Integration
+
+SafeSwitch integrates **four NaC CAMARA APIs** via the `network-as-code` Python SDK v8.0.0:
+
+### API Usage
+
+| CAMARA API | NaC SDK Method | What SafeSwitch does with it |
+|------------|---------------|------------------------------|
+| **SIM Swap** | `device.verify_sim_swap(max_age=hours)` + `device.get_sim_swap_date()` | Checks if the SIM was recently replaced. If detected, computes minutes since swap for continuous recency scoring (50 pts at 0 min → 20 pts at 360+ min). The strongest single fraud signal. |
+| **Device Swap** | `device.verify_device_swap(max_age=hours)` + `device.get_device_swap_date()` | Checks if the SIM moved to a new physical device. Scores 15 pts alone, or +10 combo bonus when detected alongside SIM swap — the signature pattern of mobile money account takeover. |
+| **Number Verification** | `device.verify_number(code, state)` | Attempts to verify the phone number matches the session device. Sandbox returns OAuth 404 (handled gracefully as "Verification unavailable"). In production with proper carrier OAuth, this confirms caller identity. |
+| **Device Status** | `device.get_roaming()` | Checks if the device is in an unexpected roaming location. Anomalous roaming adds 10 pts and is flagged in the reasoning engine output. |
+
+### How the SDK is used
+
+1. A single `NetworkAsCodeClient` is initialized with the `NAC_API_KEY` and cached globally (lazy singleton pattern in `orchestrator.py`).
+2. One `devices.get(phone_number=...)` call fetches the device object, reused across all four API calls — eliminating redundant lookups.
+3. All four CAMARA calls fire simultaneously via `asyncio.gather()`. Each call is wrapped in `asyncio.wait_for()` with a 10-second timeout.
+4. On timeout or error, each call returns a graceful null result — the pipeline never raises. Signal aggregation handles missing data via a confidence scoring system (4/4 APIs = 1.0 confidence, 0/4 = 0.0).
+
+### Sandbox Behaviour
+
+The Nokia sandbox differentiates by test number rather than returning identical data, allowing the demo to show all three decision outcomes.
 
 The Nokia sandbox differentiates by phone number:
 
