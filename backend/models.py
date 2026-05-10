@@ -26,6 +26,7 @@ class Transaction(Base):
     reasoning_text = Column(String, nullable=True)     # From reasoning_engine.py
     alert_kinyarwanda = Column(String, nullable=True)  # Only for block decisions
     total_response_ms = Column(Integer, nullable=True)
+    agentic_analysis = Column(String, nullable=True)   # AI executive summary
     signals = relationship("ApiSignal", back_populates="transaction")
 
 class ApiSignal(Base):

@@ -31,6 +31,7 @@ class TransactionResponse(BaseModel):
     alert_kinyarwanda: Optional[str]
     total_response_ms: int
     signals: List[ApiSignalResponse]
+    agentic_analysis: Optional[str]
 
 class TransactionListItem(BaseModel):
     id: str

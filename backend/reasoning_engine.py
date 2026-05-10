@@ -333,4 +333,60 @@ def generate_reasoning(
 
     kinyarwanda = KINYARWANDA_ALERTS.get(threat) if decision == "block" else None
 
-    return reasoning, kinyarwanda
+    agentic_analysis = _generate_agentic_analysis(threat, score, decision, amount_rwf)
+
+    return reasoning, kinyarwanda, agentic_analysis
+
+
+def _generate_agentic_analysis(threat: str, score: int, decision: str, amount_rwf: float) -> str:
+    templates = {
+        "active_account_takeover": (
+            f"AGENTIC ANALYSIS: Active account takeover detected. "
+            f"SIM and device were swapped simultaneously — this is the definitive signature of a mobile money account hijack. "
+            f"Risk score {score}/100. Transaction of {amount_rwf:,.0f} RWF blocked. "
+            f"Recommendation: Freeze account, initiate customer callback, file SAR."
+        ),
+        "probable_sim_swap_fraud": (
+            f"AGENTIC ANALYSIS: Probable SIM swap fraud. "
+            f"A recent SIM replacement combined with other anomalous signals indicates an ongoing fraud attempt. "
+            f"Risk score {score}/100. Autonomous decision: {decision.upper()}. "
+            f"Recommendation: Step-up verification or block depending on amount threshold."
+        ),
+        "device_hijack": (
+            f"AGENTIC ANALYSIS: Device hijack pattern detected. "
+            f"The SIM has been moved to a new device without a corresponding SIM swap event. "
+            f"Risk score {score}/100. Decision: {decision.upper()}. "
+            f"Recommendation: Verify ownership before approving future transactions."
+        ),
+        "unverified_identity": (
+            f"AGENTIC ANALYSIS: Identity verification failed. "
+            f"The phone number could not be confirmed as belonging to the session device. "
+            f"Risk score {score}/100. Decision: {decision.upper()}. "
+            f"Recommendation: Require additional identity verification."
+        ),
+        "high_velocity_abuse": (
+            f"AGENTIC ANALYSIS: High-velocity transaction pattern detected. "
+            f"Multiple rapid transactions from this number combined with existing risk signals suggest automated abuse. "
+            f"Risk score {score}/100. Decision: {decision.upper()}. "
+            f"Recommendation: Rate-limit account and review recent transaction history."
+        ),
+        "high_value_targeting": (
+            f"AGENTIC ANALYSIS: High-value targeting detected. "
+            f"A large transfer of {amount_rwf:,.0f} RWF following account changes is a primary fraud vector. "
+            f"Risk score {score}/100. Decision: {decision.upper()}. "
+            f"Recommendation: Manual review recommended regardless of score."
+        ),
+        "suspicious_activity": (
+            f"AGENTIC ANALYSIS: Suspicious activity flagged. "
+            f"Anomalous connectivity or device behaviour detected. "
+            f"Risk score {score}/100. Decision: {decision.upper()}. "
+            f"Recommendation: Monitor account for further anomalies."
+        ),
+        "low_risk": (
+            f"AGENTIC ANALYSIS: No significant fraud signals detected. "
+            f"All four network APIs returned clean or neutral results. "
+            f"Risk score {score}/100. Decision: {decision.upper()}. "
+            f"Recommendation: No action required."
+        ),
+    }
+    return templates.get(threat, f"Risk score {score}/100. Decision: {decision.upper()}.")

@@ -77,7 +77,7 @@ async def analyze_transaction(request: TransactionRequest, db: Session = Depends
     )
     decision = make_decision(score, confidence)
 
-    reasoning_text, kinyarwanda = generate_reasoning(
+    reasoning_text, kinyarwanda, agentic_analysis = generate_reasoning(
         signals=signals,
         score=score,
         decision=decision,
@@ -97,7 +97,8 @@ async def analyze_transaction(request: TransactionRequest, db: Session = Depends
         decision=decision,
         reasoning_text=reasoning_text,
         alert_kinyarwanda=kinyarwanda,
-        total_response_ms=total_ms
+        total_response_ms=total_ms,
+        agentic_analysis=agentic_analysis,
     )
     db.add(transaction)
     db.flush()
@@ -141,7 +142,8 @@ async def analyze_transaction(request: TransactionRequest, db: Session = Depends
         reasoning_text=reasoning_text,
         alert_kinyarwanda=kinyarwanda,
         total_response_ms=total_ms,
-        signals=signal_responses
+        signals=signal_responses,
+        agentic_analysis=agentic_analysis,
     )
 
 

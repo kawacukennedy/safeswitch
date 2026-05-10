@@ -401,11 +401,30 @@ export default function Demo() {
                   </div>
                 </motion.div>
 
-                {/* Section D: Decision Banner */}
+                {/* Section D: Agentic AI Analysis */}
+                {result.agentic_analysis && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 0.4 }}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <h3 className="text-heading-sm text-neutral-900">AGENTIC AI ANALYSIS</h3>
+                      <span className="text-label-sm text-neutral-500 bg-neutral-100 rounded-full px-2 py-0.5 whitespace-nowrap">autonomous decision engine</span>
+                    </div>
+                    <div className="bg-neutral-900 text-neutral-100 border border-neutral-700 rounded-xl p-4 sm:p-5">
+                      <p className="text-body-sm sm:text-body-md leading-relaxed font-mono">
+                        {result.agentic_analysis}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Section E: Decision Banner */}
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.55, duration: 0.4 }}
+                  transition={{ delay: 0.6, duration: 0.4 }}
                   className={`border rounded-xl p-4 sm:p-5 ${decisionBgMap[decision]} ${decisionBorderMap[decision]}`}
                 >
                   <div className="flex items-center gap-3 mb-2">

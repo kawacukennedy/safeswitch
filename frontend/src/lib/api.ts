@@ -25,6 +25,7 @@ export interface TransactionResponse {
   alert_kinyarwanda?: string
   total_response_ms: number
   signals: ApiSignal[]
+  agentic_analysis?: string
 }
 
 export interface TransactionListItem {
