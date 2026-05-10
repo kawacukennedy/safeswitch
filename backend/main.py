@@ -25,36 +25,135 @@ def _seed_db():
         now = datetime.now(timezone.utc)
         seeds = [
             {
-                "phone_number": "+99999991001", "amount_rwf": 95000,
-                "risk_score": 8, "decision": "approve",
-                "created_at": now - timedelta(hours=2),
+                "phone_number": "+99999991000", "amount_rwf": 25000,
+                "risk_score": 5, "decision": "approve",
+                "created_at": now - timedelta(hours=12),
                 "signals": [
                     {"name": "sim_swap", "contrib": 0, "ms": 120, "timeout": False, "err": None, "raw": {"api": "sim_swap", "detected": False, "swap_date": None}},
-                    {"name": "device_swap", "contrib": 0, "ms": 120, "timeout": False, "err": None, "raw": {"api": "device_swap", "detected": False, "swap_date": None}},
+                    {"name": "device_swap", "contrib": 0, "ms": 110, "timeout": False, "err": None, "raw": {"api": "device_swap", "detected": False, "swap_date": None}},
                     {"name": "number_verification", "contrib": 0, "ms": 0, "timeout": False, "err": None, "raw": {"api": "number_verification", "verified": None}},
-                    {"name": "device_status", "contrib": 8, "ms": 120, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": False, "anomalous": False}},
+                    {"name": "device_status", "contrib": 5, "ms": 95, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": False, "anomalous": False}},
+                ]
+            },
+            {
+                "phone_number": "+99999991000", "amount_rwf": 15000,
+                "risk_score": 3, "decision": "approve",
+                "created_at": now - timedelta(hours=10),
+                "signals": [
+                    {"name": "sim_swap", "contrib": 0, "ms": 105, "timeout": False, "err": None, "raw": {"api": "sim_swap", "detected": False, "swap_date": None}},
+                    {"name": "device_swap", "contrib": 0, "ms": 98, "timeout": False, "err": None, "raw": {"api": "device_swap", "detected": False, "swap_date": None}},
+                    {"name": "number_verification", "contrib": 0, "ms": 0, "timeout": False, "err": None, "raw": {"api": "number_verification", "verified": None}},
+                    {"name": "device_status", "contrib": 3, "ms": 88, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": False, "anomalous": False}},
+                ]
+            },
+            {
+                "phone_number": "+99999991000", "amount_rwf": 50000,
+                "risk_score": 7, "decision": "approve",
+                "created_at": now - timedelta(hours=8),
+                "signals": [
+                    {"name": "sim_swap", "contrib": 0, "ms": 115, "timeout": False, "err": None, "raw": {"api": "sim_swap", "detected": False, "swap_date": None}},
+                    {"name": "device_swap", "contrib": 0, "ms": 108, "timeout": False, "err": None, "raw": {"api": "device_swap", "detected": False, "swap_date": None}},
+                    {"name": "number_verification", "contrib": 0, "ms": 0, "timeout": False, "err": None, "raw": {"api": "number_verification", "verified": None}},
+                    {"name": "device_status", "contrib": 7, "ms": 92, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": False, "anomalous": False}},
+                ]
+            },
+            {
+                "phone_number": "+99999991234", "amount_rwf": 35000,
+                "risk_score": 45, "decision": "challenge",
+                "created_at": now - timedelta(hours=7),
+                "signals": [
+                    {"name": "sim_swap", "contrib": 0, "ms": 210, "timeout": False, "err": None, "raw": {"api": "sim_swap", "detected": False, "swap_date": None}},
+                    {"name": "device_swap", "contrib": 15, "ms": 205, "timeout": False, "err": None, "raw": {"api": "device_swap", "detected": True, "swap_date": (now - timedelta(hours=7)).isoformat()}},
+                    {"name": "number_verification", "contrib": 0, "ms": 0, "timeout": False, "err": None, "raw": {"api": "number_verification", "verified": None}},
+                    {"name": "device_status", "contrib": 0, "ms": 130, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": False, "anomalous": False}},
+                ]
+            },
+            {
+                "phone_number": "+99999991234", "amount_rwf": 60000,
+                "risk_score": 42, "decision": "challenge",
+                "created_at": now - timedelta(hours=6),
+                "signals": [
+                    {"name": "sim_swap", "contrib": 0, "ms": 195, "timeout": False, "err": None, "raw": {"api": "sim_swap", "detected": False, "swap_date": None}},
+                    {"name": "device_swap", "contrib": 15, "ms": 188, "timeout": False, "err": None, "raw": {"api": "device_swap", "detected": True, "swap_date": (now - timedelta(hours=7)).isoformat()}},
+                    {"name": "number_verification", "contrib": 0, "ms": 0, "timeout": False, "err": None, "raw": {"api": "number_verification", "verified": None}},
+                    {"name": "device_status", "contrib": 0, "ms": 120, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": False, "anomalous": False}},
                 ]
             },
             {
                 "phone_number": "+99999991000", "amount_rwf": 95000,
-                "risk_score": 55, "decision": "challenge",
-                "created_at": now - timedelta(hours=1),
+                "risk_score": 10, "decision": "approve",
+                "created_at": now - timedelta(hours=5),
                 "signals": [
-                    {"name": "sim_swap", "contrib": 35, "ms": 450, "timeout": False, "err": None, "raw": {"api": "sim_swap", "detected": True, "swap_date": (now - timedelta(hours=2)).isoformat()}},
-                    {"name": "device_swap", "contrib": 15, "ms": 450, "timeout": False, "err": None, "raw": {"api": "device_swap", "detected": True, "swap_date": (now - timedelta(hours=2)).isoformat()}},
+                    {"name": "sim_swap", "contrib": 0, "ms": 118, "timeout": False, "err": None, "raw": {"api": "sim_swap", "detected": False, "swap_date": None}},
+                    {"name": "device_swap", "contrib": 0, "ms": 112, "timeout": False, "err": None, "raw": {"api": "device_swap", "detected": False, "swap_date": None}},
                     {"name": "number_verification", "contrib": 0, "ms": 0, "timeout": False, "err": None, "raw": {"api": "number_verification", "verified": None}},
-                    {"name": "device_status", "contrib": 0, "ms": 120, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": False, "anomalous": False}},
+                    {"name": "device_status", "contrib": 10, "ms": 105, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": False, "anomalous": False}},
                 ]
             },
             {
-                "phone_number": "+99999991000", "amount_rwf": 180000,
-                "risk_score": 78, "decision": "block",
-                "created_at": now - timedelta(minutes=30),
+                "phone_number": "+99999991234", "amount_rwf": 120000,
+                "risk_score": 55, "decision": "challenge",
+                "created_at": now - timedelta(hours=4),
                 "signals": [
-                    {"name": "sim_swap", "contrib": 50, "ms": 450, "timeout": False, "err": None, "raw": {"api": "sim_swap", "detected": True, "swap_date": (now - timedelta(minutes=10)).isoformat()}},
-                    {"name": "device_swap", "contrib": 15, "ms": 450, "timeout": False, "err": None, "raw": {"api": "device_swap", "detected": True, "swap_date": (now - timedelta(minutes=10)).isoformat()}},
+                    {"name": "sim_swap", "contrib": 0, "ms": 220, "timeout": False, "err": None, "raw": {"api": "sim_swap", "detected": False, "swap_date": None}},
+                    {"name": "device_swap", "contrib": 15, "ms": 215, "timeout": False, "err": None, "raw": {"api": "device_swap", "detected": True, "swap_date": (now - timedelta(hours=7)).isoformat()}},
                     {"name": "number_verification", "contrib": 0, "ms": 0, "timeout": False, "err": None, "raw": {"api": "number_verification", "verified": None}},
-                    {"name": "device_status", "contrib": 0, "ms": 120, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": False, "anomalous": False}},
+                    {"name": "device_status", "contrib": 0, "ms": 125, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": False, "anomalous": False}},
+                ]
+            },
+            {
+                "phone_number": "+99999991500", "amount_rwf": 80000,
+                "risk_score": 72, "decision": "block",
+                "created_at": now - timedelta(hours=3),
+                "signals": [
+                    {"name": "sim_swap", "contrib": 50, "ms": 450, "timeout": False, "err": None, "raw": {"api": "sim_swap", "detected": True, "swap_date": (now - timedelta(hours=3, minutes=10)).isoformat()}},
+                    {"name": "device_swap", "contrib": 0, "ms": 320, "timeout": False, "err": None, "raw": {"api": "device_swap", "detected": False, "swap_date": None}},
+                    {"name": "number_verification", "contrib": 0, "ms": 0, "timeout": False, "err": None, "raw": {"api": "number_verification", "verified": None}},
+                    {"name": "device_status", "contrib": 10, "ms": 340, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": True, "anomalous": True}},
+                ]
+            },
+            {
+                "phone_number": "+99999991500", "amount_rwf": 15000,
+                "risk_score": 65, "decision": "challenge",
+                "created_at": now - timedelta(hours=2),
+                "signals": [
+                    {"name": "sim_swap", "contrib": 35, "ms": 430, "timeout": False, "err": None, "raw": {"api": "sim_swap", "detected": True, "swap_date": (now - timedelta(hours=3, minutes=10)).isoformat()}},
+                    {"name": "device_swap", "contrib": 0, "ms": 310, "timeout": False, "err": None, "raw": {"api": "device_swap", "detected": False, "swap_date": None}},
+                    {"name": "number_verification", "contrib": 0, "ms": 0, "timeout": False, "err": None, "raw": {"api": "number_verification", "verified": None}},
+                    {"name": "device_status", "contrib": 10, "ms": 330, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": True, "anomalous": True}},
+                ]
+            },
+            {
+                "phone_number": "+99999991500", "amount_rwf": 250000,
+                "risk_score": 85, "decision": "block",
+                "created_at": now - timedelta(hours=1),
+                "signals": [
+                    {"name": "sim_swap", "contrib": 50, "ms": 460, "timeout": False, "err": None, "raw": {"api": "sim_swap", "detected": True, "swap_date": (now - timedelta(hours=3, minutes=10)).isoformat()}},
+                    {"name": "device_swap", "contrib": 0, "ms": 325, "timeout": False, "err": None, "raw": {"api": "device_swap", "detected": False, "swap_date": None}},
+                    {"name": "number_verification", "contrib": 0, "ms": 0, "timeout": False, "err": None, "raw": {"api": "number_verification", "verified": None}},
+                    {"name": "device_status", "contrib": 10, "ms": 345, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": True, "anomalous": True}},
+                ]
+            },
+            {
+                "phone_number": "+99999991234", "amount_rwf": 25000,
+                "risk_score": 38, "decision": "approve",
+                "created_at": now - timedelta(minutes=45),
+                "signals": [
+                    {"name": "sim_swap", "contrib": 0, "ms": 180, "timeout": False, "err": None, "raw": {"api": "sim_swap", "detected": False, "swap_date": None}},
+                    {"name": "device_swap", "contrib": 15, "ms": 175, "timeout": False, "err": None, "raw": {"api": "device_swap", "detected": True, "swap_date": (now - timedelta(hours=7)).isoformat()}},
+                    {"name": "number_verification", "contrib": 0, "ms": 0, "timeout": False, "err": None, "raw": {"api": "number_verification", "verified": None}},
+                    {"name": "device_status", "contrib": 0, "ms": 115, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": False, "anomalous": False}},
+                ]
+            },
+            {
+                "phone_number": "+99999991500", "amount_rwf": 45000,
+                "risk_score": 75, "decision": "block",
+                "created_at": now - timedelta(minutes=20),
+                "signals": [
+                    {"name": "sim_swap", "contrib": 50, "ms": 440, "timeout": False, "err": None, "raw": {"api": "sim_swap", "detected": True, "swap_date": (now - timedelta(hours=3, minutes=10)).isoformat()}},
+                    {"name": "device_swap", "contrib": 0, "ms": 315, "timeout": False, "err": None, "raw": {"api": "device_swap", "detected": False, "swap_date": None}},
+                    {"name": "number_verification", "contrib": 0, "ms": 0, "timeout": False, "err": None, "raw": {"api": "number_verification", "verified": None}},
+                    {"name": "device_status", "contrib": 10, "ms": 335, "timeout": False, "err": None, "raw": {"api": "device_status", "roaming": True, "anomalous": True}},
                 ]
             },
         ]

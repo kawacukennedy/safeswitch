@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 import Navbar from '../components/layout/Navbar'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
@@ -64,18 +64,25 @@ export default function Dashboard() {
   const sorted = [...transactions].sort(
     (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
   )
-  let lastApproved = 0, lastChallenged = 0, lastBlocked = 0
-  const chartData = sorted.map(tx => {
-    if (tx.decision === 'approve') lastApproved = tx.risk_score
-    if (tx.decision === 'challenge') lastChallenged = tx.risk_score
-    if (tx.decision === 'block') lastBlocked = tx.risk_score
-    return {
-      time: new Date(tx.created_at).toLocaleTimeString(),
-      approved: lastApproved,
-      challenged: lastChallenged,
-      blocked: lastBlocked,
-    }
-  })
+  const chartData = sorted.map(tx => ({
+    time: new Date(tx.created_at).toLocaleTimeString(),
+    score: tx.risk_score,
+    decision: tx.decision,
+  }))
+
+  const decisionDotColors: Record<string, string> = {
+    approve: '#1A7A4A',
+    challenge: '#B45309',
+    block: '#9B1C1C',
+  }
+
+  function CustomDot(props: any) {
+    const { cx, cy, payload } = props
+    if (cx == null || cy == null) return null
+    return (
+      <circle cx={cx} cy={cy} r={5} fill={decisionDotColors[payload.decision]} stroke="#fff" strokeWidth={2} />
+    )
+  }
 
   return (
     <div className="h-screen bg-white flex flex-col">
@@ -123,12 +130,28 @@ export default function Dashboard() {
 
           {/* Risk Chart */}
           <Card className="mb-6 p-6">
-            <h2 className="text-heading-sm text-neutral-900 mb-4">Risk Score Distribution</h2>
-            <ResponsiveContainer width="100%" height={160}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-heading-sm text-neutral-900">Risk Score Trend</h2>
+              <div className="flex gap-4 text-label-sm text-neutral-500">
+                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-status-safe" /> Approve</span>
+                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-status-warn" /> Challenge</span>
+                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-status-block" /> Block</span>
+              </div>
+            </div>
+            <ResponsiveContainer width="100%" height={180}>
               <AreaChart data={chartData}>
+                <defs>
+                  <linearGradient id="scoreGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#9B1C1C" stopOpacity={0.25} />
+                    <stop offset="50%" stopColor="#B45309" stopOpacity={0.12} />
+                    <stop offset="100%" stopColor="#1A7A4A" stopOpacity={0.04} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E8E7E4" vertical={false} />
                 <XAxis dataKey="time" tick={{ fontSize: 11, fill: '#A8A59D' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: '#A8A59D' }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                <ReferenceLine y={70} stroke="#9B1C1C" strokeDasharray="4 3" strokeOpacity={0.5} />
+                <ReferenceLine y={40} stroke="#B45309" strokeDasharray="4 3" strokeOpacity={0.5} />
                 <Tooltip
                   contentStyle={{
                     background: '#FAFAF9',
@@ -137,14 +160,13 @@ export default function Dashboard() {
                     boxShadow: 'none',
                     fontSize: '13px',
                   }}
+                  formatter={(value: number, _name: string, props: any) => {
+                    const decision = props.payload.decision
+                    const label = decision === 'approve' ? 'Approved' : decision === 'challenge' ? 'Challenged' : 'Blocked'
+                    return [`${value}/100`, label]
+                  }}
                 />
-                <Legend
-                  iconType="circle"
-                  wrapperStyle={{ fontSize: '12px', color: '#757270' }}
-                />
-                <Area type="monotone" dataKey="approved" stroke="#1A7A4A" fill="#E8F5EE" strokeWidth={2} dot={true} name="Approved" />
-                <Area type="monotone" dataKey="challenged" stroke="#B45309" fill="#FEF3C7" strokeWidth={2} dot={true} name="Challenged" />
-                <Area type="monotone" dataKey="blocked" stroke="#9B1C1C" fill="#FEE2E2" strokeWidth={2} dot={true} name="Blocked" />
+                <Area type="monotone" dataKey="score" stroke="#0F0E0D" strokeWidth={2} fill="url(#scoreGrad)" dot={<CustomDot />} connectNulls name="Risk Score" />
               </AreaChart>
             </ResponsiveContainer>
           </Card>
